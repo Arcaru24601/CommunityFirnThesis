@@ -1,21 +1,39 @@
 # -*- coding: utf-8 -*-
 """
-Created on Mon Sep 12 13:57:34 2022
+Created on Sat Sep 17 05:46:42 2022
 
 @author: jespe
 """
 
-import json,os
-import numpy as np
+import json,subprocess
 
-path = 'CFM/CFM_main/'
-file = open(path+'example.json')
 
-data = json.load(file)
-data['int_type'] = 'linear'
 
-with open(path+"example.json", 'w') as f:
-    json.dump(data, f,indent = 2)
-    
-# Closing file
-f.close()
+def Terminal_run(Experiments_T,Experiments_A,i,priority):
+    file = open('CFM/CFM_main/example.json')
+        
+    data = json.load(file)
+    data['grid_outputs'] = False
+    if priority == 'Temp':
+        data['resultsFolder'] = 'CFMoutput/' + str(Experiments_T[i])
+        data['InputFileFolder'] = 'CFMinput/' + str(Experiments_T[i])
+        data['InputFileNameTemp'] = str(Experiments_T[i]) + '.csv'
+        data['InputFileNamebdot'] = 'Acc_const.csv'
+        
+    elif priority == 'Acc':
+        data['resultsFolder'] = 'CFMoutput/' + str(Experiments_A[i])
+        data['InputFileFolder'] = 'CFMinput/' + str(Experiments_A[i])
+        data['InputFileNamebdot'] = str(Experiments_A[i]) + '.csv'
+        data['InputFileNameTemp'] = 'Temp_const.csv'
+        
+    with open("CFM/CFM_main/example.json", 'w') as f:
+        json.dump(data, f,indent = 2)
+        
+        # Closing file
+    f.close()    
+
+    subprocess.run('python main.py example.json -n', shell=True, cwd='CFM/CFM_main/')
+
+
+
+

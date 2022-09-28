@@ -31,18 +31,18 @@ def read(rfolder):
     timesteps = f['DIP'][:,0]
     timesteps[0] = 0
     stps = len(timesteps)
-    depth = f['depth'][1:]
+    depth = f['depth'][:]
     density = f['density'][:,:]
     temperature = f['temperature'][:,:]
-    diffusivity = f['diffusivity'][:,1:]
+    diffusivity = f['diffusivity'][:,:]
     forcing = f['forcing'][:,:]
     age = f['age'][:,:]
     climate = f['Modelclimate'][:,:]
-    d15N2 = f['d15N2'][:,1:]
+    d15N2 = f['d15N2'][:,:]
     #print(d15N2.shape,depth.shape)
-    Bubble = f['BCO'][:,1:]
+    Bubble = f['BCO'][:,2]
     f.close()
-    #with h5.File(fn,'r') as hf:
-    #    print(hf.keys())
+    with h5.File(fn,'r') as hf:
+        print(hf.keys())
     return timesteps,stps,depth,density,temperature,diffusivity,forcing,age,climate,d15N2,Bubble
     
