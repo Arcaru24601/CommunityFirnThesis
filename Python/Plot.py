@@ -10,7 +10,8 @@ from celluloid import Camera
 plt.rcParams['font.size'] = '16'
 cmap = plt.cm.get_cmap('PuOr')
 import numpy as np
-
+import seaborn as sns
+sns.set()
 
 def plotter(i,cm,temperature,forcing,d15N2,depth,diffusivity,density,age):
         
@@ -58,21 +59,21 @@ def plotter(i,cm,temperature,forcing,d15N2,depth,diffusivity,density,age):
     #ax[1,2].set_xlim(0,410)
     ax[1,2].invert_yaxis()
 
-rfolder = 'CFM/CFM_main/CFMoutput/Temp_linear/'
+rfolder = 'CFM/CFM_main/CFMoutput/Temp_square/'
 Folder = ['Temp_const','Temp_linear','Temp_osc','Acc_const','Acc_linear','Acc_osc','Acc_ramp']
 timesteps,stps,depth,density,temperature,diffusivity,forcing,age,climate,d15N2,Bubble = read(rfolder)
 
 cmap_interval = np.linspace(0,1,7)
-rows, cols = 2,3
-fig, ax = plt.subplots(rows,cols,figsize=(15, 15), tight_layout=True)
-plotter(-1,cmap_interval[4],temperature,forcing,(d15N2-1.)*1000,depth,diffusivity,density,age)
+#rows, cols = 2,3
+#fig, ax = plt.subplots(rows,cols,figsize=(15, 15), tight_layout=True)
+#plotter(-1,cmap_interval[4],temperature,forcing,(d15N2-1.)*1000,depth,diffusivity,density,age)
 
 
 
 #for j in range(len(Folder)):
 #timesteps,stps,depth,density,temperature,diffusivity,forcing,age,climate,d15N2,Bubble = read(rfolder+'Temp_osc')
-'''
-for i in range(len(timesteps[::25])):
+
+for i in range(len(timesteps[::40])):
     rows, cols = 2,3
     fig, ax = plt.subplots(rows,cols,figsize=(15, 15), tight_layout=True)
     print(i)
@@ -80,4 +81,4 @@ for i in range(len(timesteps[::25])):
     plt.savefig('ImageFolder/Temp_ramp/{0:03d}'.format(i)+'.png')
     plt.close(fig)
     #plt.clf()
-'''
+
