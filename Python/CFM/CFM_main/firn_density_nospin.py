@@ -912,7 +912,8 @@ class FirnDensityNoSpin:
             drho_dt = RD['drho_dt']
             if self.c['no_densification']:
                 drho_dt = np.zeros_like(drho_dt)
-            self.viscosity = RD['viscosity']
+            if not self.c['physRho']=='Goujon2003':   #### Goujon2003 does not include viscosity in RD?
+                    self.viscosity = RD['viscosity']
 
             # Strain modules
             if self.c['strain_softening']:

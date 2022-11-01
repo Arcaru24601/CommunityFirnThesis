@@ -50,12 +50,12 @@ class File:
             Array = np.full_like(self.Time_steps,self.V_i)
         elif self.name == 'varying':
             Array = np.full_like(self.Time_steps,self.V_i)
-            Array[125:250] = self.V_f
-            Array[500:505] = self.V_f
-            Array[1000:1100] = self.V_f
-            Array[1500:2000] = self.V_f
-            Array[5000:5020] = self.V_f
-            Array[6000:7000] = self.V_f
+            Array[2000:2005] = self.V_f
+            Array[3500:3600] = self.V_f
+            Array[4000:4200] = self.V_f
+            Array[6000:6400] = self.V_f
+            Array[7000:8000] = self.V_f
+            Array[9000:-1] = self.V_f
             
         elif self.name == 'instant':
             A = np.full(int(self.size/2),self.V_i)
@@ -100,10 +100,6 @@ class File:
         if self.Priority == 'Acc':
             Bdot_csv = np.array([self.Time_steps,self.apply_func()[0]])
             Temp_csv = np.array([self.Time_steps,self.apply_func()[1]])
-            if self.FlipFlag == True:
-
-                np.savetxt(self.sfolder + 'Flip/' + self.apply_func()[2]+'/Temp_const.csv',Temp_csv,delimiter=',')
-                np.savetxt(self.sfolder + 'Flip/' + self.apply_func()[2]+'/Acc_'+self.name+'.csv',Bdot_csv,delimiter=',')
                 
             np.savetxt(self.sfolder+self.Folder+'/Temp_const.csv',Temp_csv,delimiter=',')
             np.savetxt(self.sfolder+self.Folder+'/Acc_'+self.name+'.csv',Bdot_csv,delimiter=',')
@@ -111,11 +107,7 @@ class File:
         elif self.Priority == 'Temp':
             Temp_csv = np.array([self.Time_steps,self.apply_func()[0]])
             Bdot_csv = np.array([self.Time_steps,self.apply_func()[1]])
-            if self.FlipFlag == True:
-
-                np.savetxt(self.sfolder + 'Flip/' + self.Folder+'/Acc_const.csv',Bdot_csv,delimiter=',')
-                np.savetxt(self.sfolder + 'Flip/' + self.Folder+'/Temp_'+self.name+'.csv',Temp_csv,delimiter=',')
-
+            
             np.savetxt(self.sfolder+self.Folder+'/Acc_const.csv',Bdot_csv,delimiter=',')
             np.savetxt(self.sfolder+self.Folder+'/Temp_'+self.name+'.csv',Temp_csv,delimiter=',')
         

@@ -12,8 +12,9 @@ cmap = plt.cm.get_cmap('PuOr')
 import numpy as np
 import seaborn as sns
 sns.set()
-
-def plotter(i,cm,temperature,forcing,d15N2,depth,diffusivity,density,age):
+from pathlib import Path
+import os
+def plotter(i,ax,cm,temperature,forcing,d15N2,depth,diffusivity,density,age):
         
     ax[0,0].plot(forcing[:,0],forcing[:,1],'r-')
     ax2=ax[0,0].twinx()
@@ -21,7 +22,7 @@ def plotter(i,cm,temperature,forcing,d15N2,depth,diffusivity,density,age):
     ax[0,0].set_xlabel(r'Model-time [yr]')
     ax[0,0].set_ylabel(r'Temperature forcing [K]')
     ax2.set_ylabel(r'Accumulation ice equivalent [m yr$^{-1}$]')
-    print(depth.shape,d15N2.shape)
+    #print(depth.shape,d15N2.shape)
     ax[0,1].plot(d15N2[i,1:],depth[i,1:],color=cmap(cm))
     ax[0,1].set_ylabel(r'Depth [m]')
     ax[0,1].set_xlabel(u'$\delta^{15}$N ‰')
@@ -59,26 +60,31 @@ def plotter(i,cm,temperature,forcing,d15N2,depth,diffusivity,density,age):
     #ax[1,2].set_xlim(0,410)
     ax[1,2].invert_yaxis()
 
-rfolder = 'CFM/CFM_main/CFMoutput/Temp_square/'
-Folder = ['Temp_const','Temp_linear','Temp_osc','Acc_const','Acc_linear','Acc_osc','Acc_ramp']
-timesteps,stps,depth,density,temperature,diffusivity,forcing,age,climate,d15N2,Bubble = read(rfolder)
+folder = './CFM/CFM_main/CFMinput'
+
+Folder = [name for name in os.listdir(folder) if os.path.isdir(os.path.join(folder, name))]
+rfolder = 'CFM/CFM_main/CFMoutput/'
+
+#timesteps,stps,depth,density,temperature,diffusivity,forcing,age,climate,d15N2,Bubble = read(rfolder)
 
 cmap_interval = np.linspace(0,1,7)
 #rows, cols = 2,3
 #fig, ax = plt.subplots(rows,cols,figsize=(15, 15), tight_layout=True)
-#plotter(-1,cmap_interval[4],temperature,forcing,(d15N2-1.)*1000,depth,diffusivity,density,age)
+#plotter(-1,ax,cmap_interval[4],temperature,forcing,(d15N2-1.)*1000,depth,diffusivity,density,age)
 
 
 
-#for j in range(len(Folder)):
-#timesteps,stps,depth,density,temperature,diffusivity,forcing,age,climate,d15N2,Bubble = read(rfolder+'Temp_osc')
-
-for i in range(len(timesteps[::40])):
-    rows, cols = 2,3
-    fig, ax = plt.subplots(rows,cols,figsize=(15, 15), tight_layout=True)
-    print(i)
-    plotter(i,cmap_interval[4],temperature,forcing,d15N2*1000,depth,diffusivity,density,age)
-    plt.savefig('ImageFolder/Temp_ramp/{0:03d}'.format(i)+'.png')
-    plt.close(fig)
+for j in range(len(Folder)):
+    timesteps,stps,depth,density,temperature,diffusivity,forcing,age,climate,d15N2,Bubble = read(rfolder+Folder[j])
+    path = Path('CFM/CFM_main/CFMoutput/' + Folder[j])
+    path.mkdir(parents=True, exist_ok=True)
+    for i in range(len(timesteps[::40])):
+        rows, cols = 2,3
+        fig, ax = plt.subplots(rows,cols,figsize=(15, 15), tight_layout=True)
+        print(i)
+        
+        plotter(i,ax,cmap_interval[4],temperature,forcing,d15N2*1000,depth,diffusivity,density,age)
+        plt.savefig('ImageFolder/'+str(Folder[j])+'/{0:03d}'.format(i)+'.png')
+        plt.close(fig)
     #plt.clf()
 
