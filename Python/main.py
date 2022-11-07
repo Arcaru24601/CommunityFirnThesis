@@ -31,10 +31,7 @@ for j in range(len(FlipFlags)):
         path = Path('CFM/CFM_main/CFMoutput/' + Experiments_Acc[i])
         path.mkdir(parents=True, exist_ok=True)
         je.Terminal_run(Experiments_Temp,Experiments_Acc,i,'Acc',FlipFlags[j])
-     
 '''
-
-
 
 for i in range(len(Folder)):
     path = Path('CFM/CFM_main/CFMoutput/' + Folder[i])
@@ -45,8 +42,7 @@ for i in range(len(Folder)):
         je.Terminal_run(Folder,i,'Acc')
 
 
-
-'''    
+'''
 saver = True
 rfolder = 'CFM\CFM_main\CFMoutput_example\df'
 

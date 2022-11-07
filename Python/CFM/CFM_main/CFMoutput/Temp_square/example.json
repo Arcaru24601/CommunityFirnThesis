@@ -17,7 +17,7 @@
   ],
   "DFresample": "1M",
   "DFfile": "CFM_example_input_df.pkl",
-  "physRho": "Goujon2003",
+  "physRho": "Barnola1991",
   "physRho_options": [
     "HLdynamic",
     "HLSigfus",
@@ -121,8 +121,8 @@
     "BCO",
     "FirnAir",
     "climate",
-    "Diffusivity"  ],
-
+    "Diffusivity"
+  ],
   "outputs_options": [
     "density",
     "depth",
