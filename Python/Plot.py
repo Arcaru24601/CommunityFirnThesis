@@ -8,13 +8,13 @@ from reader import read
 import matplotlib.pyplot as plt 
 from celluloid import Camera
 plt.rcParams['font.size'] = '16'
-cmap = plt.cm.get_cmap('PuOr')
+cmap = plt.cm.get_cmap('viridis')
 import numpy as np
 import seaborn as sns
 sns.set()
 from pathlib import Path
 import os
-def plotter(i,ax,cm,temperature,forcing,d15N2,depth,diffusivity,density,age):
+def plotter(i,ax,cm,temperature,forcing,d15N2,d40Ar,depth,diffusivity,density,age):
         
     ax[0,0].plot(forcing[:,0],forcing[:,1],'r-')
     ax2=ax[0,0].twinx()
@@ -23,9 +23,23 @@ def plotter(i,ax,cm,temperature,forcing,d15N2,depth,diffusivity,density,age):
     ax[0,0].set_ylabel(r'Temperature forcing [K]')
     ax2.set_ylabel(r'Accumulation ice equivalent [m yr$^{-1}$]')
     #print(depth.shape,d15N2.shape)
-    ax[0,1].plot(d15N2[i,1:],depth[i,1:],color=cmap(cm))
+    
+    
+    
+    
+    ax10=ax[0,1].twiny()
+
+    ax[0,1].set_xlabel("$\delta^{15}N$ [‰]",color=cmap(cmap_interval[3]))
+    ax10.set_xlabel("$\delta^{40}Ar$ [‰]",color=cmap(cmap_interval[1]))
+    #ax[0,1].set_xlabel("Model-time [yr]")
+    
+    ax10.set_xlim(0,1)
+    ax[0,1].set_xlim(0,0.6)
+    ax[0,1].plot(d15N2[i,1:],depth[i,1:],color=cmap(cmap_interval[3]))
+    ax[0,1].plot(d40Ar[i,1:],depth[i,1:],color=cmap(cmap_interval[1]))
     ax[0,1].set_ylabel(r'Depth [m]')
-    ax[0,1].set_xlabel(u'$\delta^{15}$N ‰')
+    
+    #ax[0,1].set_xlabel(u'$\delta^{15}$N ‰')
     ax[0,1].xaxis.get_offset_text().set_visible(False)
     #ax[0,1].set_ylim(0,121)
     #ax[0,1].set_xlim(1000.0001,1000.2)
@@ -49,7 +63,7 @@ def plotter(i,ax,cm,temperature,forcing,d15N2,depth,diffusivity,density,age):
     ax[1,1].set_xlabel(r'Temperature [K]')
     ax[1,1].set_ylabel(r'Depth [m]')
     ax[1,1].xaxis.set_major_locator(plt.MaxNLocator(6))
-    #ax[1,1].set_xlim(243,255)
+    ax[1,1].set_xlim(243,255)
     #ax[1,1].set_ylim(0,121)
     ax[1,1].invert_yaxis()
     
@@ -65,26 +79,27 @@ folder = './CFM/CFM_main/CFMinput'
 Folder = [name for name in os.listdir(folder) if os.path.isdir(os.path.join(folder, name))]
 rfolder = 'CFM/CFM_main/CFMoutput/'
 
-#timesteps,stps,depth,density,temperature,diffusivity,forcing,age,climate,d15N2,Bubble = read(rfolder)
+timesteps,stps,depth,density,temperature,diffusivity,forcing,age,climate,d15N2,d40Ar,Bubble = read(rfolder+Folder[3])
 
 cmap_interval = np.linspace(0,1,7)
 #rows, cols = 2,3
 #fig, ax = plt.subplots(rows,cols,figsize=(15, 15), tight_layout=True)
-#plotter(-1,ax,cmap_interval[4],temperature,forcing,(d15N2-1.)*1000,depth,diffusivity,density,age)
-
+#plotter(-1,ax,cmap_interval[0],temperature,forcing,d15N2,d40Ar,depth,diffusivity,density,age)
 
 
 for j in range(len(Folder)):
-    timesteps,stps,depth,density,temperature,diffusivity,forcing,age,climate,d15N2,Bubble = read(rfolder+Folder[j])
+    timesteps,stps,depth,density,temperature,diffusivity,forcing,age,climate,d15N2,d40Ar,Bubble = read(rfolder+Folder[j])
     path = Path('CFM/CFM_main/CFMoutput/' + Folder[j])
     path.mkdir(parents=True, exist_ok=True)
-    for i in range(len(timesteps[::40])):
+    
+    for i in range(len(timesteps[::50])):
         rows, cols = 2,3
         fig, ax = plt.subplots(rows,cols,figsize=(15, 15), tight_layout=True)
         print(i)
         
-        plotter(i,ax,cmap_interval[4],temperature,forcing,d15N2*1000,depth,diffusivity,density,age)
+        plotter(i,ax,cmap_interval[0],temperature,forcing,d15N2,d40Ar,depth,diffusivity,density,age)
         plt.savefig('ImageFolder/'+str(Folder[j])+'/{0:03d}'.format(i)+'.png')
         plt.close(fig)
     #plt.clf()
 
+    

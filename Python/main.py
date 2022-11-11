@@ -15,7 +15,7 @@ from pathlib import Path
 folder = './CFM/CFM_main/CFMinput'
 
 Folder = [name for name in os.listdir(folder) if os.path.isdir(os.path.join(folder, name))]
-
+#Folder = 'Temp_const'
 
 Experiments_Temp = ['Temp_linear','Temp_const','Temp_osc','Temp_ramp','Temp_square','Temp_instant','Temp_varying']
 Experiments_Acc = ['Acc_linear', 'Acc_const', 'Acc_osc','Acc_ramp','Acc_square','Acc_instant','Acc_varying']
@@ -32,7 +32,7 @@ for j in range(len(FlipFlags)):
         path.mkdir(parents=True, exist_ok=True)
         je.Terminal_run(Experiments_Temp,Experiments_Acc,i,'Acc',FlipFlags[j])
 '''
-
+'''
 for i in range(len(Folder)):
     path = Path('CFM/CFM_main/CFMoutput/' + Folder[i])
     path.mkdir(parents=True, exist_ok=True)
@@ -41,7 +41,7 @@ for i in range(len(Folder)):
     elif Folder[i].startswith('Acc'):
         je.Terminal_run(Folder,i,'Acc')
 
-
+'''
 '''
 saver = True
 rfolder = 'CFM\CFM_main\CFMoutput_example\df'

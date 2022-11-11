@@ -10,9 +10,10 @@ import os
 from matplotlib import pyplot as plt
 import numpy as np
 cmap = plt.cm.get_cmap('viridis')
-import seaborn as sns
+import seaborn as sns 
 #plt.rc('text', usetex=True)
 #plt.rc('font', family='serif')
+import reader as re
 sns.set()
 from scipy.signal import savgol_filter
 from scipy.ndimage.filters import uniform_filter1d
@@ -46,8 +47,11 @@ class CoD_plotter():
             self.d15N_cod[i] = self.d15N[i,idx]
             self.d40Ar_cod[i] = self.d40Ar[i,idx]
         
-        self.close_off_depth = savgol_filter(self.close_off_depth, window_length=51,polyorder=3)
-        self.d15N_cod = savgol_filter(self.d15N_cod, window_length=51, polyorder=3)
+    
+        
+        #self.close_off_depth = savgol_filter(self.close_off_depth, window_length=51,polyorder=3)
+        #self.d15N_cod = savgol_filter(self.d15N_cod, window_length=51, polyorder=3)
+        #self.d40Ar_cod = savgol_filter(self.d40Ar_cod, window_length=51, polyorder=3)
         #self.d15N_codm = np.mean(self.d15N_cod.reshape(-1,3), axis=1)
         #self.d40Ar_codm = np.mean(self.dAr40_cod.reshape(-1,3), axis=1)
         self.model_time[0] = 0    
@@ -92,8 +96,10 @@ class CoD_plotter():
         self.ax[0,2].set_ylabel("Depth [m]",fontsize=labelFont)
         self.ax[0,2].set_xlabel("$\delta^{15}N$ [‰]",fontsize=labelFont)
         
+        self.ax10 = self.ax[1,0].twinx()
         
-        self.ax[1,0].set_ylabel("$\delta^{15}N_{cod}$ [‰]",fontsize=labelFont)
+        self.ax[1,0].set_ylabel("$\delta^{15}N_{cod}$ [‰]",color=cmap(cmap_interval[2]),fontsize=labelFont)
+        self.ax10.set_ylabel("$\delta^{40}Ar_{cod}$ [‰]",color=cmap(cmap_interval[1]),fontsize=labelFont)
         self.ax[1,0].set_xlabel("Model-time [yr]",fontsize=labelFont)
         
         self.ax[1,1].set_ylabel("Depth [m]",fontsize=labelFont)
@@ -122,7 +128,10 @@ class CoD_plotter():
             self.ax[0,2].plot(self.d15N[Times[i]][1:], self.z[Times[i]][1:],color=cmap(cmap_interval[i]),linestyle='-',linewidth=0.7,label=time_labels[i])
             self.ax[1,1].plot(self.temperature[Times[i]][1:], self.z[Times[i]][1:],color=cmap(cmap_interval[i]),linestyle='-',linewidth=0.7,label=time_labels[i])
         #print(self.d15N_cod.shape,self.close_off_depth.shape)
+        
+        
         self.ax[1,0].plot(self.model_time[::25],self.d15N_cod[::25],color=cmap(cmap_interval[2]),linewidth=0.7)
+        self.ax10.plot(self.model_time[::25],self.d40Ar_cod[::25],color=cmap(cmap_interval[1]),linewidth=0.7)
         self.ax[1,2].plot(self.z[::25, 0],self.close_off_depth[::25],linewidth=0.7)
         self.ax[0,1].legend(loc='lower left',fontsize=legFont)
         self.ax[0,2].legend(loc='lower left',fontsize=legFont)

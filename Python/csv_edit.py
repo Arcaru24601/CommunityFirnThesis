@@ -15,7 +15,7 @@ class File:
         self.Value = Value
         self.name = str(name)
         self.size = int(size)
-        self.Month_sep = 24
+        self.Month_sep = 12
         self.sfolder = sfolder
         self.Time_steps = np.arange(0,self.T_steps,self.Month_sep/12)
         self.Priority = Priority
@@ -131,7 +131,7 @@ class File:
             np.savetxt(self.sfolder+self.Folder+'/'+self.Folder+'.csv',Temp_csv,delimiter=',')
         
 Flips = [False]
-steps = 1e4*2
+steps = 1e4
 size = 1e4
 for i in Flips:
     T_linear = File(steps,size,253,'linear','Temp',LongFlag=i)
