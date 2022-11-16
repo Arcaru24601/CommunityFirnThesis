@@ -29,7 +29,7 @@ def read(rfolder):
     f = h5.File(fn,'r')
     
     timesteps = f['DIP'][:,0]
-    timesteps[0] = 0
+    #timesteps[0] = 0
     stps = len(timesteps)
     depth = f['depth'][:]
     density = f['density'][:,:]
@@ -41,7 +41,7 @@ def read(rfolder):
     d15N2 = (f['d15N2'][:,:]-1)*1000
     d40Ar = (f[f'd40Ar'][:,:]-1)*1000
     #print(d15N2.shape,depth.shape)
-    Bubble = f['BCO'][:,2]
+    Bubble = f['BCO'][:]
     f.close()
     with h5.File(fn,'r') as hf:
         print(hf.keys())

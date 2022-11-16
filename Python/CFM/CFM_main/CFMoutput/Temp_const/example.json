@@ -17,7 +17,7 @@
   ],
   "DFresample": "1M",
   "DFfile": "CFM_example_input_df.pkl",
-  "physRho": "Barnola1991",
+  "physRho": "HLdynamic",
   "physRho_options": [
     "HLdynamic",
     "HLSigfus",
@@ -84,10 +84,10 @@
   "rhos0": 350.0,
   "r2s0": 1e-08,
   "AutoSpinUpTime": false,
-  "yearSpin": 20,
+  "yearSpin": 1000,
   "H": 3000,
   "HbaseSpin": 2880.0,
-  "stpsPerYear": 2.0,
+  "stpsPerYear": 1,
   "D_surf": 1.0,
   "bdot_type": "mean",
   "bdot_type_options": [
@@ -163,7 +163,7 @@
   "manual_iceout": false,
   "iceout": 0.23,
   "QMorris": 110000.0,
-  "timesetup": "exact",
+  "timesetup": "interp",
   "timesetup_options": [
     "exact",
     "interp",

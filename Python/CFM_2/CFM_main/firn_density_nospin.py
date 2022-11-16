@@ -241,7 +241,7 @@ class FirnDensityNoSpin:
             ## option 3: sublim is implied by negative values in bdot
             else:
                 print('SUBLIM is calculated using negative values of bdot')
-                input_year_sublim = input_year_bdot#climateTS['time'][start_ind:]
+                input_year_sublim = input_year_bdot #climateTS['time'][start_ind:]
                 input_sublim = input_bdot.copy()
                 input_sublim[input_sublim>0] = 0.0             
                 input_sublim_full = input_bdot_full.copy()

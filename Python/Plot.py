@@ -34,9 +34,9 @@ def plotter(i,ax,cm,temperature,forcing,d15N2,d40Ar,depth,diffusivity,density,ag
     #ax[0,1].set_xlabel("Model-time [yr]")
     
     ax10.set_xlim(0,1)
-    ax[0,1].set_xlim(0,0.6)
+    ax[0,1].set_xlim(0,1)
     ax[0,1].plot(d15N2[i,1:],depth[i,1:],color=cmap(cmap_interval[3]))
-    ax[0,1].plot(d40Ar[i,1:],depth[i,1:],color=cmap(cmap_interval[1]))
+    ax10.plot(d40Ar[i,1:],depth[i,1:],color=cmap(cmap_interval[1]))
     ax[0,1].set_ylabel(r'Depth [m]')
     
     #ax[0,1].set_xlabel(u'$\delta^{15}$N ‰')
@@ -75,18 +75,33 @@ def plotter(i,ax,cm,temperature,forcing,d15N2,d40Ar,depth,diffusivity,density,ag
     ax[1,2].invert_yaxis()
 
 folder = './CFM/CFM_main/CFMinput'
+Folder = np.array(['df'])
+#Folder = [name for name in os.listdir(folder) if os.path.isdir(os.path.join(folder, name))]
+rfolder = 'CFM_2/CFM_main/CFMoutput_example/'
 
-Folder = [name for name in os.listdir(folder) if os.path.isdir(os.path.join(folder, name))]
-rfolder = 'CFM/CFM_main/CFMoutput/'
-
-timesteps,stps,depth,density,temperature,diffusivity,forcing,age,climate,d15N2,d40Ar,Bubble = read(rfolder+Folder[3])
+timesteps,stps,depth,density,temperature,diffusivity,forcing,age,climate,d15N2,d40Ar,Bubble = read(rfolder+Folder[0])
 
 cmap_interval = np.linspace(0,1,7)
-#rows, cols = 2,3
-#fig, ax = plt.subplots(rows,cols,figsize=(15, 15), tight_layout=True)
-#plotter(-1,ax,cmap_interval[0],temperature,forcing,d15N2,d40Ar,depth,diffusivity,density,age)
+rows, cols = 2,3
+fig, ax = plt.subplots(rows,cols,figsize=(15, 15), tight_layout=True)
+plotter(-1,ax,cmap_interval[0],temperature,forcing,d15N2,d40Ar,depth,diffusivity,density,age)
+
+rows,cols = 2,1
+
+fig, axs = plt.subplots(2, 1, sharex=True)
 
 
+
+axs[0].plot(timesteps,Bubble[:,2])
+axs[1].plot(timesteps,Bubble[:,6])
+axs[0].invert_yaxis()
+axs[1].invert_yaxis()
+#axs[1].set_ylim(130,60)
+#axs[0].set_ylim(130,60)
+
+# Remove vertical space between axes
+print(Bubble[-1,2],Bubble[-1,6])
+'''
 for j in range(len(Folder)):
     timesteps,stps,depth,density,temperature,diffusivity,forcing,age,climate,d15N2,d40Ar,Bubble = read(rfolder+Folder[j])
     path = Path('CFM/CFM_main/CFMoutput/' + Folder[j])
@@ -102,4 +117,4 @@ for j in range(len(Folder)):
         plt.close(fig)
     #plt.clf()
 
-    
+ '''

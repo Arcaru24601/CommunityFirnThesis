@@ -20,7 +20,6 @@ from scipy.ndimage.filters import uniform_filter1d
 class CoD_plotter():
 
     def __init__(self,filepath=None):
-
         self.filepath = filepath
         rfile = 'CFMresults.hdf5'
         self.fs = os.path.join(self.filepath,rfile)
@@ -54,7 +53,7 @@ class CoD_plotter():
         #self.d40Ar_cod = savgol_filter(self.d40Ar_cod, window_length=51, polyorder=3)
         #self.d15N_codm = np.mean(self.d15N_cod.reshape(-1,3), axis=1)
         #self.d40Ar_codm = np.mean(self.dAr40_cod.reshape(-1,3), axis=1)
-        self.model_time[0] = 0    
+        #self.model_time[0] = 0    
         f.close()
        
         return
@@ -73,9 +72,11 @@ class CoD_plotter():
         self.ax[1,0].set_xlim(self.model_time[0],self.model_time[-1])
         self.ax[1,2].set_xlim(self.model_time[0],self.model_time[-1])
         
-        Times = [500,2000,4000,6000,8000,9900,9990-1]
-        #Times = [500,1000,2000,3000,4000,4700,5000-1]
-        #Times = [250,500,1000,1500,2000,2350]
+        #Times = [1000,5000,10000,12500,15000,16000,17000-1]
+        Times = [500,1000,2000,3000,4000,4700,5000-1]
+        #Times = [100,250,400,500,600,800,1000]
+        #Times = [200,500,1000,2000,2500,3000,3100]
+        #Times = [10,20,50,100,200,400,492]
         cmap_interval = np.linspace(0,1,len(Times))
         time_labels = ['$t_0$', '$t_1$', '$t_2$', '$t_3$', '$t_4$', '$t_5$', '$t_6$','$t_f$']
         
@@ -130,9 +131,10 @@ class CoD_plotter():
         #print(self.d15N_cod.shape,self.close_off_depth.shape)
         
         
-        self.ax[1,0].plot(self.model_time[::25],self.d15N_cod[::25],color=cmap(cmap_interval[2]),linewidth=0.7)
-        self.ax10.plot(self.model_time[::25],self.d40Ar_cod[::25],color=cmap(cmap_interval[1]),linewidth=0.7)
-        self.ax[1,2].plot(self.z[::25, 0],self.close_off_depth[::25],linewidth=0.7)
+        self.ax[1,0].plot(self.model_time,self.d15N_cod,color=cmap(cmap_interval[2]),linewidth=0.7)
+        self.ax10.plot(self.model_time,self.d40Ar_cod,color=cmap(cmap_interval[1]),linewidth=0.7)
+        self.ax[1,2].plot(self.z[:, 0],self.close_off_depth,linewidth=0.7)
+        #self.ax[1,2].set_ylim(90,60)
         self.ax[0,1].legend(loc='lower left',fontsize=legFont)
         self.ax[0,2].legend(loc='lower left',fontsize=legFont)
         self.ax[1,1].legend(loc='lower left',fontsize=legFont)
@@ -161,16 +163,16 @@ class CoD_plotter():
 
 
 folder = './CFM/CFM_main/CFMinput'
-
-Folder = [name for name in os.listdir(folder) if os.path.isdir(os.path.join(folder, name))]
-rfolder = 'CFM/CFM_main/CFMoutput/'
+Folder = np.array(['df'])
+#Folder = [name for name in os.listdir(folder) if os.path.isdir(os.path.join(folder, name))]
+rfolder = 'CFM_2/CFM_main/CFMoutput_example/'
 
 for i in range(len(Folder)):
     print(Folder[i])
     if os.path.exists(rfolder + Folder[i]+"/CFMresults.hdf5"):
         Current_plot = CoD_plotter(filepath=rfolder+Folder[i])
         Current_plot.plotting()
-        plt.savefig('CoD_plots/'+ str(Folder[i])+'.png',dpi=300)
+        plt.savefig('CoD_plots/df1.png',dpi=300)
         plt.close('all')
     else:
         print("Results file does not exist")

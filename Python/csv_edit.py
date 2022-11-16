@@ -26,7 +26,7 @@ class File:
         self.LongFlag = LongFlag
         
         
-        self.Temp_i = [243,253]
+        self.Temp_i = [242.05,253]
         if self.Priority == 'Acc':    
             self.V_i,self.V_f = self.Acc_i
         elif self.Priority == 'Temp':    
