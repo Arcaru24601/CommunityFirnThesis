@@ -73,7 +73,8 @@ class CoD_plotter():
         self.ax[1,2].set_xlim(self.model_time[0],self.model_time[-1])
         
         #Times = [1000,5000,10000,12500,15000,16000,17000-1]
-        Times = [500,1000,2000,3000,4000,4700,5000-1]
+        Times = [500, 1500, 2000, 2500, 3000, 4000, 4990]
+        #Times = [500,1000,2000,3000,4000,4700,5000-1]
         #Times = [100,250,400,500,600,800,1000]
         #Times = [200,500,1000,2000,2500,3000,3100]
         #Times = [10,20,50,100,200,400,492]
@@ -163,9 +164,9 @@ class CoD_plotter():
 
 
 folder = './CFM/CFM_main/CFMinput'
-Folder = np.array(['df'])
+Folder = np.array(['Temp_const'])
 #Folder = [name for name in os.listdir(folder) if os.path.isdir(os.path.join(folder, name))]
-rfolder = 'CFM_2/CFM_main/CFMoutput_example/'
+rfolder = 'CFM/CFM_main/CFMoutput/'
 
 for i in range(len(Folder)):
     print(Folder[i])

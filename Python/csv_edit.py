@@ -19,7 +19,7 @@ class File:
         self.sfolder = sfolder
         self.Time_steps = np.arange(0,self.T_steps,self.Month_sep/12)
         self.Priority = Priority
-        self.RampPoint = [2000*2,2500*2]
+        self.RampPoint = [2000,2500]
         self.Acc_i = [0.185,0.195]
         
         
@@ -69,26 +69,26 @@ class File:
             Array = np.concatenate((A,B))
         elif self.name == 'osc':
             if self.Priority == 'Acc':
-                F = 0.0005/4
-                amplitude = 0.005
+                F = 0.0005
+                amplitude = 0.15
                 b_0 = 0.19
                 Array = amplitude * np.sin(2*np.pi*F*self.Time_steps) + b_0
 
             elif self.Priority == 'Temp':
-                F = 0.0005/4
+                F = 0.0005
                 amplitude = 10
                 t_0 = 249
                 Array = amplitude * np.sin(2*np.pi*F*self.Time_steps) + t_0
         elif self.name == 'ramp':
-            t1 = 6000*2
-            t0 = 4000*2
+            t1 = 6000
+            t0 = 4000
             slope = (self.V_f - self.V_i) / (t1 - t0)
             Array = self.V_i + np.minimum(slope * np.maximum(self.Time_steps - t0, 0.0), self.V_f - self.V_i)
-            
         elif self.name == 'square':
             result = self.ramp()
             Array = np.concatenate((result,np.flip(result)))
-            
+            plt.plot(self.Time_steps,Array)
+
         
         if self.Priority == 'Temp':
             Array_c = np.full_like(self.Time_steps, 0.19)

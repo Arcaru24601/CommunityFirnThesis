@@ -17,10 +17,11 @@ import os.path
 import string
 import shutil
 import sys
+import matplotlib
+matplotlib.rc_file_defaults()
 
 plt.rc('text', usetex=True)
 plt.rc('font', family='serif')
-
 
 class CfmPlotter():
     #Jesper
@@ -112,13 +113,15 @@ class CfmPlotter():
 
 
         plt.xlabel(r"Model Time [y]", labelpad=-1.5, fontsize=9)
-        #plt.savefig('resultsFolder/Test.pdf')
+        plt.savefig('Test.pdf')
         plt.tight_layout
         plt.show()
+        print(self.d15n_cod[-1]*1000,self.d40ar_cod[-1]*1000/4)
+
 
 
         return
 
 
-plots = CfmPlotter('CFM_2/CFM_main/CFMoutput_example/df/CFMresults.hdf5')
+plots = CfmPlotter('CFM/CFM_main/CFMoutput/Temp_const/CFMresults.hdf5')
 plots.plotting()

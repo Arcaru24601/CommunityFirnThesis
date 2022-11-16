@@ -334,7 +334,7 @@ class FirnDensityNoSpin:
             self.modeltime  = np.linspace(yr_start, yr_end, self.stp+1)[:-1]
             # self.t          = 1.0 / self.c['stpsPerYear']                   # years per time step
             self.t = (1.0 / self.c['stpsPerYear']) * np.ones_like(self.dt)
-            init_time = -9999.0
+            init_time = input_year_temp[0]#-9999.0
 
         elif self.c['timesetup']=='exact':
             # print('"Exact" time setup will not work properly if input forcing does not all have the same time')

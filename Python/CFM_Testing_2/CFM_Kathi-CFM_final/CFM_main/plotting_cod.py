@@ -105,7 +105,7 @@ class CfmPlotter():
 
 
         plt.xlabel(r"Model Time [y]", labelpad=-1.5, fontsize=9)
-        plt.savefig('resultsFolder/Test.pdf')
+        plt.savefig('resultsFolder/Const.pdf')
         plt.tight_layout
         plt.show()
         print(self.d15n_cod[-1]*1000,self.d40ar_cod[-1]*1000/4)
@@ -113,5 +113,5 @@ class CfmPlotter():
         return
 
 
-plots = CfmPlotter('resultsFolder/CFMresults_periodic_T_acc_500y_15K_HLd.hdf5')
+plots = CfmPlotter('resultsFolder/CFMresults_steady.hdf5')
 plots.plotting()
