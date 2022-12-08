@@ -490,6 +490,7 @@ def init_regrid22(self):
     if self.nodestocombine2 > 0: # grid22 process is turned on
         ind2            = np.intersect1d(np.where(self.z>=grid1b)[0],np.where(self.z<grid2b)[0]) # layers of grid2
         ind22           = np.where(self.z>=grid2b)[0] # layers of grid22
+        print(int(-self.nodestocombine2))
         ind23           = ind22[-self.nodestocombine2:] # layers of grid23
         ind22           = ind22[0:-self.nodestocombine2] # remove layers of grid23 from grid22
         grid1z          = self.z[ind1] # z values grid1

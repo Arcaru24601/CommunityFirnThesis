@@ -15,36 +15,66 @@ from pathlib import Path
 folder = './CFM/CFM_main/CFMinput'
 
 Folder = [name for name in os.listdir(folder) if os.path.isdir(os.path.join(folder, name))]
-#Folder = 'Temp_const'
-
-Experiments_Temp = ['Temp_linear','Temp_const','Temp_osc','Temp_ramp','Temp_square','Temp_instant','Temp_varying']
-Experiments_Acc = ['Acc_linear', 'Acc_const', 'Acc_osc','Acc_ramp','Acc_square','Acc_instant','Acc_varying']
-FlipFlags = [False]
-'''
-for j in range(len(FlipFlags)):
-    for i in range(len(Experiments_Temp)):
-        path = Path('CFM/CFM_main/CFMoutput/' + Experiments_Temp[i])
+Advection = ['zero','Christo','Darcy']
+Effect = ['grav','full']
+def run(folder):
+    for i in range(len(folder)):
+        path = Path('CFM/CFM_main/CFMoutput/' + folder[i])
         path.mkdir(parents=True, exist_ok=True)
-        je.Terminal_run(Experiments_Temp,Experiments_Acc,i,'Temp',FlipFlags[j])
-    #subprocess.run('python main.py example.json -n', shell=True, cwd='CFM/CFM_main/')
-    for i in range(len(Experiments_Acc)):
-        path = Path('CFM/CFM_main/CFMoutput/' + Experiments_Acc[i])
-        path.mkdir(parents=True, exist_ok=True)
-        je.Terminal_run(Experiments_Temp,Experiments_Acc,i,'Acc',FlipFlags[j])
+        print(Folder[i])
+        if folder[i].startswith('Temp'):
+            je.Terminal_run(folder,i,'Temp')
+        elif folder[i].startswith('Acc'):
+            je.Terminal_run(folder,i,'Acc')
+folder2 = './CFM/CFM_main/CFMinput/DO_event'
+
+Folder2 = [name for name in os.listdir(folder2) if os.path.isdir(os.path.join(folder2, name))]
+
+def Air_run(Model,folder,advec,effect):
+    for i in range(len(folder)):
+        for j in range(len(advec)):
+            
+            for k in range(len(effect)):
+                Foldname = str(folder[i]) + '/' + str(Model) + '/' + str(advec[j]) + '/' + str(effect[k])
+                path = Path('CFM/CFM_main/CFMoutput/DO_event/' + Foldname)
+                path.mkdir(parents=True, exist_ok=True)
+                print(Model,folder[i],advec[j],effect[k])
+                je.Terminal_run2(Model,folder[i],'Temp',effect[k],advec[j])
+
+
+#run(Folder)                
+Air_run('Goujon2003',Folder2,Advection,Effect)
+#Models = ['HLdynamic','Barnola1991','Goujon2003']
+#from multiprocessing import Process
 '''
-'''
-for i in range(len(Folder)):
-    path = Path('CFM/CFM_main/CFMoutput/' + Folder[i])
-    path.mkdir(parents=True, exist_ok=True)
-    if Folder[i].startswith('Temp'):
-        je.Terminal_run(Folder,i,'Temp')
-    elif Folder[i].startswith('Acc'):
-        je.Terminal_run(Folder,i,'Acc')
+if __name__ == "__main__":
+    processes = [Process(target = Air_run, args = ('HLdynamic',  Folder2, Advection,Effect)),
+                 Process(target = Air_run, args = ('Barnola1991',Folder2, Advection,Effect))]
+                 Process(target = Air_run, args = ('Goujon2003', Folder2, Advection,Effect)),
+                 
+    # kick them off 
+    for process in processes:
+        process.start()
+
+    # now wait for them to finish
+    for process in processes:
+        process.join()
+
 
 '''
-'''
-saver = True
-rfolder = 'CFM\CFM_main\CFMoutput_example\df'
 
-Time,steps,depth,density,temperature,diffusivity,forcing,age,climate,d15N2,Bubble = read(rfolder,saver)
-'''
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

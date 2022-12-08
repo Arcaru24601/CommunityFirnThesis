@@ -158,6 +158,7 @@ class FirnDensitySpin:
         try:
             if self.c['spinup_climate_type']=='initial':
                 self.bdot0      = input_bdot[0]
+                print(input_bdot[0])
             elif self.c['spinup_climate_type']=='mean':
                 self.bdot0      = np.mean(input_bdot)
         except:
@@ -180,6 +181,7 @@ class FirnDensitySpin:
         ############################
         ### set up model grid ######
         ############################
+        #print(self.c['H'],self.c['HbaseSpin'],self.bdot0,self.c['stpsPerYear'])
         self.gridLen    = int((self.c['H'] - self.c['HbaseSpin']) / (self.bdot0 / self.c['stpsPerYear'])) # number of grid points
 
         gridHeight      = np.linspace(self.c['H'], self.c['HbaseSpin'], self.gridLen)

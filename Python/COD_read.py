@@ -47,7 +47,8 @@ class CoD_plotter():
             self.d40Ar_cod[i] = self.d40Ar[i,idx]
         
     
-        
+        #print(self.d15N_cod.shape)
+
         #self.close_off_depth = savgol_filter(self.close_off_depth, window_length=51,polyorder=3)
         #self.d15N_cod = savgol_filter(self.d15N_cod, window_length=51, polyorder=3)
         #self.d40Ar_cod = savgol_filter(self.d40Ar_cod, window_length=51, polyorder=3)
@@ -57,7 +58,6 @@ class CoD_plotter():
         f.close()
        
         return
-    
     
     
     def plotting(self):
@@ -73,14 +73,14 @@ class CoD_plotter():
         self.ax[1,2].set_xlim(self.model_time[0],self.model_time[-1])
         
         #Times = [1000,5000,10000,12500,15000,16000,17000-1]
-        Times = [500, 1500, 2000, 2500, 3000, 4000, 4990]
-        #Times = [500,1000,2000,3000,4000,4700,5000-1]
+        #Times = [500, 1500, 2000, 2500, 3000, 4000, 4990]
+        Times = [500,1000,2000,3000,4000,4700,5000-1]
         #Times = [100,250,400,500,600,800,1000]
         #Times = [200,500,1000,2000,2500,3000,3100]
         #Times = [10,20,50,100,200,400,492]
         cmap_interval = np.linspace(0,1,len(Times))
         time_labels = ['$t_0$', '$t_1$', '$t_2$', '$t_3$', '$t_4$', '$t_5$', '$t_6$','$t_f$']
-        
+        print(self.model_time[Times])
         
         self.ax02 = self.ax[0,0].twinx()
         self.ax[0,0].set_ylabel("Temperature Forcing [K]",color=cmap(cmap_interval[3]),fontsize=labelFont)
@@ -90,7 +90,7 @@ class CoD_plotter():
 
         #for i in range(len(Times)):
         #    plt.annotate(time_labels[i], xy=(Times[i]+100,0.1805), rotation=0, verticalalignment='bottom')
-        
+        print(self.model_time[Times])
         
         self.ax[0,1].set_ylabel("Depth [m]",fontsize=labelFont)
         self.ax[0,1].set_xlabel("Density $[\mathrm{kg m^{-3}}]$",fontsize=labelFont)
@@ -133,7 +133,7 @@ class CoD_plotter():
         
         
         self.ax[1,0].plot(self.model_time,self.d15N_cod,color=cmap(cmap_interval[2]),linewidth=0.7)
-        self.ax10.plot(self.model_time,self.d40Ar_cod,color=cmap(cmap_interval[1]),linewidth=0.7)
+        self.ax10.plot(self.model_time,self.d40Ar_cod/4,color=cmap(cmap_interval[1]),linewidth=0.7)
         self.ax[1,2].plot(self.z[:, 0],self.close_off_depth,linewidth=0.7)
         #self.ax[1,2].set_ylim(90,60)
         self.ax[0,1].legend(loc='lower left',fontsize=legFont)
@@ -164,16 +164,16 @@ class CoD_plotter():
 
 
 folder = './CFM/CFM_main/CFMinput'
-Folder = np.array(['Temp_const'])
-#Folder = [name for name in os.listdir(folder) if os.path.isdir(os.path.join(folder, name))]
+#Folder = np.array(['Temp_ramp'])
+Folder = [name for name in os.listdir(folder) if os.path.isdir(os.path.join(folder, name))]
 rfolder = 'CFM/CFM_main/CFMoutput/'
-
+    
 for i in range(len(Folder)):
     print(Folder[i])
     if os.path.exists(rfolder + Folder[i]+"/CFMresults.hdf5"):
         Current_plot = CoD_plotter(filepath=rfolder+Folder[i])
         Current_plot.plotting()
-        plt.savefig('CoD_plots/df1.png',dpi=300)
+        plt.savefig('CoD_plots/'+str(Folder[i])+'.png',dpi=300)
         plt.close('all')
     else:
         print("Results file does not exist")

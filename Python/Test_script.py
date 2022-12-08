@@ -9,8 +9,8 @@ import json,subprocess
 
 
 
-def Terminal_run(Folder,i,priority,FlipFlag=False):
-    file = open('CFM/CFM_main/example.json')
+def Terminal_run(Folder,i,priority,):
+    file = open('CFM/CFM_main/example_const.json')
         
     data = json.load(file)
     data['grid_outputs'] = False
@@ -20,25 +20,107 @@ def Terminal_run(Folder,i,priority,FlipFlag=False):
     if priority == 'Temp':
         data['InputFileNameTemp'] = str(Folder[i])+'.csv'
         data['InputFileNamebdot'] = 'Acc_const.csv'
-        if FlipFlag == True:
-            data['InputFileFolder'] = 'CFMinput/Flip/' + str(Folder[i])
-            data['resultsFolder'] = 'CFMoutput/Flip/' + str(Folder[i])
+ 
         
     elif priority == 'Acc':
         data['InputFileNamebdot'] = str(Folder[i])+'.csv'
         data['InputFileNameTemp'] = 'Temp_const.csv'  
-        if FlipFlag == True:
-            data['InputFileFolder'] = 'CFMinput/Flip/' + str(Folder[i])
-            data['resultsFolder'] = 'CFMoutput/Flip/' + str(Folder[i])
         
-    with open("CFM/CFM_main/example.json", 'w') as f:
+        
+    with open("CFM/CFM_main/example_const.json", 'w') as f:
         json.dump(data, f,indent = 2)
         
         # Closing file
     f.close()    
-
-    subprocess.run('python main.py example.json -n', shell=True, cwd='CFM/CFM_main/')
-
-
+    
+    subprocess.run('python main.py example_const.json -n', shell=True, cwd='CFM/CFM_main/')
 
 
+def Config_Edit(Model,Folder,priority,effect,advec):
+    
+    if effect == 'grav':
+        file = open('CFM/CFM_main/example_grav.json')    
+    elif effect == 'full':
+        file = open('CFM/CFM_main/example_Air.json')
+    elif Model == 'HLdynamic':
+        file = open('CFM/CFM_main/example_HLD.json')
+    elif Model == 'Barnola1991':
+        file = open('CFM/CFM_main/example_BAR.json')
+    elif Model == 'Goujon2003':
+        file = open('CFM/CFM_main/example_GOU.json')
+    
+    
+    #elif Folder == 'Osc':
+        #file = open('CFM/CFM_main/example_osc.json')
+    
+        
+    data = json.load(file)
+    data['grid_outputs'] = False
+    data['resultsFileName'] = str(Folder) + str(Model) + str(advec) + str(effect) + '.hdf5'#'CFMresults.hdf5'
+    data['resultsFolder'] = 'CFMoutput/DO_event/' + str(Folder) + '/' + str(Model) + '/' + str(advec) + '/' + str(effect)
+    data['InputFileFolder'] = 'CFMinput/DO_event/' + str(Folder)
+    data['physRho'] = str(Model)
+    
+    
+    
+    if priority == 'Temp':
+        data['InputFileNameTemp'] = str(Folder)+'_Temp.csv'
+        data['InputFileNamebdot'] = str(Folder)+'_acc.csv'
+ 
+        
+    elif priority == 'Acc':
+        data['InputFileNamebdot'] = str(Folder)+'_acc.csv'
+        data['InputFileNameTemp'] = str(Folder)+'_Temp.csv'  
+        
+    if effect == 'grav':  
+        with open("CFM/CFM_main/example_grav.json", 'w') as f:
+            json.dump(data, f,indent = 2)
+    elif effect == 'full':
+        with open("CFM/CFM_main/example_Air.json", 'w') as f:
+            json.dump(data, f,indent = 2)
+        # Closing file
+    f.close()
+    
+def Air_Edit(Model,effect,advec):
+    
+    if Model == 'HLdynamic':
+        file = open('CFM/CFM_main/Air_HLD.json')
+    elif Model == 'Barnola1991':
+        file = open('CFM/CFM_main/Air_BAR.json')
+    elif Model == 'Goujon2003':
+        file = open('CFM/CFM_main/Air_GOU.json')
+        
+    
+    data = json.load(file)
+    data['advection_type'] = str(advec)
+    
+    if effect =='full':
+        data['gravity'] = 'on'
+        data['thermal'] = 'on'
+    elif effect == 'grav':
+        data['thermal'] = 'off'
+    
+        
+
+    with open("CFM/CFM_main/AirConfig.json", 'w') as f:
+        json.dump(data, f,indent = 2)
+        
+        # Closing file
+    f.close()
+def Terminal_run2(Model,Folder,Priority,effect,advec):
+    Config_Edit(Model,Folder,Priority,effect,advec)
+    Air_Edit(Model,effect,advec)
+    if effect == 'grav':
+        subprocess.run('python main.py example_grav.json -n', shell=True, cwd='CFM/CFM_main/')
+    elif effect == 'full':
+        subprocess.run('python main.py example_Air.json -n', shell=True, cwd='CFM/CFM_main/')
+    
+def Terminal_run_Models(Model,Folder,Priority,effect,advec):
+    Config_Edit(Model,Folder,Priority,effect,advec)
+    Air_Edit(Model,effect,advec)
+    if Model == 'HLdynamic':
+        subprocess.run('python main.py example_HLD.json -n', shell=True, cwd='CFM/CFM_main/')
+    elif Model == 'Barnola1991':
+        subprocess.run('python main.py example_BAR.json -n', shell=True, cwd='CFM/CFM_main/')
+    elif Model == 'Goujon2003':
+        subprocess.run('python main.py example_GOU.json -n', shell=True, cwd='CFM/CFM_main/')

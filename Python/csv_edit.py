@@ -20,7 +20,7 @@ class File:
         self.Time_steps = np.arange(0,self.T_steps,self.Month_sep/12)
         self.Priority = Priority
         self.RampPoint = [2000,2500]
-        self.Acc_i = [0.185,0.195]
+        self.Acc_i = [0.185,0.26]
         
         
         self.LongFlag = LongFlag
@@ -57,10 +57,10 @@ class File:
         elif self.name == 'varying':
             Array = np.full_like(self.Time_steps,self.V_i)
             Array[2000:2005] = self.V_f
-            Array[3500:3600] = self.V_f
-            Array[4000:4200] = self.V_f
-            Array[6000:6400] = self.V_f
-            Array[7000:8000] = self.V_f
+            Array[2500:3000] = self.V_f
+            Array[4500:4600] = self.V_f
+            Array[6000:7000] = self.V_f
+            Array[7050:8500] = self.V_f
             Array[9000:-1] = self.V_f
             
         elif self.name == 'instant':
@@ -80,21 +80,24 @@ class File:
                 t_0 = 249
                 Array = amplitude * np.sin(2*np.pi*F*self.Time_steps) + t_0
         elif self.name == 'ramp':
-            t1 = 6000
-            t0 = 4000
+            t1 = 3000*2
+            t0 = 2000*2
             slope = (self.V_f - self.V_i) / (t1 - t0)
             Array = self.V_i + np.minimum(slope * np.maximum(self.Time_steps - t0, 0.0), self.V_f - self.V_i)
         elif self.name == 'square':
             result = self.ramp()
             Array = np.concatenate((result,np.flip(result)))
-            plt.plot(self.Time_steps,Array)
-
+            #plt.plot(self.Time_steps,Array)
+        
+        
         
         if self.Priority == 'Temp':
+            #Array_c = np.exp(0.0811*Array-21.492)
             Array_c = np.full_like(self.Time_steps, 0.19)
         elif self.Priority == 'Acc':
             Array_c = np.full_like(self.Time_steps, 253)
-        
+        elif self.Priority == 'Temp_acc':
+            Array_c = np.exp(0.0811*Array-21.492)
         Time_steps = self.Time_steps
 
         if self.LongFlag == True:
