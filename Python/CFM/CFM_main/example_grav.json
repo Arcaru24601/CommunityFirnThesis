@@ -7,7 +7,7 @@
   "InputFileNamemelt": "example_SMELT.csv",
   "InputFileNameStrain": "example_STRAIN.csv",
   "InputFileNameRain": "example_RAIN.csv",
-  "resultsFolder": "CFMoutput/DO_event/Short/Goujon2003/Darcy/grav",
+  "resultsFolder": "CFMoutput/DO_event/Short/Barnola1991/Darcy/grav",
   "initfirnFile": "example_firndata.csv",
   "initprofile": false,
   "input_type": "csv",
@@ -17,7 +17,7 @@
   ],
   "DFresample": "1M",
   "DFfile": "CFM_example_input_df.pkl",
-  "physRho": "Goujon2003",
+  "physRho": "Barnola1991",
   "physRho_options": [
     "HLdynamic",
     "HLSigfus",
@@ -134,7 +134,7 @@
     "runoff",
     "refrozen"
   ],
-  "resultsFileName": "ShortGoujon2003Darcygrav.hdf5",
+  "resultsFileName": "ShortBarnola1991Darcygrav.hdf5",
   "spinFileName": "CFMspin.hdf5",
   "doublegrid": false,
   "nodestocombine": 3,

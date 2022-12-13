@@ -29,9 +29,9 @@ class CoD_plotter():
         self.filepath = filepath
         self.f1path = f1path
         self.KtC = KtC
-        rows,cols  = 3,2
-        self.fig,self.ax = plt.subplots(rows,cols,figsize=(15, 8), sharex=True,sharey=False)
-        
+        self.rows,self.cols  = 6,1
+        self.fig,self.ax = plt.subplots(self.rows,self.cols,figsize=(15, 8), sharex=True,sharey=False)
+        #print(self.ax.shape)
         return
  
 
@@ -78,32 +78,53 @@ class CoD_plotter():
                 self.climate[:,2] - 273.15
      
             f.close()
-            self.ax[0,0].plot(self.model_time,self.d15N_cod * 1000,'--',label = labels[k])#,color=cmap(cmap_intervals[k]))
-            self.ax[1,0].plot(self.model_time,self.d15n_grav_cod * 1000,'--',label = labels[k])#,color=cmap(cmap_intervals[k]))
-            self.ax[2,0].plot(self.model_time,self.d15N_th_cod * 1000,'--',label = labels[k])#,color=cmap(cmap_intervals[k]))
-            self.ax[0,1].plot(self.model_time,self.d40Ar_cod * 1000/4,'--',label = labels[k])#,color=cmap(cmap_intervals[k]))
-            self.ax[1,1].plot(self.model_time,self.d40ar_grav_cod * 1000/4,'--',label = labels[k])#,color=cmap(cmap_intervals[k]))
-            self.ax[2,1].plot(self.model_time,self.d40Ar_th_cod * 1000/4,'--',label = labels[k])#,color=cmap(cmap_intervals[k]))
+            if (self.rows == 3 and self.cols == 2):
+                
+                self.ax[0,0].plot(self.model_time,self.d15N_cod * 1000,'--',label = labels[k])#,color=cmap(cmap_intervals[k]))
+                self.ax[1,0].plot(self.model_time,self.d15n_grav_cod * 1000,'--',label = labels[k])#,color=cmap(cmap_intervals[k]))
+                self.ax[2,0].plot(self.model_time,self.d15N_th_cod * 1000,'--',label = labels[k])#,color=cmap(cmap_intervals[k]))
+                self.ax[0,1].plot(self.model_time,self.d40Ar_cod * 1000/4,'--',label = labels[k])#,color=cmap(cmap_intervals[k]))
+                self.ax[1,1].plot(self.model_time,self.d40ar_grav_cod * 1000/4,'--',label = labels[k])#,color=cmap(cmap_intervals[k]))
+                self.ax[2,1].plot(self.model_time,self.d40Ar_th_cod * 1000/4,'--',label = labels[k])#,color=cmap(cmap_intervals[k]))
             
             
-            self.ax[0,0].set_ylabel(r'$\delta^{15}N_{cod}$ [‰]')
-            self.ax[1,0].set_ylabel(r'$\delta^{15}N_{cod,grav}$ [‰]')
-            self.ax[2,0].set_ylabel(r'$\delta^{15}N_{cod,th}$ [‰]')
-            self.ax[0,1].set_ylabel(r'$\delta^{40}Ar_{cod}$ [‰]')
-            self.ax[1,1].set_ylabel(r'$\delta^{40}Ar_{cod,grav}$ [‰]')
-            self.ax[2,1].set_ylabel(r'$\delta^{40}Ar_{cod,th}$ [‰]')
-            for i in range(len(self.ax[:,0])):
-                for j in range((len(self.ax[0,:]))):
-                    self.ax[i,j].grid(linestyle='--', color='gray', lw='0.5')
-                    self.ax[i,j].legend(loc='right', fontsize=8)
-
+                self.ax[0,0].set_ylabel(r'$\delta^{15}N_{cod}$ [‰]')
+                self.ax[1,0].set_ylabel(r'$\delta^{15}N_{cod,grav}$ [‰]')
+                self.ax[2,0].set_ylabel(r'$\delta^{15}N_{cod,th}$ [‰]')
+                self.ax[0,1].set_ylabel(r'$\delta^{40}Ar_{cod}$ [‰]')
+                self.ax[1,1].set_ylabel(r'$\delta^{40}Ar_{cod,grav}$ [‰]')
+                self.ax[2,1].set_ylabel(r'$\delta^{40}Ar_{cod,th}$ [‰]')
+                for i in range(self.rows):
+                    for j in range(self.cols):
+                        self.ax[i,j].grid(linestyle='--', color='gray', lw='0.5')
+                        self.ax[i,j].legend(loc='right', fontsize=8)
+            elif self.rows == 6:
+                #print(2+2)
+                self.ax[0].plot(self.model_time,self.d15N_cod * 1000,'--',label = labels[k])#,color=cmap(cmap_intervals[k]))
+                self.ax[1].plot(self.model_time,self.d15n_grav_cod * 1000,'--',label = labels[k])#,color=cmap(cmap_intervals[k]))
+                self.ax[2].plot(self.model_time,self.d15N_th_cod * 1000,'--',label = labels[k])#,color=cmap(cmap_intervals[k]))
+                self.ax[3].plot(self.model_time,self.d40Ar_cod * 1000/4,'--',label = labels[k])#,color=cmap(cmap_intervals[k]))
+                self.ax[4].plot(self.model_time,self.d40ar_grav_cod * 1000/4,'--',label = labels[k])#,color=cmap(cmap_intervals[k]))
+                self.ax[5].plot(self.model_time,self.d40Ar_th_cod * 1000/4,'--',label = labels[k])#,color=cmap(cmap_intervals[k]))
+            
+            
+                self.ax[0].set_ylabel(r'$\delta^{15}N_{cod}$ [‰]')
+                self.ax[1].set_ylabel(r'$\delta^{15}N_{cod,grav}$ [‰]')
+                self.ax[2].set_ylabel(r'$\delta^{15}N_{cod,th}$ [‰]')
+                self.ax[3].set_ylabel(r'$\delta^{40}Ar_{cod}$ [‰]')
+                self.ax[4].set_ylabel(r'$\delta^{40}Ar_{cod,grav}$ [‰]')
+                self.ax[5].set_ylabel(r'$\delta^{40}Ar_{cod,th}$ [‰]')
+                for i in range(self.rows):
+                    #for j in range((len(self.ax[0,:]))):
+                    self.ax[i].grid(linestyle='--', color='gray', lw='0.5')
+                    self.ax[i].legend(loc='right', fontsize=8)
 rfolder = 'CFM/CFM_main/CFMoutput/DO_event/'
 
 
 def folder_gen(Model,exp,fold,FileFlag):
     X = [exp]
     X2 = [Model]
-    Y = ['Christo/', 'Darcy/', 'zero/']
+    Y = ['Christo/', 'Darcy/']#, 'zero/']
     Z = [fold]
     if FileFlag == True:
         X = [x[:-1] for x in X]

@@ -141,7 +141,7 @@ class CoD_plotter():
 
 rfolder = 'CFM/CFM_main/CFMoutput/DO_event/'
 x = ['Long', 'Short', 'Osc2','Osc']
-x2 = ['HLdynamic','Barnola1991']
+x2 = ['HLdynamic','Barnola1991','Goujon2003']
 y = ['zero', 'Christo', 'Darcy']
 #z = ['grav','Full']
 Folder = [(i+i2+j) for i in x for i2 in x2 for j in y]
@@ -149,7 +149,7 @@ Folder = [(i+i2+j) for i in x for i2 in x2 for j in y]
 
 def folder_gen(fold,FileFlag):
     X = ['Long/', 'Short/', 'Osc2/','Osc/']
-    X2 = ['HLdynamic/','Barnola1991/']
+    X2 = ['HLdynamic/','Barnola1991/','Goujon2003']
     Y = ['zero/', 'Christo/', 'Darcy/']
     if FileFlag == True:
         X = [x[:-1] for x in X]
@@ -176,6 +176,7 @@ for i in range(len(Folder)):
         
         
     else:
+        print(Folder[i])
         Current_plot = CoD_plotter(filepath=path,f1path=path_grav)
         Current_plot.plotting()
         plt.savefig('CoDv2/'+str(Folder[i])+'.png',dpi=300)

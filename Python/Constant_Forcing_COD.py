@@ -55,6 +55,8 @@ class CoD_plotter():
             self.climate = f["Modelclimate"][:]
             self.model_time = np.array(([a[0] for a in self.z[:]]))
             self.close_off_depth = f["BCO"][:, 2]
+            if self.close_off_depth[i] < 0:
+                continue
             CoD_out[j,i] = self.close_off_depth[i]
             
             
@@ -142,7 +144,6 @@ headers = {
     "selector": "th:not(.index_name)",
     "props": "background-color: #800000; color: white; text-align: center"
 }
-
 
 
 

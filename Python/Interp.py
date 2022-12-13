@@ -14,13 +14,13 @@ cmap = plt.cm.get_cmap('viridis')
 from pathlib import Path
 
 def osc(period):
-    Time_steps = np.arange(0,8500)
+    Time_steps = np.arange(0,4000)
     #T = 5000 ### Number of years
     F = 1/period
     amplitude = 10
     t_0 = 249
     Array = amplitude * np.sin(2*np.pi*F*Time_steps) + t_0
-    Const = np.full(1500,t_0)
+    Const = np.full(1000,t_0)
     Temp = np.concatenate((Const,Array))
     Time = np.arange(0,10000)
     #Bdot = np.full(len(Time),1.9e-1)
@@ -31,7 +31,7 @@ def osc(period):
     return Time, Temp, Bdot
 def csv_gen(mode):
     if mode == 'Long':
-        Time = np.array([250,1000,1050,5000,5500,10000])
+        Time = np.array([250,1000,1050,3000,3500,5000])
         Temp = np.array([232.05,232.05,253,253,232.05,232.05])
         Bdot = np.full(len(Time),1.9e-1)
         #plt.plot(Time,Temp)

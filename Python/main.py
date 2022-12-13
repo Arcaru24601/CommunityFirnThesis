@@ -43,7 +43,7 @@ def Air_run(Model,folder,advec,effect):
 
 
 #run(Folder)                
-Air_run('Goujon2003',Folder2,Advection,Effect)
+Air_run('Barnola1991',Folder2,Advection,Effect)
 #Models = ['HLdynamic','Barnola1991','Goujon2003']
 #from multiprocessing import Process
 '''

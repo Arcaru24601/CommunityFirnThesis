@@ -21,7 +21,9 @@ class CoD_plotter():
 
     def __init__(self,filepath=None):
         self.filepath = filepath
+        self.filepath = 'CFM/CFM_main/CFMoutput/Constant_Forcing/Fuji/KuipersMunneke2015'
         rfile = 'CFMresults.hdf5'
+        rfile = 'KuipersMunneke2015Fuji.hdf5'
         self.fs = os.path.join(self.filepath,rfile)
         f = h5.File(self.fs,'r')        
         #print(self.fs)
@@ -34,17 +36,17 @@ class CoD_plotter():
         self.climate = f["Modelclimate"][:]
         self.model_time = np.array(([a[0] for a in self.z[:]]))
         self.close_off_depth = f["BCO"][:, 2]
-        self.d15N = (f["d15N2"][:]-1.) * 1000
-        self.d40Ar = (f["d40Ar"][:]-1.) * 1000
+        #self.d15N = (f["d15N2"][:]-1.) * 1000
+        #self.d40Ar = (f["d40Ar"][:]-1.) * 1000
         
-        self.d15N_cod = np.ones_like(self.model_time)
-        self.d40Ar_cod = np.ones_like(self.model_time)
+        #self.d15N_cod = np.ones_like(self.model_time)
+        #self.d40Ar_cod = np.ones_like(self.model_time)
         
         
-        for i in range(self.z.shape[0]):
-            idx = int(np.where(self.z[i, 1:] == self.close_off_depth[i])[0])
-            self.d15N_cod[i] = self.d15N[i,idx]
-            self.d40Ar_cod[i] = self.d40Ar[i,idx]
+        #for i in range(self.z.shape[0]):
+        #    idx = int(np.where(self.z[i, 1:] == self.close_off_depth[i])[0])
+        #    self.d15N_cod[i] = self.d15N[i,idx]
+        #    self.d40Ar_cod[i] = self.d40Ar[i,idx]
         
     
         #print(self.d15N_cod.shape)
@@ -127,13 +129,13 @@ class CoD_plotter():
         self.ax02.plot(self.climate[:,0],self.climate[:,1],color=cmap(cmap_interval[1]))
         for i in range(len(Times)):
             self.ax[0,1].plot(self.rho[Times[i]][1:], self.z[Times[i]][1:],color=cmap(cmap_interval[i]),linestyle='--',linewidth=0.7,label=time_labels[i])
-            self.ax[0,2].plot(self.d15N[Times[i]][1:], self.z[Times[i]][1:],color=cmap(cmap_interval[i]),linestyle='-',linewidth=0.7,label=time_labels[i])
+        #    self.ax[0,2].plot(self.d15N[Times[i]][1:], self.z[Times[i]][1:],color=cmap(cmap_interval[i]),linestyle='-',linewidth=0.7,label=time_labels[i])
             self.ax[1,1].plot(self.temperature[Times[i]][1:], self.z[Times[i]][1:],color=cmap(cmap_interval[i]),linestyle='-',linewidth=0.7,label=time_labels[i])
         #print(self.d15N_cod.shape,self.close_off_depth.shape)
         
         
-        self.ax[1,0].plot(self.model_time,self.d15N_cod,color=cmap(cmap_interval[2]),linewidth=0.7)
-        self.ax10.plot(self.model_time,self.d40Ar_cod/4,color=cmap(cmap_interval[1]),linewidth=0.7)
+        #self.ax[1,0].plot(self.model_time,self.d15N_cod,color=cmap(cmap_interval[2]),linewidth=0.7)
+        #self.ax10.plot(self.model_time,self.d40Ar_cod/4,color=cmap(cmap_interval[1]),linewidth=0.7)
         self.ax[1,2].plot(self.z[:, 0],self.close_off_depth,linewidth=0.7)
         #self.ax[1,2].set_ylim(90,60)
         self.ax[0,1].legend(loc='lower left',fontsize=legFont)
@@ -168,7 +170,7 @@ folder = './CFM/CFM_main/CFMinput'
 Folder = [name for name in os.listdir(folder) if os.path.isdir(os.path.join(folder, name))]
 rfolder = 'CFM/CFM_main/CFMoutput/'
     
-for i in range(len(Folder)):
+for i in range(1):
     print(Folder[i])
     if os.path.exists(rfolder + Folder[i]+"/CFMresults.hdf5"):
         Current_plot = CoD_plotter(filepath=rfolder+Folder[i])
