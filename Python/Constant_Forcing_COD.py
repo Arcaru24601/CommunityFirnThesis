@@ -79,7 +79,7 @@ data = json.load(file)
 Models = data['physRho_options']
 
 rfolder = 'CFM/CFM_main/CFMoutput/Constant_Forcing/'
-x = ['NGRIP', 'Fuji', 'Siple','DE08']
+x = ['NGRIP', 'Fuji', 'Siple','DE08','DML']
 x2 = Models
 Folder = [(i+i2) for i in x for i2 in x2]
 
@@ -100,27 +100,27 @@ def folder_gen(Fold,FileFlag):
 
 T_Path = folder_gen('NGRIP/',True)
 T_Fold = folder_gen('NGRIP/',False)
-Sites = ['NGRIP/', 'Fuji/', 'Siple/','DE08/']
-Sit = ['NGRIP', 'Fuji', 'Siple','DE08']
+Sites = ['NGRIP/', 'Fuji/', 'Siple/','DE08/','DML/']
+Sit = ['NGRIP', 'Fuji', 'Siple','DE08','DML']
 
 
-CoD_out = np.zeros((4,14))
+CoD_out = np.zeros((5,14))
 
 for j in range(len(Sites)):
     T = folder_gen(Sites[j],False)
     P = folder_gen(Sites[j],True)
     path = [rfolder + m+n + '.hdf5' for m,n in zip(T,P)]
-    
+    print(Sites[j])
     Current_plot = CoD_plotter(j,path,Models)
     CoD_out[j,:] = Current_plot.CoD_out()#Current_plot.plotting()
     
     plt.savefig('Constant/'+str(Sit[j])+'.png',dpi=300)
     plt.close('all')  
         
-Temp = np.array([242.05,215.85,247.75,254.2]).reshape((4,1))
-Acc = np.array([0.19,0.028,0.13,1.2]).reshape((4,1))
-CoD = np.array([78,104,57,85]).reshape((4,1))
-Site = ['NGRIP','Fuji','Siple','DE08']
+Temp = np.array([242.05,215.85,247.75,254.2,234.15]).reshape((5,1))
+Acc = np.array([0.19,0.028,0.13,1.2,7.0]).reshape((5,1))
+CoD = np.array([78,104,57,85,74]).reshape((5,1))
+Site = ['NGRIP','Fuji','Siple','DE08','DML']
 header = ['Temp','Acc','CoD', 'HLD', 'HLS','Li4','Li1','HEL','ArtS','ArtT','Li5','GOU','BAR','MOR','KM','CRO','LIG'] 
 Matrix = np.concatenate((Temp, Acc, CoD, np.round(CoD_out,1)), axis=1)
 

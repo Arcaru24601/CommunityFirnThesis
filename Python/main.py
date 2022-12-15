@@ -75,7 +75,7 @@ def Equi_run(Model,exp,folder):
             for i in range(len(folder)):
             
                 print(exp[k],Model[j],folder[i])
-                #je.Terminal_run2(Model,folder[i])
+                je.Terminal_run_Models(Model[j],exp[k],folder[i])
 
 
 

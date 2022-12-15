@@ -134,9 +134,9 @@ def Terminal_run_Models(Model,Exp,Folder):
         
     data = json.load(file)
     data['grid_outputs'] = False
-    data['resultsFileName'] = str(Exp) + '_' + str(Model) + '.hdf5'
+    data['resultsFileName'] = str(Exp) + '_' + str(Model) + str(Folder) + '.hdf5'
     data['resultsFolder'] = 'CFMoutput/Equi/' + str(Exp) + '/' + str(Model) + '/' + str(Folder)
-    data['InputFileFolder'] = 'CFMinput/' + str(Exp) + '/' + str(Folder) + 'y'
+    data['InputFileFolder'] = 'CFMinput/Equi/' + str(Exp) + '/' + str(Folder)
     data['InputFileNameTemp'] = 'Temp.csv'
     data['InputFileNamebdot'] = 'Acc.csv'
  
