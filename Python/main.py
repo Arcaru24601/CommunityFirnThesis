@@ -43,7 +43,7 @@ def Air_run(Model,folder,advec,effect):
 
 
 #run(Folder)                
-Air_run('Barnola1991',Folder2,Advection,Effect)
+#Air_run('Barnola1991',Folder2,Advection,Effect)
 #Models = ['HLdynamic','Barnola1991','Goujon2003']
 #from multiprocessing import Process
 '''
@@ -62,13 +62,25 @@ if __name__ == "__main__":
 
 
 '''
+folder2 = './CFM/CFM_main/CFMinput/Equi'
+
+#Equi_Folder = [name for name in os.listdir(folder2) if os.path.isdir(os.path.join(folder2, name))]
+Exp = ['Temp','Acc','Both']
+Models = ['HLdynamic','Barnola1991','Goujon2003']
+Folder = ['50y','100y','200y','500y']
+def Equi_run(Model,exp,folder):
+    for k in range(len(exp)):
+        for j in range(len(Model)):
+        
+            for i in range(len(folder)):
+            
+                print(exp[k],Model[j],folder[i])
+                #je.Terminal_run2(Model,folder[i])
 
 
 
 
-
-
-
+Equi_run(Models,Exp,Folder)
 
 
 

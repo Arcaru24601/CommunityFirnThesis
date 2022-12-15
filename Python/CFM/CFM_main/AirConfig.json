@@ -9,7 +9,7 @@
     "d40Ar"
   ],
   "gravity": "on",
-  "thermal": "on",
+  "thermal": "off",
   "runtype": "transient",
   "runtype_options": [
     "steady",
@@ -31,7 +31,7 @@
   ],
   "lockin": false,
   "ConvectiveZoneDepth": 1.5,
-  "advection_type": "Darcy",
+  "advection_type": "zero",
   "advection_type_options": [
     "Christo",
     "Darcy",

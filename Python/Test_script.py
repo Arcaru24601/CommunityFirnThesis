@@ -124,3 +124,39 @@ def Terminal_run_Models(Model,Folder,Priority,effect,advec):
         subprocess.run('python main.py example_BAR.json -n', shell=True, cwd='CFM/CFM_main/')
     elif Model == 'Goujon2003':
         subprocess.run('python main.py example_GOU.json -n', shell=True, cwd='CFM/CFM_main/')
+
+
+
+
+
+def Terminal_run_Models(Model,Exp,Folder):
+    file = open('CFM/CFM_main/example_equi.json')
+        
+    data = json.load(file)
+    data['grid_outputs'] = False
+    data['resultsFileName'] = str(Exp) + '_' + str(Model) + '.hdf5'
+    data['resultsFolder'] = 'CFMoutput/Equi/' + str(Exp) + '/' + str(Model) + '/' + str(Folder)
+    data['InputFileFolder'] = 'CFMinput/' + str(Exp) + '/' + str(Folder) + 'y'
+    data['InputFileNameTemp'] = 'Temp.csv'
+    data['InputFileNamebdot'] = 'Acc.csv'
+ 
+        
+    with open("CFM/CFM_main/example_equi.json", 'w') as f:
+        json.dump(data, f,indent = 2)
+        
+        # Closing file
+    f.close()    
+        
+    subprocess.run('python main.py example_equi.json -n', shell=True, cwd='CFM/CFM_main/')
+   
+
+
+
+
+
+
+
+
+
+
+
