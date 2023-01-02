@@ -18,26 +18,34 @@ import reader as re
 sns.set()
 from scipy.signal import savgol_filter
 from scipy.ndimage.filters import uniform_filter1d
-cmap = plt.cm.get_cmap('magma')
+cmap = plt.cm.get_cmap('viridis')
 cmap_intervals = np.linspace(0, 1, 4)
 from pathlib import Path
 
 
 plt.rc('text', usetex=True)
 plt.rc('font', family='serif')
+
+
+def find_constant_row(matrix, tolerance=1e-6):
+  for i, row in enumerate(matrix):
+    if all(abs(x - row[0]) < tolerance for x in row):
+      return i
+  return -1
+
+
 class CoD_plotter():
 
-    def __init__(self,filepath=None,KtC=False):
+    def __init__(self,filepath=None,rate=None,KtC=False):
         self.filepath = filepath
         self.KtC = KtC
   
         fig, ax = plt.subplots(4, sharex=False, sharey=False)
-        
+        label = rate
         fig.set_figheight(15)
         fig.set_figwidth(8)
-        Times = [500,1001,1020,1030,1500]
-        alpha = [1, 0.8, 0.6, 0.4, 0.2]
-        label = ['50y', '100y', '200y','500y']
+        Rates = np.array([int(x[:-1]) for x in rate])
+        alpha = [1, 0.6, 0.3]
         for k in range(len(self.filepath)):
             if not os.path.exists(self.filepath[k]):
                 print('Results file does not exist', self.filepath[k][40:])
@@ -58,7 +66,7 @@ class CoD_plotter():
                 self.climate[:,2] - 273.15
 
         
-            
+            #print(label,rate)
             #print(len(self.filepath))        
             ax[0].plot(self.model_time, self.climate[:,2],color=cmap(cmap_intervals[k]))
             ax[0].grid(linestyle='--', color='gray', lw='0.5')
@@ -79,9 +87,12 @@ class CoD_plotter():
             ax[2].invert_yaxis()
             #ax[2].legend(loc='lower right', fontsize=8)
             ax[2].set_xlabel(r"Model Time [y]", labelpad=-1.5, fontsize=9)
-            for i in range(len(Times)):
-       
-                ax[3].plot(self.temperature[Times[i]][1:], self.z[Times[i]][1:], color=cmap(cmap_intervals[k]), alpha=alpha[i], label=label[k])
+            
+            Times = np.array([0,Rates[k]+500,len(self.model_time)-1])
+            print(Times)
+            for i in range(len(alpha)):
+                
+                ax[3].plot(self.temperature[Times[i]][1:], self.z[Times[i]][1:], color=cmap(cmap_intervals[k]), alpha=alpha[i], label=label[k]+str(Times[i]))
                 ax[3].grid(linestyle='--', color='gray', lw='0.5')
                 if self.KtC:
                     ax[3].set_ylabel(r'Depth')
@@ -107,7 +118,7 @@ class CoD_plotter():
 rfolder = 'CFM/CFM_main/CFMoutput/Equi/'
 x = ['Temp','Acc','Both']
 
-y = ['50y','100y','200y,','500y']
+y = ['50y','200y','500y,','1000y']
 x2 = ['HLD','BAR','GOU']
 #z = ['grav','Full']
 Folder = [(i+i2+j) for i in x for i2 in x2 for j in y]
@@ -116,7 +127,7 @@ Folder = [(i+i2+j) for i in x for i2 in x2 for j in y]
 def folder_gen(Fold,Exp,FileFlag):
     X = [Exp]
     X2 = [Fold]
-    Y = ['50y/','100y/','200y/','500y/']
+    Y = ['50y/','200y/','500y/','1000y/'] #### Move rate change to figure generation because of legend
     if FileFlag == True:
         X = [x[:-1] for x in X]
         X2 = [x[:-1] for x in X2]
@@ -133,7 +144,7 @@ def folder_gen(Fold,Exp,FileFlag):
     return Folder 
 Exp = ['Temp/','Acc/','Both/']
 Models = ['HLdynamic/','Barnola1991/','Goujon2003/']
-Rates = y
+Rates = ['50y','200y','500y','1000y']
 for j in range(len(Exp)):
     for i in range(len(Models)):
         T = folder_gen(Models[i],Exp[j],False)
@@ -141,7 +152,7 @@ for j in range(len(Exp)):
         path = [rfolder + m+n + '.hdf5' for m,n in zip(T,P)]
         print(Exp[j],Models[i])
         #print(path)
-        Current_plot = CoD_plotter(filepath = path)
+        Current_plot = CoD_plotter(filepath = path,rate = Rates)
         plt.savefig('CoDEqui/'+ str(Exp[j][:-1]) + str(Models[i][:-1]) +'.png',dpi=300)
         plt.close('all')
 

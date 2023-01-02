@@ -18,20 +18,20 @@ def csv_gen(mode,rate):
     
     if mode == 'Both':
         
-        Time = np.array([250,2000,2000+rate,4000])
-        Temp = np.array([232.05,232.05,243,243])
+        Time = np.array([250,1000,2000,2000+rate,6000])
+        Temp = np.array([232.05,232.05,232.05,243,243])
     
         a = -21.492
         b = 0.0811
         Bdot = np.exp(a+b*Temp)
     elif mode == 'Temp':
-        Time = np.array([250,2000,2000+rate,4000])
-        Temp = np.array([232.05,232.05,243,243])
+        Time = np.array([250,1000,2000,2000+rate,6000])
+        Temp = np.array([232.05,232.05,232.05,243,243])
         Bdot = np.full(len(Time),1.9e-1)
     elif mode == 'Acc':
-        Time = np.array([250,2000,2000+rate,4000])
+        Time = np.array([250,1000,2000,2000+rate,6000])
         Temp = np.full(len(Time),232.05)
-        Bdot = np.array([0.185,0.185,0.26,0.26])
+        Bdot = np.array([0.185,0.185,0.185,0.26,0.26])
 
         #plt.plot(Time,Temp)
     Temp_csv = np.array([Time,Temp])
