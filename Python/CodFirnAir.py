@@ -115,9 +115,10 @@ class CoD_plotter():
         
         ax[4].plot(self.model_time, self.close_off_age,'g')
         ax[4].plot(self.model_time, self.ice_age_cod,'g--')
+        #ax[4].plot(self.model_time,self.close_off_age-self.ice_age_cod,'g')
         ax[4].grid(linestyle='--', color='gray', lw='0.5')
         ax[4].set_ylabel(r'$\Delta$age [y]')
-
+        print(self.close_off_age[-10:]-self.ice_age_cod[-10:])
         ax[5].plot(self.model_time,self.d15N_cod * 1000,'c-',label='$\delta^{15}$N')
         ax[5].plot(self.model_time,self.d15N_th_cod * 1000,'c:',label='$\delta^{15}$N thermal')
         ax[5].plot(self.model_time,self.d15n_grav_cod * 1000,'c--',label='$\delta^{15}$N gravitational')
@@ -177,7 +178,7 @@ for i in range(len(Folder)):
         
     else:
         print(Folder[i])
-        Current_plot = CoD_plotter(filepath=path,f1path=path_grav)
+        Current_plot = CoD_plotter(filepath=path,f1path=path_grav,KtC=True)
         Current_plot.plotting()
         plt.savefig('CoDv2/'+str(Folder[i])+'.png',dpi=300)
         plt.close('all')

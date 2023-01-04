@@ -67,7 +67,7 @@ folder2 = './CFM/CFM_main/CFMinput/Equi'
 #Equi_Folder = [name for name in os.listdir(folder2) if os.path.isdir(os.path.join(folder2, name))]
 Exp = ['Temp','Acc','Both']
 Models = ['HLdynamic','Barnola1991','Goujon2003']
-Folder = ['50y','100y','200y','500y']
+Folder = ['50y','200y','500y','1000y']
 def Equi_run(Model,exp,folder):
     for k in range(len(exp)):
         for j in range(len(Model)):

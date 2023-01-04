@@ -18,7 +18,7 @@ import reader as re
 sns.set()
 from scipy.signal import savgol_filter
 from scipy.ndimage.filters import uniform_filter1d
-cmap = plt.cm.get_cmap('magma')
+cmap = plt.cm.get_cmap('viridis')
 cmap_intervals = np.linspace(0, 1, 4)
 from pathlib import Path
 
@@ -37,7 +37,7 @@ class CoD_plotter():
         fig.set_figwidth(8)
         Times = [500,1001,1020,1030,1500]
         alpha = [1, 0.8, 0.6, 0.4, 0.2]
-        label = ['50y', '100y', '200y','500y']
+        label = ['50y', '200y','500y','1000y']
         for k in range(len(self.filepath)):
             if not os.path.exists(self.filepath[k]):
                 print('Results file does not exist', self.filepath[k][40:])
@@ -76,9 +76,11 @@ class CoD_plotter():
             ax[2].grid(linestyle='--', color='gray', lw='0.5')
             ax[2].set_ylabel(r'\centering Close-off \newline\centering depth [m]')
             #ax[2].set_yticks(np.arange(30,120,step=30))
-            ax[2].invert_yaxis()
+            #ax[2].invert_yaxis()
             #ax[2].legend(loc='lower right', fontsize=8)
             ax[2].set_xlabel(r"Model Time [y]", labelpad=-1.5, fontsize=9)
+            #ax[2].invert_yaxis()
+
             for i in range(len(Times)):
        
                 ax[3].plot(self.temperature[Times[i]][1:], self.z[Times[i]][1:], color=cmap(cmap_intervals[k]), alpha=alpha[i], label=label[k])
@@ -89,14 +91,19 @@ class CoD_plotter():
                     ax[3].set_ylabel(r"Depth")
                 #ax[3].legend(loc='lower right', fontsize=8)
                 ax[2].set_xlabel(r"Temperature [K]", labelpad=-1.5, fontsize=9)
-                
+                ax[3].invert_yaxis()
+                handles, labels = plt.gca().get_legend_handles_labels()
+                by_label = dict(zip(labels, handles))
+                ax[3].legend(by_label.values(), by_label.keys())
                 
                 
              
                
             #plt.xlabel(r"Model Time [y]", labelpad=-1.5, fontsize=9)
-            
-        ax[3].legend(loc='lower right', fontsize=8)
+        #plt.invert_yaxis()
+        #ax[2].invert_yaxis()
+        
+        #ax[3].legend(loc='lower right', fontsize=8)
         ax[2].legend(loc='lower right', fontsize=8)
         f.close()
        
@@ -107,7 +114,7 @@ class CoD_plotter():
 rfolder = 'CFM/CFM_main/CFMoutput/Equi/'
 x = ['Temp','Acc','Both']
 
-y = ['50y','100y','200y,','500y']
+y = ['50y','200y,','500y','1000y']
 x2 = ['HLD','BAR','GOU']
 #z = ['grav','Full']
 Folder = [(i+i2+j) for i in x for i2 in x2 for j in y]
@@ -116,7 +123,7 @@ Folder = [(i+i2+j) for i in x for i2 in x2 for j in y]
 def folder_gen(Fold,Exp,FileFlag):
     X = [Exp]
     X2 = [Fold]
-    Y = ['50y/','100y/','200y/','500y/']
+    Y = ['50y/','200y/','500y/','1000y/']
     if FileFlag == True:
         X = [x[:-1] for x in X]
         X2 = [x[:-1] for x in X2]

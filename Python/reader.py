@@ -47,7 +47,7 @@ def read(rfolder):
         print(hf.keys())
     return timesteps,stps,depth,density,temperature,diffusivity,forcing,age,climate,d15N2,d40Ar,Bubble
 
-
+timesteps,stps,depth,density,temperature,diffusivity,forcing,age,climate,d15N2,d40Ar,Bubble = read('CFM/CFM_main/CFMoutput/Temp_ramp')
 
 def moving_average(x, w):
     return np.convolve(x, np.ones(w), 'valid') / w

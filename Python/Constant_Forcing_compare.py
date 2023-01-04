@@ -30,7 +30,9 @@ def Run(Model,site):
     elif site == 'DE08':
         data['site_pressure'] = 850
     elif site == 'DML':
-        data['site_pressure'] = 757           
+        data['site_pressure'] = 757
+    elif site == 'Test':
+        data['site_pressure'] = 691           
     data['InputFileNamebdot'] = str(site) + '_acc.csv'
     data['InputFileNameTemp'] = str(site) + '_Temp.csv'
     data['physRho'] = str(Model)
@@ -46,27 +48,31 @@ def Run(Model,site):
 
 def csv_gen(site):
     if site == 'NGRIP':    
-        Time = np.array([250,1000,4000])
+        Time = np.array([250,1000,5000])
         Temp = np.full(len(Time),242.05)
         Bdot = np.full(len(Time),1.9e-1)
     elif site == 'Fuji':    
-        Time = np.array([250,1000,4000])
+        Time = np.array([250,1000,5000])
         Temp = np.full(len(Time),215.85)
         Bdot = np.full(len(Time),2.8e-2)
         #print(np.std(Bdot))
     elif site == 'Siple':    
-        Time = np.array([250,1000,4000])
+        Time = np.array([250,1000,5000])
         Temp = np.full(len(Time),247.75)
         Bdot = np.full(len(Time),1.3e-1)
     elif site == 'DE08':    
-        Time = np.array([250,1000,4000])
+        Time = np.array([250,1000,5000])
         Temp = np.full(len(Time),254.2)
         Bdot = np.full(len(Time),1.2)
     elif site == 'DML':
-        Time = np.array([250,1000,4000])
+        Time = np.array([250,1000,5000])
         Temp = np.full(len(Time),234.15)
         Bdot = np.full(len(Time),7.0e-2)
-    
+    elif site == 'Test':
+         Time = np.array([250,1000,5000])
+         Temp = np.full(len(Time),215.85)
+         Bdot = np.full(len(Time),1.9e-1)
+     
     #plt.plot(Time,Temp)
     #plt.plot(Time,Bdot)
     print(Bdot)
@@ -83,7 +89,7 @@ def csv_gen(site):
 file = open('CFM/CFM_main/Constant_Forcing.json')
 data = json.load(file)
 Models = data['physRho_options']
-Sites = ['DML']#['NGRIP','Fuji','Siple','DE08']
+Sites = ['NGRIP','Fuji','Siple','DE08','DML','Test']
 
 for Site in Sites:
     path = Path('CFM/CFM_main/CFMinput/Constant_Forcing/' + Site)

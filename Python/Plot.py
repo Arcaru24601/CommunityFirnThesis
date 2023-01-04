@@ -77,7 +77,7 @@ def plotter(i,ax,cm,temperature,forcing,d15N2,d40Ar,depth,diffusivity,density,ag
 folder = './CFM/CFM_main/CFMinput'
 Folder = np.array(['Temp_ramp'])
 #Folder = [name for name in os.listdir(folder) if os.path.isdir(os.path.join(folder, name))]
-rfolder = 'CFM/CFM_main/CFMoutput/'
+rfolder = 'CFM/CFM_main/CFMoutput//'
 
 timesteps,stps,depth,density,temperature,diffusivity,forcing,age,climate,d15N2,d40Ar,Bubble = read(rfolder+Folder[0])
 

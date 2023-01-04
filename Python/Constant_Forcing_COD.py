@@ -41,6 +41,7 @@ class CoD_plotter():
         #print(filepath)
         self.filepath = filepath
         self.KtC = KtC
+        self.CoD = np.array([78,104,57,85,74,78])
         return
     def CoD_out(self):
         
@@ -57,21 +58,22 @@ class CoD_plotter():
             self.close_off_depth = f["BCO"][:, 2]
             if self.close_off_depth[i] < 0:
                 continue
-            CoD_out[j,i] = self.close_off_depth[i]
-            
-            
-            self.ax.plot(self.model_time,self.close_off_depth, color=cmap(cmap_intervals[i]), label=label[i])
-            
         
+            CoD_out[j,i] = self.close_off_depth[i]
+            CoD_diff[j,i] = self.CoD[j] - CoD_out[j,i]
+            self.ax.axhline(self.CoD[j],color='r',linestyle='-')
+
+            self.ax.plot(self.model_time,self.close_off_depth, color=cmap(cmap_intervals[i]), label=label[i])
+        #self.ax.invert_yaxis()
         self.ax.grid(linestyle='--', color='gray', lw='0.5')
         self.ax.set_ylabel(r'\centering Close-off \newline\centering depth [m]')
         self.ax.set_yticks(np.arange(30,120,step=30))
-        self.ax.invert_yaxis()
-        self.ax.legend(loc='lower right', fontsize=8)
+        
+        self.ax.legend(loc='lower left', fontsize=8)
            
         plt.xlabel(r"Model Time [y]", labelpad=-1.5, fontsize=9)
         f.close()
-        return CoD_out[j,:]
+        return CoD_out[j,:],CoD_diff[j,:]
 import json
 
 file = open('CFM/CFM_main/Constant_Forcing.json')
@@ -79,7 +81,7 @@ data = json.load(file)
 Models = data['physRho_options']
 
 rfolder = 'CFM/CFM_main/CFMoutput/Constant_Forcing/'
-x = ['NGRIP', 'Fuji', 'Siple','DE08','DML']
+x = ['NGRIP', 'Fuji', 'Siple','DE08','DML','Test']
 x2 = Models
 Folder = [(i+i2) for i in x for i2 in x2]
 
@@ -100,30 +102,31 @@ def folder_gen(Fold,FileFlag):
 
 T_Path = folder_gen('NGRIP/',True)
 T_Fold = folder_gen('NGRIP/',False)
-Sites = ['NGRIP/', 'Fuji/', 'Siple/','DE08/','DML/']
-Sit = ['NGRIP', 'Fuji', 'Siple','DE08','DML']
+Sites = ['NGRIP/', 'Fuji/', 'Siple/','DE08/','DML/','Test/']
+Sit = ['NGRIP', 'Fuji', 'Siple','DE08','DML','Test']
 
 
-CoD_out = np.zeros((5,14))
-
+CoD_out = np.zeros((6,14))
+CoD_diff = np.zeros((6,14))
 for j in range(len(Sites)):
     T = folder_gen(Sites[j],False)
     P = folder_gen(Sites[j],True)
     path = [rfolder + m+n + '.hdf5' for m,n in zip(T,P)]
     print(Sites[j])
     Current_plot = CoD_plotter(j,path,Models)
-    CoD_out[j,:] = Current_plot.CoD_out()#Current_plot.plotting()
+    CoD_out[j,:] = Current_plot.CoD_out()[0]#Current_plot.plotting()
+    CoD_diff[j,:] = Current_plot.CoD_out()[1]#Current_plot.plotting()
     
     plt.savefig('Constant/'+str(Sit[j])+'.png',dpi=300)
     plt.close('all')  
         
-Temp = np.array([242.05,215.85,247.75,254.2,234.15]).reshape((5,1))
-Acc = np.array([0.19,0.028,0.13,1.2,7.0]).reshape((5,1))
-CoD = np.array([78,104,57,85,74]).reshape((5,1))
-Site = ['NGRIP','Fuji','Siple','DE08','DML']
+Temp = np.array([242.05,215.85,247.75,254.2,234.15,215.85]).reshape((6,1))
+Acc = np.array([0.19,0.028,0.13,1.2,7.0,0.19]).reshape((6,1))
+CoD = np.array([78,104,57,85,74,78]).reshape((6,1))
+Site = ['NGRIP','Fuji','Siple','DE08','DML','Test']
 header = ['Temp','Acc','CoD', 'HLD', 'HLS','Li4','Li1','HEL','ArtS','ArtT','Li5','GOU','BAR','MOR','KM','CRO','LIG'] 
 Matrix = np.concatenate((Temp, Acc, CoD, np.round(CoD_out,1)), axis=1)
-
+Matrix2 = np.concatenate((Temp, Acc, CoD, np.round(CoD_diff,1)), axis=1)
 import pandas as pd
 
 
@@ -156,15 +159,44 @@ df = df.astype(str)
 #df = df.replace(to_replace = "\.0+$",value = "", regex = True)
 
 with open('mytable.tex', 'w') as tf:
-     tf.write(df.style.to_latex(column_format="ccccc", position="h", position_float="centering",
+     tf.write(df.style.to_latex(column_format="cccccc", position="h", position_float="centering",
                 hrules=True, label="table:5", caption="Styled LaTeX Table",
                 multirow_align="t", multicol_align="r")  
               )
 
 
+df = pd.DataFrame(data = Matrix2.T, 
+                  index = header, 
+                  columns = Site)
+
+cell_hover = {
+    "selector": "td:hover",
+    "props": [("background-color", "#FFFFE0")]
+}
+index_names = {
+    "selector": ".index_name",
+    "props": "font-style: italic; color: darkgrey; font-weight:normal;"
+}
+headers = {
+    "selector": "th:not(.index_name)",
+    "props": "background-color: #800000; color: white; text-align: center"
+}
 
 
 
+
+df.style.format(decimal='.', thousands=',', precision=1)
+df = df.astype(str)
+#df.style.applymap(color_negative_red, subset=['NGRIP','Fuji','Siple','DE08'])
+
+
+#df = df.replace(to_replace = "\.0+$",value = "", regex = True)
+
+with open('mytable2.tex', 'w') as tf:
+     tf.write(df.style.to_latex(column_format="cccccc", position="h", position_float="centering",
+                hrules=True, label="table:5", caption="Styled LaTeX Table",
+                multirow_align="t", multicol_align="r")  
+              )
 
 
 
