@@ -60,14 +60,16 @@ def find_first_constant(vector, tolerance):
   return -1
 
 
-
-
 timesteps,stps,depth,density,temperature,diffusivity,forcing,age,climate,d15N2,d40Ar,Bubble = read('CFM/CFM_main/CFMoutput/Equi/Temp/HLdynamic/50y/')
 from matplotlib import pyplot as plt
+fig,ax = plt.subplots(1)
+ax.invert_yaxis()
 
-plt.plot(temperature[:, 1:].T)
+ax.plot(timesteps,Bubble)
+Time_Const = timesteps[find_first_constant(Bubble[1010:], tolerance=1e-5)+1010]
+ax.axvline(Time_Const,color='k',label=str(Time_Const))
 Time = find_constant_row(temperature[1002:,1:],tolerance = 1e-2)
-
+ax.legend
 
 
 

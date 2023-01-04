@@ -264,6 +264,7 @@ class FirnDensitySpin:
             try:
                 zz          = np.min(self.z[self.rho > 850.0])
                 self.years  = int(zz / self.bdot0)
+                print('Using Autospinup for ' + str(self.years))
             except ValueError:
                 print("auto spin up error; using spin up time from json")
                 self.years = self.c['yearSpin'] # number of years to spin up for

@@ -175,5 +175,4 @@ with open('mytable.tex', 'w') as tf:
 
 
 
-
       
