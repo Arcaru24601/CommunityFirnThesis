@@ -18,6 +18,7 @@ def Run(Model,site):
         
     data = json.load(file)
     data['grid_outputs'] = False
+    data['AutoSpinUpTime'] = False
     data['resultsFileName'] = str(Model) + str(site) + '.hdf5'
     data['resultsFolder'] = 'CFMoutput/Constant_Forcing/' + str(site) + '/' + str(Model)
     data['InputFileFolder'] = 'CFMinput/Constant_Forcing'
@@ -48,14 +49,16 @@ def Run(Model,site):
 
 def csv_gen(site):
     if site == 'NGRIP':    
+
         Time = np.array([250,1000,5000])
         Temp = np.full(len(Time),242.05)
         Bdot = np.full(len(Time),1.9e-1)
     elif site == 'Fuji':    
         Time = np.array([250,1000,5000])
-        Temp = np.full(len(Time),215.85)
-        Bdot = np.full(len(Time),2.8e-2)
-        #print(np.std(Bdot))
+        Time = np.array([1,3000,5000])
+        Temp = np.full(len(Time),242.05)
+        Bdot = np.full(len(Time),1.9e-1)
+
     elif site == 'Siple':    
         Time = np.array([250,1000,5000])
         Temp = np.full(len(Time),247.75)
@@ -66,13 +69,7 @@ def csv_gen(site):
         Bdot = np.full(len(Time),1.2)
     elif site == 'DML':
         Time = np.array([250,1000,5000])
-        Temp = np.full(len(Time),234.15)
-        Bdot = np.full(len(Time),7.0e-2)
-    elif site == 'Test':
-         Time = np.array([250,1000,5000])
-         Temp = np.full(len(Time),215.85)
-         Bdot = np.full(len(Time),1.9e-1)
-     
+
     #plt.plot(Time,Temp)
     #plt.plot(Time,Bdot)
     print(Bdot)
@@ -89,7 +86,8 @@ def csv_gen(site):
 file = open('CFM/CFM_main/Constant_Forcing.json')
 data = json.load(file)
 Models = data['physRho_options']
-Sites = ['NGRIP','Fuji','Siple','DE08','DML','Test']
+Sites = ['NGRIP','Fuji','Siple','DE08','DML']
+
 
 for Site in Sites:
     path = Path('CFM/CFM_main/CFMinput/Constant_Forcing/' + Site)

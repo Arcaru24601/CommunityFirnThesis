@@ -205,7 +205,3 @@ with open('mytable2.tex', 'w') as tf:
 
 
 
-
-
-
-      

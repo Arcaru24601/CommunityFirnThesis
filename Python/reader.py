@@ -24,7 +24,7 @@ def read(rfolder):
     Various arrays.
 
     '''
-    rfile = 'CFMresults.hdf5'
+    rfile = 'Temp_HLdynamic50y.hdf5'
     fn = os.path.join(rfolder,rfile)
     f = h5.File(fn,'r')
     
@@ -41,13 +41,41 @@ def read(rfolder):
     d15N2 = (f['d15N2'][:,:]-1)*1000
     d40Ar = (f[f'd40Ar'][:,:]-1)*1000
     #print(d15N2.shape,depth.shape)
-    Bubble = f['BCO'][:]
+    Bubble = f['BCO'][:,2]
     f.close()
     with h5.File(fn,'r') as hf:
         print(hf.keys())
     return timesteps,stps,depth,density,temperature,diffusivity,forcing,age,climate,d15N2,d40Ar,Bubble
 
-timesteps,stps,depth,density,temperature,diffusivity,forcing,age,climate,d15N2,d40Ar,Bubble = read('CFM/CFM_main/CFMoutput/Temp_ramp')
+
+def find_constant_row(matrix, tolerance=1e-6):
+  for i, row in enumerate(matrix):
+    if all(abs(x - row[0]) < tolerance for x in row):
+      return i
+  return -1
+
+def find_first_constant(vector, tolerance):
+  for i in range(1, len(vector)):
+    if abs(vector[i] - vector[i-1]) <= tolerance:
+      return i
+  return -1
+
+
+timesteps,stps,depth,density,temperature,diffusivity,forcing,age,climate,d15N2,d40Ar,Bubble = read('CFM/CFM_main/CFMoutput/Equi/Temp/HLdynamic/50y/')
+from matplotlib import pyplot as plt
+fig,ax = plt.subplots(1)
+ax.invert_yaxis()
+
+ax.plot(timesteps,Bubble)
+Time_Const = timesteps[find_first_constant(Bubble[1010:], tolerance=1e-5)+1010]
+ax.axvline(Time_Const,color='k',label=str(Time_Const))
+Time = find_constant_row(temperature[1002:,1:],tolerance = 1e-2)
+ax.legend
+
+
+
+
+
 
 def moving_average(x, w):
     return np.convolve(x, np.ones(w), 'valid') / w
