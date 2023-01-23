@@ -68,6 +68,9 @@ class CoD_plotter():
             self.temp_cod[i] = self.temperature[i,idx]
             self.ice_age_cod[i] = self.age[i,idx]# - self.close_off_age[i]
             self.delta_age[i] = self.age[i, idx] - self.gas_age[i, idx]
+            self.gas_age_cod[i] = self.close_off_age[i]-self.ice_age_cod[i]
+            
+            
             #print(self.ice_age_cod.shape)
 
         self.delta_temp = self.climate[:,2] - self.temp_cod
@@ -114,8 +117,8 @@ class CoD_plotter():
             ax[3].set_ylabel(r'\centering Temperature \newline\centering Gradient [K]')
         
         ax[4].plot(self.model_time, self.close_off_age,'g')
-        ax[4].plot(self.model_time, self.ice_age_cod,'g--')
-        #ax[4].plot(self.model_time,self.close_off_age-self.ice_age_cod,'g')
+        #ax[4].plot(self.model_time, self.ice_age_cod,'g--')
+        #ax[4].plot(self.model_time,self.gas_age_cod,'g')
         ax[4].grid(linestyle='--', color='gray', lw='0.5')
         ax[4].set_ylabel(r'$\Delta$age [y]')
         print(self.close_off_age[-10:]-self.ice_age_cod[-10:])

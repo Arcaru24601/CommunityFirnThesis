@@ -49,7 +49,7 @@ def read_input(filename,StartDate=None):
         StartInd = np.where(input_year>=StartDate)[0]
         input_year = input_year[StartInd]
         input_data = input_data[StartInd]
-
+    print(xx,yy)
     return input_data, input_year, input_data_full, input_year_full
 
 def read_init(folder, resultsFileName, varname):

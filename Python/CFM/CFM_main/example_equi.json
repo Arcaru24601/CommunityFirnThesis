@@ -7,7 +7,7 @@
   "InputFileNamemelt": "example_SMELT.csv",
   "InputFileNameStrain": "example_STRAIN.csv",
   "InputFileNameRain": "example_RAIN.csv",
-  "resultsFolder": "CFMoutput/Equi/Both/Goujon2003/1000y",
+  "resultsFolder": "CFMoutput/Equi/Both/Goujon2003/1000y/-10Temp",
   "initfirnFile": "example_firndata.csv",
   "initprofile": false,
   "input_type": "csv",
@@ -17,7 +17,7 @@
   ],
   "DFresample": "1M",
   "DFfile": "CFM_example_input_df.pkl",
-  "physRho": "HLdynamic",
+  "physRho": "Goujon2003",
   "physRho_options": [
     "HLdynamic",
     "HLSigfus",
@@ -142,7 +142,7 @@
     "runoff",
     "refrozen"
   ],
-  "resultsFileName": "Both_Goujon20031000y.hdf5",
+  "resultsFileName": "Both_Goujon20031000y-10Temp.hdf5",
   "spinFileName": "CFMspin.hdf5",
   "doublegrid": false,
   "nodestocombine": 50,

@@ -39,6 +39,13 @@ def find_first_constant(vector, tolerance):
       return i
   return -1
 
+def find_last_constant(vector, tolerance):
+    vector = np.flip(vector)    
+    for i in range(1, len(vector)):
+        if abs(vector[i] - vector[i-1]) <= tolerance:
+            return i
+        return -1
+
 
 class CoD_plotter():
 
@@ -97,16 +104,16 @@ class CoD_plotter():
             ax[2].set_ylabel(r'\centering Close-off \newline\centering depth [m]')
             #ax[2].set_yticks(np.arange(30,120,step=30))
 
-            Time_Const = self.model_time[find_first_constant(self.close_off_depth[1010:], tolerance=1e-5)+1010]
-            ax[2].axvline(x=Time_Const,color=cmap(cmap_intervals[k]),alpha=0.5,label=label[k]+str(Time_Const-2000))
+            Time_Const = self.model_time[find_first_constant(self.close_off_depth[510:], tolerance=1e-6)+510]
+            ax[2].axvline(x=Time_Const,color=cmap(cmap_intervals[k]),alpha=0.5,label=label[k]+str(Time_Const-1500))
             #ax[2].legend(loc='lower right', fontsize=8)
             ax[2].set_xlabel(r"Model Time [y]", labelpad=-1.5, fontsize=9)
             ax[2].legend(loc='lower right', fontsize=8)
-            print(self.model_time[1000:])
+            #print(self.model_time[1000:])
             
 
     
-            Times = np.array([0,Rates[k]+500,len(self.model_time)-1])
+            Times = np.array([0,Rates[k]+500,find_constant_row(self.temperature)])
             #print(Times)
             #if Exs == 'Acc/':
             #    continue
@@ -179,8 +186,8 @@ for j in range(len(Exp)):
         plt.savefig('CoDEqui/'+ str(Exp[j][:-1]) + str(Models[i][:-1]) +'.png',dpi=300)
         plt.close('all')
 
-    plt.close('all')            
+    #            
 
-
+plt.close('all')
 
 

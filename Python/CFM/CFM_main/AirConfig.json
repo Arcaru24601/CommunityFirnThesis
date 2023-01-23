@@ -5,11 +5,10 @@
     "CO2"
   ],
   "gaschoice": [
-    "d15N2",
-    "d40Ar"
+    "d15N2"
   ],
   "gravity": "on",
-  "thermal": "off",
+  "thermal": "on",
   "runtype": "transient",
   "runtype_options": [
     "steady",
@@ -29,7 +28,7 @@
     "Battle",
     "Adolph"
   ],
-  "lockin": false,
+  "lockin": true,
   "ConvectiveZoneDepth": 1.5,
   "advection_type": "zero",
   "advection_type_options": [
