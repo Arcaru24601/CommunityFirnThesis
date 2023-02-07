@@ -1,10 +1,9 @@
 # -*- coding: utf-8 -*-
 """
-Created on Thu Dec 15 00:02:43 2022
+Created on Tue Feb  7 15:09:45 2023
 
 @author: Jesper Holm
 """
-
 
 import h5py as h5
 import os
@@ -62,18 +61,18 @@ def get_HalfTime(array,mode):
     
 class CoD_plotter():
 
-    def __init__(self,j,i,filepath=None,rate=None,Exs=None,KtC=False):
+    def __init__(self,j,i,filepath=None,amp=None,Exs=None,KtC=False):
         self.filepath = filepath
         self.KtC = KtC
         #if Exs == 'Acc/':
         #    fig, ax = plt.subplots(3, sharex=False, sharey=False)
         #else:
         fig, ax = plt.subplots(4, sharex=False, sharey=False)
-        label = rate
+        label = amp
         fig.set_figheight(15)
         fig.set_figwidth(8)
 
-        Rates = np.array([int(x[:-1]) for x in rate])
+        Amplitude = np.array([int(x[:-1]) for x in amp])
         #print(Rates)
         alpha = [1, 0.6, 0.3]
         alphas = [1,0.75,0.5,0.25]
@@ -108,49 +107,45 @@ class CoD_plotter():
                 self.climate[:,2] - 273.15
 
         
-            #print(label,rate)
-            #print(len(self.filepath))        
+                    
             ax[0].plot(self.model_time, self.climate[:,2],color=cmap(cmap_intervals[k]))
             ax[0].grid(linestyle='--', color='gray', lw='0.5')
             ax[0].set_ylabel(r'\centering Temperature \newline\centering Forcing [K]')
-            #ax[0].set_yticks(np.arange(230,260, step=10))
             ax[0].set_xlabel(r"Model Time [y]", labelpad=-1.5, fontsize=9)
             
             ax[1].plot(self.model_time, self.climate[:,1],color=cmap(cmap_intervals[k]))
             ax[1].grid(linestyle='--', color='gray', lw='0.5')
             ax[1].set_ylabel(r'\centering Acc. Forcing \newline\centering [$\mathrm{my}^{-1}$ ice eq.]')
-            #ax[1].set_yticks(np.arange(0.05,0.6,step=0.2))
             ax[1].set_xlabel(r"Model Time [y]", labelpad=-1.5, fontsize=9)
             
-            ax[2].plot(self.model_time, self.close_off_depth, color=cmap(cmap_intervals[k]), label=label[k])
             ax[2].grid(linestyle='--', color='gray', lw='0.5')
             ax[2].set_ylabel(r'\centering Close-off \newline\centering depth [m]')
-            #ax[2].set_yticks(np.arange(30,120,step=30))
             
-            #get_HalfTime(self.close_off_depth)
-            #print()
-            slices = 500+Rates[k]
-            #Time_Const = self.model_time[find_first_constant(self.close_off_depth[510:], tolerance=1e-6)+510]
+            slices = 500+300
+
             Time_Const = self.model_time[get_HalfTime(self.close_off_depth[slices:],mode='Endpoint')+slices]
-            #print(Time_Const)
-            ax[2].axvline(x=Time_Const,color=cmap(cmap_intervals[k]),alpha=0.5,label=label[k]+'_'+str(Time_Const-1500-Rates[k]))
-            #ax[2].legend(loc='lower right', fontsize=8)
+            
+            
+            if Exp[j] == 'Temp/' or Exp[j] == 'Both/':
+                ax[2].plot(self.model_time, self.close_off_depth, color=cmap(cmap_intervals[k]), label=str(int(label[k])*10)+'K')
+                ax[2].axvline(x=Time_Const,color=cmap(cmap_intervals[k]),alpha=0.5,label=str(int(label[k])*10)+'K_'+str(Time_Const-1500-300))
+            elif Exp[j] == 'Acc/':
+                ax[2].plot(self.model_time, self.close_off_depth, color=cmap(cmap_intervals[k]), label=str(int(label[k])*0.075))
+                ax[2].axvline(x=Time_Const,color=cmap(cmap_intervals[k]),alpha=0.5,label=str(int(label[k])*0.075)+'_'+str(Time_Const-1500-300))
+
             ax[2].set_xlabel(r"Model Time [y]", labelpad=-1.5, fontsize=9)
             ax[2].legend(loc='lower right', fontsize=8)
-            #print(self.model_time[1000:])
             
 
     
-            Times = np.array([0,Rates[k]+500,find_constant_row(self.temperature)])
-            #print(Times)
-            #if Exs == 'Acc/':
-            #    continue
-            #else:
             Time_Const = self.model_time[get_HalfTime(self.delta_temp[slices:],mode='Endpoint')+slices]
-            ax[3].plot(self.model_time,self.delta_temp, color=cmap(cmap_intervals[k]), label=label[k])
-            ax[3].axvline(x=Time_Const,color=cmap(cmap_intervals[k]),alpha=0.5,label=label[k]+'_'+str(Time_Const-1500-Rates[k]))
+            if Exp[j] == 'Temp/' or Exp[j] == 'Both/':
+                ax[3].plot(self.model_time,self.delta_temp, color=cmap(cmap_intervals[k]), label=str(int(label[k])*10)+'K')    
+                ax[3].axvline(x=Time_Const,color=cmap(cmap_intervals[k]),alpha=0.5,label=str(int(label[k])*10)+'K_'+str(Time_Const-1500-300))
+            elif Exp[j] == 'Acc/':
+                ax[3].plot(self.model_time,self.delta_temp, color=cmap(cmap_intervals[k]), label=str(int(label[k])*0.075))    
+                ax[3].axvline(x=Time_Const,color=cmap(cmap_intervals[k]),alpha=0.5,label=str(int(label[k])*0.075)+'_'+str(Time_Const-1500-300))
             ax[3].grid(linestyle='--', color='gray', lw='0.5')
-            #ax[3].legend(loc='lower right', fontsize=8)
 
             ax[3].set_xlabel(r"Temperature [K]", labelpad=-1.5, fontsize=9)
             ax[3].legend(loc='lower right', fontsize=8)
@@ -160,7 +155,6 @@ class CoD_plotter():
                 
              
                
-            #plt.xlabel(r"Model Time [y]", labelpad=-1.5, fontsize=9)
 
         f.close()
             
@@ -200,18 +194,18 @@ class CoD_plotter():
             
             
             
-            slices = 500+int(Rates[k][:-1])
+            slices = 500+300
 
             Time_Const_CoD = self.model_time[get_HalfTime(self.close_off_depth[slices:],mode='Endpoint')+slices]
             Time_Const_temp = self.model_time[get_HalfTime(self.delta_temp[slices:],mode='Endpoint')+slices]
-            Output[j*5+k,odd[i]] = Time_Const_CoD - 1500 - int(Rates[k][:-1])    
-            Output[j*5+k,even[i]] = Time_Const_temp - 1500 - int(Rates[k][:-1])
+            Output[j*5+k,odd[i]] = Time_Const_CoD - 1500 - 300    
+            Output[j*5+k,even[i]] = Time_Const_temp - 1500 - 300
         return Output[j*5+0:j*5+5,even[i]:odd[i]+1]
 rfolder = 'CFM/CFM_main/CFMoutput/Equi/'
 x = ['Temp','Acc','Both']
 
 
-y = ['50y','200y','500y,','1000y','2000y']
+y = ['0.3','0.5','1.0','2.0','3.0']
 x2 = ['HLD','BAR','GOU']
 #z = ['grav','Full']
 Folder = [(i+i2+j) for i in x for i2 in x2 for j in y]
@@ -220,7 +214,7 @@ Folder = [(i+i2+j) for i in x for i2 in x2 for j in y]
 def folder_gen(Fold,Exp,FileFlag):
     X = [Exp]
     X2 = [Fold]
-    Y = ['50y/','200y/','500y/','1000y/','2000y/'] #### Move rate change to figure generation because of legend
+    Y = ['0.3','0.5','1.0','2.0','3.0'] #### Move rate change to figure generation because of legend
     if FileFlag == True:
         X = [x[:-1] for x in X]
         X2 = [x[:-1] for x in X2]
@@ -242,7 +236,7 @@ even = np.arange(0,5,2)
 odd = np.arange(1,6,2)    
 Exp = ['Temp/','Acc/','Both/']
 Models = ['HLdynamic/','Barnola1991/','Goujon2003/']
-Rates = ['50y','200y','500y','1000y','2000y']
+Multiplier = ['0.3','0.5','1.0','2.0','3.0']
 for j in range(len(Exp)):
     for i in range(len(Models)):
         T = folder_gen(Models[i],Exp[j],False)
@@ -250,10 +244,10 @@ for j in range(len(Exp)):
         path = [rfolder + m+n + '.hdf5' for m,n in zip(T,P)]
         print(Exp[j],Models[i])
         #print(path)
-        Current_plot = CoD_plotter(j,i,filepath = path,rate = Rates,Exs = Exp[j])
+        Current_plot = CoD_plotter(j,i,filepath = path,amp = Multiplier,Exs = Exp[j])
         Matrix[j*5+0:j*5+5,even[i]:odd[i]+1] = Current_plot.Equi_output()
         Matrix[5:10,0:5:2] = 0
-        plt.savefig('CoDEqui/'+ str(Exp[j][:-1]) + str(Models[i][:-1]) +'.png',dpi=300)
+        plt.savefig('CoDEquiAmp/'+ str(Exp[j][:-1]) + str(Models[i][:-1]) +'.png',dpi=300)
         plt.close('all')
 
     #            
@@ -267,11 +261,11 @@ Output = ['Temps','CoD']
 
 Iter1 = [Models,Output]
 Exp = ['Temp','Acc','Both']
-Rates = ['50y','200y','500y','1000y','2000y']
-Iter2 = [Exp,Rates]
+Multiplier = ['0.3','0.5','1.0','2.0','3.0']
+Iter2 = [Exp,Multiplier]
 cols = pd.MultiIndex.from_product(Iter1)
     
-idx = pd.MultiIndex.from_product(Iter2,names = ['Exp','dt'])
+idx = pd.MultiIndex.from_product(Iter2,names = ['Exp','Amp'])
 
 
 df = pd.DataFrame(Matrix,

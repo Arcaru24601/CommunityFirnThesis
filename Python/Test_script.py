@@ -149,7 +149,25 @@ def Terminal_run_Models(Model,Exp,Folder):
         
     subprocess.run('python main.py example_equi.json -n', shell=True, cwd='CFM/CFM_main/')
    
-
+def Terminal_run_Amp(Model,Exp,Folder):
+    file = open('CFM/CFM_main/example_equiAmp.json')
+        
+    data = json.load(file)
+    data['grid_outputs'] = False
+    data['resultsFileName'] = str(Exp) + '_' + str(Model) + str(Folder) +  '.hdf5'
+    data['resultsFolder'] = 'CFMoutput/EquiAmp/' + str(Exp) + '/' + str(Model) + '/' + str(Folder) 
+    data['InputFileFolder'] = 'CFMinput/EquiAmp/' + str(Exp) + '/' + str(Folder)
+    data['InputFileNameTemp'] = 'Temp.csv'
+    data['InputFileNamebdot'] = 'Acc.csv'
+    data['physRho'] = str(Model)
+        
+    with open("CFM/CFM_main/example_equiAmp.json", 'w') as f:
+        json.dump(data, f,indent = 2)
+        
+        # Closing file
+    f.close()    
+        
+    subprocess.run('python main.py example_equiAmp.json -n', shell=True, cwd='CFM/CFM_main/')
 
 def Terminal_run_Noise(Model,temp,acc):
     file = open('CFM/CFM_main/Firn_Noise.json')

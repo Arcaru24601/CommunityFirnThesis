@@ -68,6 +68,7 @@ folder2 = './CFM/CFM_main/CFMinput/Equi'
 Exp = ['Temp','Acc','Both']
 Models = ['HLdynamic','Barnola1991','Goujon2003']
 Folder = ['50y','200y','500y','1000y','2000y']
+Folder_Amp = ['0.3','0.5','1.0','2.0','3.0']
 def Equi_run(Model,exp,folder):
     for k in range(len(exp)):
         for j in range(len(Model)):
@@ -76,11 +77,11 @@ def Equi_run(Model,exp,folder):
             
                 print(exp[k],Model[j],folder[i])
                 je.Terminal_run_Models(Model[j],exp[k],folder[i])
-
+                je.Terminal_run_Amp(Model[j], exp[k], folder[i])
 
 
 
 Equi_run(Models,Exp,Folder)
-
+Equi_run(Models,Exp,Folder_Amp)
 
 
