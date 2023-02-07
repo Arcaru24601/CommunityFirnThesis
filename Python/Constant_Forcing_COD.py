@@ -114,8 +114,9 @@ for j in range(len(Sites)):
     path = [rfolder + m+n + '.hdf5' for m,n in zip(T,P)]
     print(Sites[j])
     Current_plot = CoD_plotter(j,path,Models)
-    CoD_out[j,:] = Current_plot.CoD_out()[0]#Current_plot.plotting()
-    CoD_diff[j,:] = Current_plot.CoD_out()[1]#Current_plot.plotting()
+    CoD_out2 = Current_plot.CoD_out()
+    CoD_out[j,:] = CoD_out2[0]#Current_plot.plotting()
+    CoD_diff[j,:] = CoD_out2[1]#Current_plot.plotting()
     
     plt.savefig('Constant/'+str(Sit[j])+'.png',dpi=300)
     plt.close('all')  

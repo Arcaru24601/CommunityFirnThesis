@@ -48,7 +48,7 @@ cod_mode = 'CoD'
 
 optimizer = 'minimize' #least_squares
 method = 'BFGS'
-theta_ = [0.42, 75]
+theta_ = [0.9,7]
 theta_0 = [0.30, 7] # init guess
 N = 1000 # Maximum amount of iterations
 
@@ -71,8 +71,8 @@ depth_interval, d18O_interval, ice_age_interval = get_interval_data_NoTimeGrid(d
 d18O_interval_perm = d18O_interval *1000
 d18o_smooth = smooth_data(cop_, d18O_interval_perm, ice_age_interval, ice_age_interval)[0]
 
-t = 1. / theta_[0] * d18o_smooth + theta_[1]
-t_artificial = (d18o_smooth + 35.1)/(theta_0[0]) -31.55 + theta_0[1]
+t1 = 1. / theta_[0] * d18o_smooth + theta_[1]
+t = (d18o_smooth + 35.1)/(theta_0[0]) -31.55 + theta_0[1]
 
 
 

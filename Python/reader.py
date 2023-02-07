@@ -24,7 +24,7 @@ def read(rfolder):
     Various arrays.
 
     '''
-    rfile = 'OscHLdynamicDarcyfull.hdf5'
+    rfile = 'Temp_HLdynamic50y.hdf5'
     fn = os.path.join(rfolder,rfile)
     f = h5.File(fn,'r')
     
@@ -110,7 +110,7 @@ ax.legend
 '''
 
 
-timesteps,depth,temperature,age,gas_age,climate,d15N2,d40Ar,Bubble = read('CFM/CFM_main/CFMoutput/DO_event/Osc/HLdynamic/Darcy/full')
+timesteps,depth,temperature,age,gas_age,climate,d15N2,d40Ar,Bubble = read('CFM/CFM_main/CFMoutput/Equi/Temp/HLdynamic/50y')
 
 
 

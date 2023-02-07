@@ -43,14 +43,29 @@ def get_interval_acc(acc, ice_age_data, start_year, end_year):
 if __name__ == '__main__':
     data_path = 'data/NGRIP/interpolated.xlsx'
     start_year = -120000
-    end_year_ = -10000
+    end_year = -10000
     depth_full, d18O_full, ice_age_full = read_data_d18O(data_path)
     temp, temp_err = read_temp(data_path)
     acc = read_acc(data_path)
-    depth_interval, d18O_interval, ice_age_interval = get_interval_data_NoTimeGrid(depth_full, d18O_full,ice_age_full,start_year=-120000, end_year=-10000)
-
-    acc_interval = get_interval_acc(acc, ice_age_full, start_year=-120000, end_year=-10000)
-
+    depth_interval, d18O_interval, ice_age_interval = get_interval_data_NoTimeGrid(depth_full, d18O_full,ice_age_full,start_year, end_year)
+    temp_interval, temp_err_interval = get_interval_temp(temp, temp_err, ice_age_full, start_year, end_year)
+    acc_interval = get_interval_acc(acc, ice_age_full, start_year, end_year)
+    
+    
+    input_temp = np.array([ice_age_interval,temp_interval])
     input_acc = np.array([ice_age_interval, acc_interval])
-    plt.plot(input_acc[0], input_acc[1])
+    fig, ax = plt.subplots(2,1,sharex=True)
+    ax[0].plot(input_acc[0], input_acc[1])
+    ax[1].plot(input_temp[0],input_temp[1])
     plt.show()
+    
+    plt.figure(2)
+    plt.plot(input_temp[1],input_acc[1],'o')
+
+
+
+
+
+
+
+

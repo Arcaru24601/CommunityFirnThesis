@@ -1,5 +1,5 @@
 {
-  "InputFileFolder": "CFMinput/Equi/Both/1000y",
+  "InputFileFolder": "CFMinput/Equi/Both/2000y",
   "InputFileNameTemp": "Temp.csv",
   "InputFileNamebdot": "Acc.csv",
   "InputFileNameIso": "example_ISOTOPE.csv",
@@ -7,7 +7,7 @@
   "InputFileNamemelt": "example_SMELT.csv",
   "InputFileNameStrain": "example_STRAIN.csv",
   "InputFileNameRain": "example_RAIN.csv",
-  "resultsFolder": "CFMoutput/Equi/Both/Goujon2003/1000y/-10Temp",
+  "resultsFolder": "CFMoutput/Equi/Both/Goujon2003/2000y",
   "initfirnFile": "example_firndata.csv",
   "initprofile": false,
   "input_type": "csv",
@@ -86,7 +86,7 @@
   "AutoSpinUpTime": false,
   "yearSpin": 1000,
   "H": 3000,
-  "HbaseSpin": 2800.0,
+  "HbaseSpin": 2700.0,
   "stpsPerYear": 1,
   "D_surf": 1.0,
   "bdot_type": "mean",
@@ -142,7 +142,7 @@
     "runoff",
     "refrozen"
   ],
-  "resultsFileName": "Both_Goujon20031000y-10Temp.hdf5",
+  "resultsFileName": "Both_Goujon20032000y.hdf5",
   "spinFileName": "CFMspin.hdf5",
   "doublegrid": false,
   "nodestocombine": 50,

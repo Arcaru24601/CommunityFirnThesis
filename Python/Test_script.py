@@ -134,8 +134,8 @@ def Terminal_run_Models(Model,Exp,Folder):
         
     data = json.load(file)
     data['grid_outputs'] = False
-    data['resultsFileName'] = str(Exp) + '_' + str(Model) + str(Folder) +  '-10Temp.hdf5'
-    data['resultsFolder'] = 'CFMoutput/Equi/' + str(Exp) + '/' + str(Model) + '/' + str(Folder) + '/-10Temp' 
+    data['resultsFileName'] = str(Exp) + '_' + str(Model) + str(Folder) +  '.hdf5'
+    data['resultsFolder'] = 'CFMoutput/Equi/' + str(Exp) + '/' + str(Model) + '/' + str(Folder) 
     data['InputFileFolder'] = 'CFMinput/Equi/' + str(Exp) + '/' + str(Folder)
     data['InputFileNameTemp'] = 'Temp.csv'
     data['InputFileNamebdot'] = 'Acc.csv'
@@ -151,7 +151,27 @@ def Terminal_run_Models(Model,Exp,Folder):
    
 
 
-
+def Terminal_run_Noise(Model,temp,acc):
+    file = open('CFM/CFM_main/Firn_Noise.json')
+    data = json.load(file)
+    data['grid_outputs'] = False
+    data['resultsFileName'] = str(Model) + str(temp)  + 'K.hdf5'
+    data['resultsFolder'] = 'CFMoutput/Noise/' + str(Model) + '/' + str(temp) + 'K' 
+    data['InputFileFolder'] = 'CFMinput/Noise/' + str(temp) + 'K'
+    data['InputFileNameTemp'] = 'Temp.csv'
+    data['InputFileNamebdot'] = 'Acc.csv'
+    data['physRho'] = str(Model)
+        
+    with open("CFM/CFM_main/Firn_Noise.json", 'w') as f:
+        json.dump(data, f,indent = 2)
+        
+        # Closing file
+    f.close()    
+    
+    
+    
+    
+    subprocess.run('python main.py Firn_Noise.json -n', shell=True, cwd='CFM/CFM_main/')
 
 
 
