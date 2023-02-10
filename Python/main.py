@@ -77,11 +77,22 @@ def Equi_run(Model,exp,folder):
             
                 print(exp[k],Model[j],folder[i])
                 je.Terminal_run_Models(Model[j],exp[k],folder[i])
-                je.Terminal_run_Amp(Model[j], exp[k], folder[i])
+                
 
 
 
 Equi_run(Models,Exp,Folder)
-Equi_run(Models,Exp,Folder_Amp)
+
+
+def Equi_run_Amp(Model,exp,folder):
+    for k in range(len(exp)):
+        for j in range(len(Model)):
+        
+            for i in range(len(folder)):
+            
+                print(exp[k],Model[j],folder[i])
+                je.Terminal_run_Amp(Model[j], exp[k], folder[i])
+Equi_run_Amp(Models,Exp,Folder_Amp)
+
 
 

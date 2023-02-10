@@ -9,7 +9,7 @@ import h5py as h5
 import os
 from matplotlib import pyplot as plt
 import numpy as np
-cmap = plt.cm.get_cmap('viridis')
+cmap = plt.cm.get_cmap('plasma')
 import seaborn as sns 
 #plt.rc('text', usetex=True)
 #plt.rc('font', family='serif')
@@ -17,7 +17,7 @@ import seaborn as sns
 sns.set()
 from scipy.signal import savgol_filter
 from scipy.ndimage.filters import uniform_filter1d
-cmap = plt.cm.get_cmap('viridis')
+cmap = plt.cm.get_cmap('plasma')
 cmap_intervals = np.linspace(0, 1, 5)
 from pathlib import Path
 import math
@@ -72,7 +72,7 @@ class CoD_plotter():
         fig.set_figheight(15)
         fig.set_figwidth(8)
 
-        Amplitude = np.array([int(x[:-1]) for x in amp])
+        #Amplitude = np.array([int(x[:-1]) for x in amp])
         #print(Rates)
         alpha = [1, 0.6, 0.3]
         alphas = [1,0.75,0.5,0.25]
@@ -127,11 +127,11 @@ class CoD_plotter():
             
             
             if Exp[j] == 'Temp/' or Exp[j] == 'Both/':
-                ax[2].plot(self.model_time, self.close_off_depth, color=cmap(cmap_intervals[k]), label=str(int(label[k])*10)+'K')
-                ax[2].axvline(x=Time_Const,color=cmap(cmap_intervals[k]),alpha=0.5,label=str(int(label[k])*10)+'K_'+str(Time_Const-1500-300))
+                ax[2].plot(self.model_time, self.close_off_depth, color=cmap(cmap_intervals[k]), label=str(float(label[k][:-1])*10)+'K')
+                ax[2].axvline(x=Time_Const,color=cmap(cmap_intervals[k]),alpha=0.5,label=str(float(label[k][:-1])*10)+'K_'+str(Time_Const-1500-300))
             elif Exp[j] == 'Acc/':
-                ax[2].plot(self.model_time, self.close_off_depth, color=cmap(cmap_intervals[k]), label=str(int(label[k])*0.075))
-                ax[2].axvline(x=Time_Const,color=cmap(cmap_intervals[k]),alpha=0.5,label=str(int(label[k])*0.075)+'_'+str(Time_Const-1500-300))
+                ax[2].plot(self.model_time, self.close_off_depth, color=cmap(cmap_intervals[k]), label="{:0.3f}".format(float(label[k][:-1])*0.075))
+                ax[2].axvline(x=Time_Const,color=cmap(cmap_intervals[k]),alpha=0.5,label="{:0.3f}".format(float(label[k][:-1])*0.075)+'_'+str(Time_Const-1500-300))
 
             ax[2].set_xlabel(r"Model Time [y]", labelpad=-1.5, fontsize=9)
             ax[2].legend(loc='lower right', fontsize=8)
@@ -140,11 +140,11 @@ class CoD_plotter():
     
             Time_Const = self.model_time[get_HalfTime(self.delta_temp[slices:],mode='Endpoint')+slices]
             if Exp[j] == 'Temp/' or Exp[j] == 'Both/':
-                ax[3].plot(self.model_time,self.delta_temp, color=cmap(cmap_intervals[k]), label=str(int(label[k])*10)+'K')    
-                ax[3].axvline(x=Time_Const,color=cmap(cmap_intervals[k]),alpha=0.5,label=str(int(label[k])*10)+'K_'+str(Time_Const-1500-300))
+                ax[3].plot(self.model_time,self.delta_temp, color=cmap(cmap_intervals[k]), label=str(float(label[k][:-1])*10)+'K')    
+                ax[3].axvline(x=Time_Const,color=cmap(cmap_intervals[k]),alpha=0.5,label=str(float(label[k][:-1])*10)+'K_'+str(Time_Const-1500-300))
             elif Exp[j] == 'Acc/':
-                ax[3].plot(self.model_time,self.delta_temp, color=cmap(cmap_intervals[k]), label=str(int(label[k])*0.075))    
-                ax[3].axvline(x=Time_Const,color=cmap(cmap_intervals[k]),alpha=0.5,label=str(int(label[k])*0.075)+'_'+str(Time_Const-1500-300))
+                ax[3].plot(self.model_time,self.delta_temp, color=cmap(cmap_intervals[k]), label="{:0.3f}".format(float(label[k][:-1])*0.075))    
+                ax[3].axvline(x=Time_Const,color=cmap(cmap_intervals[k]),alpha=0.5,label="{:0.3f}".format(float(label[k][:-1])*0.075)+'_'+str(Time_Const-1500-300))
             ax[3].grid(linestyle='--', color='gray', lw='0.5')
 
             ax[3].set_xlabel(r"Temperature [K]", labelpad=-1.5, fontsize=9)
@@ -201,7 +201,7 @@ class CoD_plotter():
             Output[j*5+k,odd[i]] = Time_Const_CoD - 1500 - 300    
             Output[j*5+k,even[i]] = Time_Const_temp - 1500 - 300
         return Output[j*5+0:j*5+5,even[i]:odd[i]+1]
-rfolder = 'CFM/CFM_main/CFMoutput/Equi/'
+rfolder = 'CFM/CFM_main/CFMoutput/EquiAmp/'
 x = ['Temp','Acc','Both']
 
 
@@ -214,7 +214,7 @@ Folder = [(i+i2+j) for i in x for i2 in x2 for j in y]
 def folder_gen(Fold,Exp,FileFlag):
     X = [Exp]
     X2 = [Fold]
-    Y = ['0.3','0.5','1.0','2.0','3.0'] #### Move rate change to figure generation because of legend
+    Y = ['0.3/','0.5/','1.0/','2.0/','3.0/'] #### Move rate change to figure generation because of legend
     if FileFlag == True:
         X = [x[:-1] for x in X]
         X2 = [x[:-1] for x in X2]
@@ -236,7 +236,7 @@ even = np.arange(0,5,2)
 odd = np.arange(1,6,2)    
 Exp = ['Temp/','Acc/','Both/']
 Models = ['HLdynamic/','Barnola1991/','Goujon2003/']
-Multiplier = ['0.3','0.5','1.0','2.0','3.0']
+Multiplier = ['0.3/','0.5/','1.0/','2.0/','3.0/']
 for j in range(len(Exp)):
     for i in range(len(Models)):
         T = folder_gen(Models[i],Exp[j],False)
@@ -297,8 +297,8 @@ df = df.astype(str)
 
 
 
-with open('mytable.tex', 'w') as tf:
+with open('EquiAmp.tex', 'w') as tf:
      tf.write(df.style.to_latex(column_format="cccccccc", position="h", position_float="centering",
-                hrules=True, label="table:5", caption="Styled LaTeX Table",
+                hrules=True, label="table:5", caption="Equilibrium times for amplitude",
                 multirow_align="c", multicol_align="c")  
               )

@@ -20,7 +20,7 @@ cmap = plt.cm.get_cmap('viridis')
 import seaborn as sns 
 #plt.rc('text', usetex=True)
 #plt.rc('font', family='serif')
-import reader as re
+#import reader as re
 sns.set()
 from scipy.signal import savgol_filter
 from scipy.ndimage.filters import uniform_filter1d
@@ -41,7 +41,7 @@ class CoD_plotter():
         #print(filepath)
         self.filepath = filepath
         self.KtC = KtC
-        self.CoD = np.array([78,104,57,85,74,78])
+        self.CoD = np.array([78,104,57,85,74])
         return
     def CoD_out(self):
         
@@ -60,7 +60,7 @@ class CoD_plotter():
                 continue
         
             CoD_out[j,i] = self.close_off_depth[i]
-            CoD_diff[j,i] = self.CoD[j] - CoD_out[j,i]
+            CoD_diff[j,i] = 100*(CoD_out[j,i]-self.CoD[j])/self.CoD[j]
             self.ax.axhline(self.CoD[j],color='r',linestyle='-')
 
             self.ax.plot(self.model_time,self.close_off_depth, color=cmap(cmap_intervals[i]), label=label[i])
@@ -81,7 +81,7 @@ data = json.load(file)
 Models = data['physRho_options']
 
 rfolder = 'CFM/CFM_main/CFMoutput/Constant_Forcing/'
-x = ['NGRIP', 'Fuji', 'Siple','DE08','DML','Test']
+x = ['NGRIP', 'Fuji', 'Siple','DE08','DML']
 x2 = Models
 Folder = [(i+i2) for i in x for i2 in x2]
 
@@ -102,12 +102,12 @@ def folder_gen(Fold,FileFlag):
 
 T_Path = folder_gen('NGRIP/',True)
 T_Fold = folder_gen('NGRIP/',False)
-Sites = ['NGRIP/', 'Fuji/', 'Siple/','DE08/','DML/','Test/']
-Sit = ['NGRIP', 'Fuji', 'Siple','DE08','DML','Test']
+Sites = ['NGRIP/', 'Fuji/', 'Siple/','DE08/','DML/']
+Sit = ['NGRIP', 'Fuji', 'Siple','DE08','DML']
 
 
-CoD_out = np.zeros((6,14))
-CoD_diff = np.zeros((6,14))
+CoD_out = np.zeros((5,14))
+CoD_diff = np.zeros((5,14))
 for j in range(len(Sites)):
     T = folder_gen(Sites[j],False)
     P = folder_gen(Sites[j],True)
@@ -121,10 +121,10 @@ for j in range(len(Sites)):
     plt.savefig('Constant/'+str(Sit[j])+'.png',dpi=300)
     plt.close('all')  
         
-Temp = np.array([242.05,215.85,247.75,254.2,234.15,215.85]).reshape((6,1))
-Acc = np.array([0.19,0.028,0.13,1.2,7.0,0.19]).reshape((6,1))
-CoD = np.array([78,104,57,85,74,78]).reshape((6,1))
-Site = ['NGRIP','Fuji','Siple','DE08','DML','Test']
+Temp = np.array([242.05,215.85,247.75,254.2,234.15]).reshape((5,1))
+Acc = np.array([0.19,0.028,0.13,1.2,7.0]).reshape((5,1))
+CoD = np.array([78,104,57,85,74]).reshape((5,1))
+Site = ['NGRIP','Fuji','Siple','DE08','DML']
 header = ['Temp','Acc','CoD', 'HLD', 'HLS','Li4','Li1','HEL','ArtS','ArtT','Li5','GOU','BAR','MOR','KM','CRO','LIG'] 
 Matrix = np.concatenate((Temp, Acc, CoD, np.round(CoD_out,1)), axis=1)
 Matrix2 = np.concatenate((Temp, Acc, CoD, np.round(CoD_diff,1)), axis=1)
@@ -159,14 +159,14 @@ df = df.astype(str)
 
 #df = df.replace(to_replace = "\.0+$",value = "", regex = True)
 
-with open('mytable.tex', 'w') as tf:
+with open('mytableCoD.tex', 'w') as tf:
      tf.write(df.style.to_latex(column_format="cccccc", position="h", position_float="centering",
                 hrules=True, label="table:5", caption="Styled LaTeX Table",
                 multirow_align="t", multicol_align="r")  
               )
 
 
-df = pd.DataFrame(data = Matrix2.T, 
+df2 = pd.DataFrame(data = Matrix2.T, 
                   index = header, 
                   columns = Site)
 
@@ -186,15 +186,15 @@ headers = {
 
 
 
-df.style.format(decimal='.', thousands=',', precision=1)
-df = df.astype(str)
+df2.style.format(decimal='.', thousands=',', precision=1)
+df2 = df2.astype(str)
 #df.style.applymap(color_negative_red, subset=['NGRIP','Fuji','Siple','DE08'])
 
 
 #df = df.replace(to_replace = "\.0+$",value = "", regex = True)
 
-with open('mytable2.tex', 'w') as tf:
-     tf.write(df.style.to_latex(column_format="cccccc", position="h", position_float="centering",
+with open('mytableCoDdiff.tex', 'w') as tf:
+     tf.write(df2.style.to_latex(column_format="cccccc", position="h", position_float="centering",
                 hrules=True, label="table:5", caption="Styled LaTeX Table",
                 multirow_align="t", multicol_align="r")  
               )

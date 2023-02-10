@@ -24,16 +24,15 @@ def Run(Model,site):
     data['InputFileFolder'] = 'CFMinput/Constant_Forcing'
     if site == 'NGRIP':
         data['site_pressure'] = 691
-    elif site == 'Fuji':
-        data['site_pressure'] = 600
-    elif site == 'Siple':
-        data['site_pressure'] = 940
-    elif site == 'DE08':
-        data['site_pressure'] = 850
-    elif site == 'DML':
-        data['site_pressure'] = 757
-    elif site == 'Test':
-        data['site_pressure'] = 691           
+    elif site == 'NEEM':
+        data['site_pressure'] = 745
+    elif site == 'DomeC':
+        data['site_pressure'] = 658
+    elif site == 'South':
+        data['site_pressure'] = 681
+    elif site == 'Summit':
+        data['site_pressure'] = 665
+    
     data['InputFileNamebdot'] = str(site) + '_acc.csv'
     data['InputFileNameTemp'] = str(site) + '_Temp.csv'
     data['physRho'] = str(Model)
@@ -53,21 +52,21 @@ def csv_gen(site):
         Time = np.array([250,1000,5000])
         Temp = np.full(len(Time),242.05)
         Bdot = np.full(len(Time),1.9e-1)
-    elif site == 'Fuji':    
+    elif site == 'NEEM':    
         Time = np.array([250,1000,5000])
-        Time = np.array([1,3000,5000])
+        #Time = np.array([1,3000,5000])
         Temp = np.full(len(Time),242.05)
         Bdot = np.full(len(Time),1.9e-1)
 
-    elif site == 'Siple':    
+    elif site == 'DomeC':    
         Time = np.array([250,1000,5000])
         Temp = np.full(len(Time),247.75)
         Bdot = np.full(len(Time),1.3e-1)
-    elif site == 'DE08':    
+    elif site == 'South':    
         Time = np.array([250,1000,5000])
         Temp = np.full(len(Time),254.2)
         Bdot = np.full(len(Time),1.2)
-    elif site == 'DML':
+    elif site == 'Summit':
         Time = np.array([250,1000,5000])
 
     #plt.plot(Time,Temp)

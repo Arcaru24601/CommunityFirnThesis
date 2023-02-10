@@ -303,8 +303,8 @@ df = df.astype(str)
 
 
 
-with open('mytable.tex', 'w') as tf:
+with open('EquiDur.tex', 'w') as tf:
      tf.write(df.style.to_latex(column_format="cccccccc", position="h", position_float="centering",
-                hrules=True, label="table:5", caption="Styled LaTeX Table",
+                hrules=True, label="table:5", caption="Equilibrium time for duration",
                 multirow_align="c", multicol_align="c")  
               )
