@@ -25,8 +25,8 @@ acc_interval = get_interval_acc(acc, ice_age_full, start_year, end_year)
 input_temp = np.array([ice_age_interval,temp_interval])
 input_acc = np.array([ice_age_interval, acc_interval])
 plt.close('all')
-plt.figure()
-plt.plot(temp_interval,acc_interval,'o')
+#plt.figure()
+#plt.plot(temp_interval,acc_interval,'o')
 
 
 def input_file(num,temp=temp_interval,acc=acc_interval):
@@ -46,7 +46,7 @@ def input_file(num,temp=temp_interval,acc=acc_interval):
     
     output_temp = np.linspace(np.min(x2),np.max(x2),num)
     output_acc = np.linspace(np.min(y2),np.max(y2),num)
-    return output_temp+273.15, output_acc
+    return output_temp+273.15, output_acc,a,b,c,d
 
 def func(T):
     y = np.exp(-21.492 + 0.0811 * T)
@@ -55,17 +55,17 @@ def func(T):
     
 #Y = func(X_fitted_Kelvin)
 #Y2 = func(X2)
-x = temp_interval
+x = temp_interval+273.15
 y = acc_interval
 
-popt, pcov = curve_fit(lambda t, a, b, c, d: a * np.exp(b * t + c) + d, x,y)
+popt, pcov = curve_fit(lambda t, a, b: np.exp(-a * t + b), x,y)
 a = popt[0]
 b = popt[1]
-c = popt[2]
-d = popt[3]
+#c = popt[2]
+#d = popt[3]
 
-X2 = np.linspace(213-273.15,250-273.15,1000)
-y2 = a * np.exp(b * X2 + c) + d
+X2 = np.linspace(215-273.15,250-273.15,1000)
+y2 = np.exp(-a * X2 + b)
 #X1 = X2 + 273.15
 #Y2 = func(X1)
 
@@ -73,7 +73,7 @@ fig, ax = plt.subplots()
 ax.scatter(x, y, label='Raw data')
 #ax.plot(X_fitted_Kelvin, y_fitted, 'k', label='Fitted curve')
 #ax.plot(x_fitted,p(x_fitted),'r',label='Poly')
-ax.plot(X2,y2,'k',label = 'Func')
+ax.plot(X2+273.15,y2,'k',label = 'Func')
 #ax.plot(X2,Y2,'r',label = 'Art')
 ax.set_title(r'Using curve\_fit() to fit an exponential function')
 ax.set_ylabel('y-Values')
