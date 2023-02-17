@@ -14,8 +14,10 @@ from scipy.optimize import brentq,least_squares
 import h5py as hf
 import subprocess
 from Kindler_fit_ODR import input_file,expfunc
+import json
+from pathlib import Path
 
-M = 0
+M = 3
 
 Tem,Ac, Beta = input_file(num = 10)
 np.random.seed(42)
@@ -51,7 +53,7 @@ end_year = spin_year + model_year
 stpsPerYear = 0.5
 S_PER_YEAR = 60*60*24*365.25
 
-N_ref = Data_d15N[0] ##### Chosen from the 3sigma dist
+N_ref = Data_d15N.max() ##### Chosen from the 3sigma dist
 temp_0 = Point_T[M] ##### Good guess from the original temp data
 #acc_0 = Point_A[M]
 
@@ -77,17 +79,18 @@ Temp_csv = np.array([Time,Temp])
 np.savetxt('../CFM/CFM_main/CFMinput/OptiNoise/optimize_temp.csv',Temp_csv,delimiter=',')
 
 
-
+'''
 var_dict = {'count': np.zeros([N, 1], dtype=int),
             'd15N@CoD' : np.zeros([N, 1]),
             'temp' : np.zeros([N, 1]),
             'cost_func': np.zeros([N, 1])
             }
+'''
 
 
 
-
-def func(temp):
+def func(temp,N_ref,var_dict):
+    
     count = int(np.max(var_dict['count']))
     print('Iteration',count)
     
@@ -97,29 +100,40 @@ def func(temp):
     input_acc = np.array([Time, i_acc])
     
     os.chdir('../CFM/CFM_main')
-
+    
     np.savetxt('CFMinput/OptiNoise/optimize_temp.csv', input_temp, delimiter=',')
     np.savetxt('CFMinput/OptiNoise/optimize_acc.csv', input_acc, delimiter=',')
     subprocess.run('python main.py FirnAir_Noise.json -n')
     
     os.chdir('../../Optimization')
-    d15N_model, temperature_model,d15N_diffu = get_model_data(model_path)
-    cost_fun = cost_func(N_ref, d15N_model)
+    #print(model_path)
+    if os.path.exists(model_path):
+        d15N_model, temperature_model,d15N_diffu = get_model_data(model_path)
+        cost_fun = cost_func(N_ref, d15N_model)
+        print('Temperature', temperature_model)
+        print('d15N@CoD', d15N_model)
     
-    var_dict['d15N@CoD'][count] = d15N_model
-    var_dict['temp'][count] = temperature_model
+        var_dict['d15N@CoD'][count] = d15N_model
+        var_dict['temp'][count] = temperature_model
+    
+    else:
+        print('There is no output file -_- ')
+        #os.chdir('../icecore_data/src/')
+        cost_fun = 100.
+        print('------------------------------------------------------------------------------------------')
+        print('<<<<<<<< Close-off crashed - Setting cost function to 100! >>>>>>>>>>>>>>')
+        print('------------------------------------------------------------------------------------------')
+    
     var_dict['cost_func'][count] = cost_fun
     count += 1
     var_dict['count'][count] = count
-    
     print('Cost func', cost_fun)
-    print('Temperature', temperature_model)
     print('Acc',i_acc[0])
-    print('d15N@CoD', d15N_model)
+    
     return cost_fun
-
-
-res_c = brentq(func,a = 213,b = 250,full_output = True,xtol=2e-8,rtol=8.88e-12)
+'''
+print(N_ref)
+res_c = brentq(func,a = 210,b = 260,args=(N_ref),full_output = True,xtol=2e-4,rtol=8.88e-8)
 entry_0 = np.where(var_dict['count'] == 0)[0]
 var_dict['count'] = np.delete(var_dict['count'], entry_0[1:])
 var_dict['count'] = var_dict['count'][:-1]
@@ -139,7 +153,7 @@ print('----------------------------------------------')
 print(res_c[1])
 print('Temp1:', temp_1)
 print('bla')
-
+'''
 
 
 '''
@@ -168,22 +182,32 @@ print('bla')
 
 
 Model_name = ['HLdynamic','HLSigfus','Barnola1991','Goujon2003']
-Dist_num =  ['Dist' + str(i) for i in np.arange(1,5)]### Regime number
+Dist_num =  ['Dist' + str(i) for i in np.arange(4)]### Regime number
 Point_dist_num = np.arange(50)
 
 
 def root_find(path_to_result,N_ref):
-    res_c = brentq(func,a = 213,b = 250,args=(N_ref),full_output = True,xtol=2e-8,rtol=8.88e-12)
+    count = 0
+    
+    var_dict = {'count': np.zeros([N, 1], dtype=int),
+                'd15N@CoD' : np.zeros([N, 1]),
+                'temp' : np.zeros([N, 1]),
+                'cost_func': np.zeros([N, 1])
+                }
+
+    res_c = brentq(func,a = 213,b = 260,args=(N_ref,var_dict),full_output = True,xtol=2e-10,rtol=8.88e-14)
     entry_0 = np.where(var_dict['count'] == 0)[0]
     var_dict['count'] = np.delete(var_dict['count'], entry_0[1:])
     var_dict['count'] = var_dict['count'][:-1]
     max_int = np.shape(var_dict['count'])[0]
+    print(res_c[1])
 
     with hf.File(path_to_result, 'w') as f:
         for key in var_dict:
             f[key] = var_dict[key][:max_int]
     f.close()
-        
+    var_dict.clear()
+    return None    
 
 for i in range(len(Point_N)):
     M = i
@@ -195,29 +219,46 @@ for i in range(len(Point_N)):
 
 
 model_path = '../CFM/CFM_main/CFMoutput/OptiNoise/CFMresults.hdf5.' ### Insert name
-results_path = 'resultsFolder/minimizer.h5' #Add name
-
+#results_path = 'resultsFolder/minimizer.h5' #Add name
+folder_path1 = 'resultsFolder/Version1/'
 def Data_crunch(Model,Dist):
     for i in range(len(Model)):
+        os.chdir('../CFM/CFM_main')
+        file = open('FirnAir_Noise.json')
+        data = json.load(file)
+        data['physRho'] = str(Model[i])
+            
+        with open("FirnAir_Noise.json", 'w') as f:
+            json.dump(data, f,indent = 2)
+            
+            # Closing file
+        f.close()
+        os.chdir('../../Optimization')
         for j in range(len(Dist)):
             
-            s = np.random.normal(Point_N[M],0.02,size=1000)
+            s = np.random.normal(Point_N[j],0.02,size=1000)
             d15N_dist = s[(abs(s - s.mean())) < (3 * s.std())][:50]
-            
+            print(d15N_dist)
             for k in range(len(d15N_dist)):
                 print(Model[i],Dist[j],k)
+                d15N_ref = d15N_dist[k]
+                folder_path = folder_path1 + str(Model[i]) + '/' + str(Dist[j]) 
+                path = Path(folder_path)
+                path.mkdir(parents=True, exist_ok=True)
+                results_path = folder_path + '/' + 'Point'  + str(k) + '.h5'
                 try:
-                    d15N_ref = d15N_dist[k]
-                    results_path = str(Model[i]) + '_'  + str(Dist[j]) + '_Point'  + str(k) + '.h5'
                     root_find(results_path,d15N_ref)
                     
                 except Exception as e: print(e)
-    return None
+                
+    return results_path
 
 
+Model_n = ['HLdynamic']
+Dist_n = ['Dist_1']
 
 
-
+#T = Data_crunch(Model_name, Dist_num)
 
 
 

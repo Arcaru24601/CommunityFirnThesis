@@ -17,7 +17,7 @@
   ],
   "DFresample": "1M",
   "DFfile": "CFM_example_input_df.pkl",
-  "physRho": "HLdynamic",
+  "physRho": "Goujon2003",
   "physRho_options": [
     "HLdynamic",
     "HLSigfus",
