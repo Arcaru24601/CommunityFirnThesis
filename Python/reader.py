@@ -24,7 +24,7 @@ def read(rfolder):
     Various arrays.
 
     '''
-    rfile = 'Temp_HLdynamic50y.hdf5'
+    rfile = 'HLdynamic250K.hdf5'
     fn = os.path.join(rfolder,rfile)
     f = h5.File(fn,'r')
     
@@ -38,40 +38,40 @@ def read(rfolder):
     temperature = f['temperature'][:]
     temp_cod = np.ones_like(close_off_depth)
     
-    age = f['age'][:]
-    delta_age = np.ones_like(close_off_depth)
-    ice_age_cod = np.ones_like(close_off_depth)
+    #age = f['age'][:]
+    #delta_age = np.ones_like(close_off_depth)
+    #ice_age_cod = np.ones_like(close_off_depth)
     
     d15N = f['d15N2'][:]-1
     d15N_cod = np.ones_like(close_off_depth)
     #d15n_grav = f1['d15N2'][:]-1
     d15n_grav_cod = np.ones_like(close_off_depth)
     
-    d40Ar = f['d40Ar'][:]-1
-    d40Ar_cod = np.ones_like(close_off_depth)
+    #d40Ar = f['d40Ar'][:]-1
+    #d40Ar_cod = np.ones_like(close_off_depth)
     #d40ar_grav = f1['d40Ar'][:]-1
-    d40ar_grav_cod = np.ones_like(close_off_depth)
+    #d40ar_grav_cod = np.ones_like(close_off_depth)
     
-    gas_age = f['gas_age'][:]
-    gas_age_cod = np.ones_like(close_off_depth)
+    #gas_age = f['gas_age'][:]
+    #gas_age_cod = np.ones_like(close_off_depth)
     for i in range(z.shape[0]):
         idx = int(np.where(z[i, 1:] == close_off_depth[i])[0])
         d15N_cod[i] = d15N[i,idx]
         #d15n_grav_cod[i] = d15n_grav[i,idx]
-        d40Ar_cod[i] = d40Ar[i,idx]
+     #   d40Ar_cod[i] = d40Ar[i,idx]
         #d40ar_grav_cod[i] = d40ar_grav[i,idx]
         
         temp_cod[i] = temperature[i,idx]
-        ice_age_cod[i] = age[i,idx]# - close_off_age[i]
-        delta_age[i] = age[i, idx] - gas_age[i, idx]
-        gas_age_cod[i] = close_off_age[i]-ice_age_cod[i]
+      #  ice_age_cod[i] = age[i,idx]# - close_off_age[i]
+       # delta_age[i] = age[i, idx] - gas_age[i, idx]
+        #gas_age_cod[i] = close_off_age[i]-ice_age_cod[i]
         
         
         #print(ice_age_cod.shape)
 
     delta_temp = climate[:,2] - temp_cod
     d15N_th_cod = d15N_cod - d15n_grav_cod
-    d40Ar_th_cod = d40Ar_cod - d40ar_grav_cod
+    #d40Ar_th_cod = d40Ar_cod - d40ar_grav_cod
         
     
     
@@ -81,7 +81,7 @@ def read(rfolder):
     f.close()
     with h5.File(fn,'r') as hf:
         print(hf.keys())
-    return model_time,z,temperature,age,gas_age_cod,climate,d15N,d40Ar,close_off_depth
+    return model_time,z,temperature,climate,d15N,close_off_depth
 
 
 def find_constant_row(matrix, tolerance=1e-6):
@@ -110,7 +110,7 @@ ax.legend
 '''
 
 
-timesteps,depth,temperature,age,gas_age,climate,d15N2,d40Ar,Bubble = read('CFM/CFM_main/CFMoutput/Equi/Temp/HLdynamic/50y')
+timesteps,depth,temperature,climate,d15N2,Bubble = read('CFM/CFM_main/CFMoutput/Noise/HLdynamic/250K')
 
 
 

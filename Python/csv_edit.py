@@ -26,7 +26,7 @@ class File:
         self.LongFlag = LongFlag
         
         
-        self.Temp_i = [242.05,253]
+        self.Temp_i = [250,253]
         if self.Priority == 'Acc':    
             self.V_i,self.V_f = self.Acc_i
         elif self.Priority == 'Temp':    
@@ -93,7 +93,7 @@ class File:
         
         if self.Priority == 'Temp':
             #Array_c = np.exp(0.0811*Array-21.492)
-            Array_c = np.full_like(self.Time_steps, 0.19)
+            Array_c = np.full_like(self.Time_steps, 0.2621)
         elif self.Priority == 'Acc':
             Array_c = np.full_like(self.Time_steps, 253)
         elif self.Priority == 'Temp_acc':

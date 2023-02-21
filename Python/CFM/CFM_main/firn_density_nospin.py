@@ -202,7 +202,7 @@ class FirnDensityNoSpin:
                 
             else: # Input data comes from a .csv
                 input_temp, input_year_temp, input_temp_full, input_year_temp_full = read_input(os.path.join(self.c['InputFileFolder'],self.c['InputFileNameTemp']), updatedStartDate)
-                print(updatedStartDate)
+                #print(updatedStartDate)
             if input_temp[0] < 0.0:
                 input_temp      = input_temp + K_TO_C
             input_temp[input_temp>T_MELT] = T_MELT
@@ -1313,10 +1313,12 @@ class FirnDensityNoSpin:
                 bcoMartRho  = 1 / (1 / (917.0) + self.cg['steady_T'] * 6.95E-7 - 4.3e-5)  # Martinerie density at close off
             else:
                 bcoMartRho  = 1 / (1 / (917.0) + self.T_mean[iii] * 6.95E-7 - 4.3e-5)  # Martinerie density at close off; see Buizert thesis (2011), Blunier & Schwander (2000), Goujon (2003)
-
+            #print('Temp',self.T_mean[iii])
+            #print('Density',self.rho)
+            #print('Mart density', bcoMartRho)
             bcoAgeMart  = min(self.age[self.rho >= bcoMartRho]) / S_PER_YEAR  # close-off age from Martinerie
             bcoDepMart  = min(self.z[self.rho >= (bcoMartRho)])
-
+            #print('Mart CoD',bcoDepMart)            
             # bubble close-off age and depth assuming rho_crit = 815kg/m^3
             bcoAge830   = min(self.age[self.rho >= 830.0]) / S_PER_YEAR  # close-off age where rho = 815 kg m^-3
             bcoDep830   = min(self.z[self.rho >= 830.0])
