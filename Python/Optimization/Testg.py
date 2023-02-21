@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 """
-Created on Fri Jan 27 14:37:12 2023
+Created on Wed Feb 15 21:55:42 2023
 
-@author: jespe
+@author: Jesper Holm
 """
 
 import numpy as np
@@ -57,18 +57,17 @@ def func(T):
 
 #Y = func(X_fitted_Kelvin)
 #Y2 = func(X2)
-x = temp_interval
+x = temp_interval+273.15
 y = acc_interval
 
-popt, pcov = curve_fit(lambda t, a, b, c, d: a * np.exp(b * t + c) + d, x,y)
-a = popt[0]
-b = popt[1]
-c = popt[2]
-d = popt[3]
-#X2 = np.linspace(np.min(temp_interval),np.max(temp_interval),1000)
+popt1, pcov1 = curve_fit(lambda t, a, b: np.exp(-a * t + b), x,y)
+a = popt1[0]
+b = popt1[1]
 
-X2 = np.linspace(210-273.15,260-273.15,1000)
-y2 = a * np.exp(b * X2 + c) + d
+X2 = np.linspace(np.min(temp_interval),np.max(temp_interval),1000)
+
+#X2 = np.linspace(213-273.15,250-273.15,1000)
+y2 = np.exp(-a * X2 + b)
 #X1 = X2 + 273.15
 #Y2 = func(X1)
 
@@ -88,14 +87,5 @@ ax.xaxis.set_major_formatter('{x:.0f}')
 # For the minor ticks, use no labels; default NullFormatter.
 ax.xaxis.set_minor_locator(MultipleLocator(1))
 ax.legend()
-
-
-
-
-
-
-
-
-
 
 
