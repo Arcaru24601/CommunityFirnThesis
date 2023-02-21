@@ -237,7 +237,7 @@ def Data_crunch(Model,Dist):
         for j in range(len(Dist)):
             
             s = np.random.normal(Point_N[j],0.02,size=1000)
-            d15N_dist = s[(abs(s - s.mean())) < (3 * s.std())][:50]
+            d15N_dist = s[(abs(s - s.mean())) < (3 * s.std())][:1]
             print(d15N_dist)
             for k in range(len(d15N_dist)):
                 print(Model[i],Dist[j],k)
@@ -258,7 +258,7 @@ Model_n = ['HLdynamic']
 Dist_n = ['Dist_1']
 
 
-#T = Data_crunch(Model_name, Dist_num)
+T = Data_crunch(Model_n, Dist_n)
 
 
 
