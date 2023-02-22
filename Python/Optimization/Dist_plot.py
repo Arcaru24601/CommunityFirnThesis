@@ -39,6 +39,25 @@ Dist = ['Dist' + str(i) for i in range(4)]
 import seaborn as sns
 sns.set_theme()
 from astropy.visualization import hist
+
+pad = plt.rcParams["xtick.major.size"] + plt.rcParams["xtick.major.pad"]
+def bottom_offset(self, bboxes, bboxes2):
+    bottom = self.axes.bbox.ymin
+    self.offsetText.set(va="top", ha="left") 
+    ox = bottom - pad * self.figure.dpi / 72.0
+    self.offsetText.set_position((ox, 1))
+
+
+
+import types
+import itertools
+palette = sns.color_palette(None, 4)
+font = {'family': 'serif',
+        'color':  'darkred',
+        'weight': 'normal',
+        'size': 16,
+        }
+
 # Loop over H5 files and load into a dataframe
 for i in range(len(Dist)):
     s = np.random.normal(Point_N[i],0.02,size=50)
@@ -61,18 +80,18 @@ for i in range(len(Dist)):
         #table = pd.DataFrame(xdata).reset_index()
         #print(table)
         bins = 'knuth'
-
-        hist(Data_d15N, bins=bins, ax=ax[0,j],histtype='stepfilled',color='b')
-        hist(Temp, bins=bins, ax=ax[1,j],histtype='stepfilled',color='r')
-        hist(count, bins=bins, ax=ax[2,j],histtype='stepfilled',color='g')
-        #hist(cost_func, bins=bins, ax=ax[3,j], histtype='stepfilled', density=True,color='k')
+    
+        hist(Data_d15N, bins=bins, ax=ax[0,j],histtype='stepfilled',color = palette[0])
+        hist(Temp, bins=bins, ax=ax[1,j],histtype='stepfilled',color = palette[1])
+        hist(count, bins=bins, ax=ax[2,j],histtype='stepfilled',color = palette[2])
+        #hist(cost_func, bins=bins, ax=ax[3,j], histtype='stepfilled',color=palette[3])
         #ax[0,j].hist(Data_d15N,bins='fd') ### d15N input
         #ax[1,j].hist(Temp,bins='fd',color='r') ### Temperature output
         #ax[2,j].hist(count,bins='fd',color='g') ### Accumulation
-        ax[3,j].plot(cost_func,color='k') ### Cost function
-        
+        ax[3,j].plot(cost_func,color=palette[3]) ### Cost function
         
         ax[0,j].set_xlabel(u'd15N [$\delta^{15}$N]')
+        #ax[0,j].text(2, 0.65, r'$\cos(2 \pi t) \exp(-t)$', fontdict=font)
         ax[1,j].set_xlabel('Temperature [K]')
         ax[2,j].set_xlabel('Point nr.')
         ax[3,j].set_xlabel('Point nr.')
@@ -80,5 +99,8 @@ for i in range(len(Dist)):
         ax[3,j].set_ylabel('Cost function')
         ax[0,j].set_title(str(Models[j]))
         ax[3,j].yaxis.set_major_formatter(mtick.FormatStrFormatter('%.1e'))
-        t = ax[3,j].yaxis.get_offset_text()
-        t.set_x(1.1)
+        #ax[3,j].xaxis.set_major_formatter(mtick.FormatStrFormatter('%.1e'))
+        #ax[3,j].xaxis.set_major_locator(plt.MaxNLocator(3))
+        #t = ax[3,j].yaxis.get_offset_text()
+        #t.set_x(1.0)
+        #ax[3,j].yaxis._update_offset_text_position = types.MethodType(bottom_offset, ax.xaxis)

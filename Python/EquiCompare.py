@@ -207,7 +207,7 @@ class CoD_plotter():
             Output[j*5+k,odd[i]] = Time_Const_CoD - 1500 - int(Rates[k][:-1])    
             Output[j*5+k,even[i]] = Time_Const_temp - 1500 - int(Rates[k][:-1])
         return Output[j*5+0:j*5+5,even[i]:odd[i]+1]
-rfolder = 'CFM/CFM_main/CFMoutput/Equi/'
+rfolder = r'D:/CFMoutput/Equi/'
 x = ['Temp','Acc','Both']
 
 
