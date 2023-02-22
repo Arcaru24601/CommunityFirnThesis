@@ -207,7 +207,7 @@ class CoD_plotter():
             Output[j*5+k,odd[i]] = Time_Const_CoD - 1500 - int(Rates[k][:-1])    
             Output[j*5+k,even[i]] = Time_Const_temp - 1500 - int(Rates[k][:-1])
         return Output[j*5+0:j*5+5,even[i]:odd[i]+1]
-rfolder = 'CFM/CFM_main/CFMoutput/Equi/'
+rfolder = r'D:/CFMoutput/Equi/'
 x = ['Temp','Acc','Both']
 
 
@@ -298,7 +298,7 @@ headers = {
 
 
 df.style.format(decimal='.', thousands=',', precision=1)
-df = df.astype(str)
+#df = df.astype(str)
 
 
 
@@ -308,3 +308,29 @@ with open('EquiDur.tex', 'w') as tf:
                 hrules=True, label="table:5", caption="Equilibrium time for duration",
                 multirow_align="c", multicol_align="c")  
               )
+
+
+fig, ax = plt.subplots(nrows = 3, ncols = 2,sharex=True)
+for k,exp in enumerate(['Temp','Acc','Both']):
+    for i, model in enumerate(['HLD','Bar','GOU']):
+        Array = df[str(model)].loc[str(exp)]
+        ax[k,0].plot(Array['Temps'])
+        ax[k,1].plot(Array['CoD'])
+        
+        
+        
+        fig.supxlabel('Duration of change [y]')
+        #ax[k,1].set_xlabel('Duration of change [y]')
+        ax[k,0].set_ylabel('Temperature at close-off [K]')
+        ax[k,1].set_ylabel('Close-off depth [m]')
+plt.savefig('Equiplot/Dur.png',dpi=300)
+
+
+
+
+
+
+
+
+
+
