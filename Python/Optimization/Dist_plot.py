@@ -81,3 +81,8 @@ for i in range(len(Dist)):
         ax[3,j].yaxis.set_major_formatter(mtick.FormatStrFormatter('%.1e'))
         t = ax[3,j].yaxis.get_offset_text()
         t.set_x(1.1)
+        
+        
+    plt.savefig(str(Dist[i])+'.png',dpi=300)
+        
+        
