@@ -292,7 +292,7 @@ headers = {
 
 
 df.style.format(decimal='.', thousands=',', precision=1)
-df = df.astype(str)
+#df = df.astype(str)
 
 
 
@@ -302,3 +302,27 @@ with open('EquiAmp.tex', 'w') as tf:
                 hrules=True, label="table:5", caption="Equilibrium times for amplitude",
                 multirow_align="c", multicol_align="c")  
               )
+
+fig, ax = plt.subplots(nrows = 3, ncols = 2)
+for k,exp in enumerate(['Temp','Acc','Both']):
+    for i, model in enumerate(['HLD','Bar','GOU']):
+        Array = df[str(model)].loc[str(exp)]
+        
+
+        ax[k,0].plot(Array['Temps'])
+        ax[k,1].plot(Array['CoD'])
+        fig.supxlabel('Magnitude of change')
+        
+# =============================================================================
+#         Find way to have multiple common ylabels
+# =============================================================================
+        
+        
+        #ax[k,0].set_ylabel('Temperature at close-off [K]')
+        #ax[k,1].set_ylabel('Close-off depth [m]')
+plt.savefig('Equiplot/Amp.png',dpi=300)
+
+
+
+
+
