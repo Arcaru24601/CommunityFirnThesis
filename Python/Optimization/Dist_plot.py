@@ -1,11 +1,10 @@
 # -*- coding: utf-8 -*-
 """
-Created on Mon Feb 20 19:28:42 2023
+Created on Tue Feb 21 15:25:28 2023
 
-@author: Jesper Holm
+@author: jespe
 """
 
-        
 from matplotlib import pyplot as plt
 
 import numpy as np
@@ -39,25 +38,6 @@ Dist = ['Dist' + str(i) for i in range(4)]
 import seaborn as sns
 sns.set_theme()
 from astropy.visualization import hist
-
-pad = plt.rcParams["xtick.major.size"] + plt.rcParams["xtick.major.pad"]
-def bottom_offset(self, bboxes, bboxes2):
-    bottom = self.axes.bbox.ymin
-    self.offsetText.set(va="top", ha="left") 
-    ox = bottom - pad * self.figure.dpi / 72.0
-    self.offsetText.set_position((ox, 1))
-
-
-
-import types
-import itertools
-palette = sns.color_palette(None, 4)
-font = {'family': 'serif',
-        'color':  'darkred',
-        'weight': 'normal',
-        'size': 16,
-        }
-
 # Loop over H5 files and load into a dataframe
 for i in range(len(Dist)):
     s = np.random.normal(Point_N[i],0.02,size=50)
@@ -100,7 +80,6 @@ for i in range(len(Dist)):
         #ax[3,j].plot(cost_func,color=palette[3]) ### Cost function
         
         ax[0,j].set_xlabel(u'd15N [$\delta^{15}$N]')
-        #ax[0,j].text(2, 0.65, r'$\cos(2 \pi t) \exp(-t)$', fontdict=font)
         ax[1,j].set_xlabel('Temperature [K]')
         ax[2,j].set_xlabel('Point nr.')
         #ax[3,j].set_xlabel('Point nr.')
