@@ -94,13 +94,13 @@ folder = 'CFM/CFM_main/CFMinput/Noise/Round4/'
 sub_folders = [name for name in os.listdir(folder) if os.path.isdir(os.path.join(folder, name))]
 sub_folders = [x + '/' for x in sub_folders]
 
-
-d15N_model = np.zeros((10,4))
-d15N_firn = np.zeros((10,4))
-Test = np.zeros((10,4))
-TestN = np.zeros((10,4))
-CoD_T = np.zeros((10,4))
-rfolder = 'CFM/CFM_main/CFMoutput/Noise/Round4/'
+H = len(sub_folders)
+d15N_model = np.zeros((H,4))
+d15N_firn = np.zeros((H,4))
+Test = np.zeros((H,4))
+TestN = np.zeros((H,4))
+CoD_T = np.zeros((H,4))
+rfolder = r'D:\GitHub/CommunityFirnThesis/CommunityFirnThesis/CFM/CFM_main/CFMoutput/Noise/Round4/'
 
 for j in range(len(sub_folders)):
     T = folder_gen(sub_folders[j],False)
@@ -156,7 +156,9 @@ for (index, column) in enumerate(df):
     #ax2.plot(Input_acc,d15N,linestyle[index],fillstyle='none',color=cmap(cmap_intervals[index]))
 #ax1.plot(Point_T,Point_N,'o')
     #plt.ylim((0.2,0.6))
-plt.savefig('Noise/NoiseTemp.png',dpi=300)
+plt.xlabel('Temperature [K]')
+plt.ylabel(u'd15N [$\delta^{15}$N]')
+plt.savefig('Noise/NoiseTemp22.png',dpi=300)
 
 fig = plt.figure()
 ax1 = fig.add_subplot(111)

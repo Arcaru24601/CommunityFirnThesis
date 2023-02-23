@@ -135,8 +135,8 @@ def Terminal_run_Models(Model,Exp,Folder):
     data = json.load(file)
     data['grid_outputs'] = False
     data['resultsFileName'] = str(Exp) + '_' + str(Model) + str(Folder) +  '.hdf5'
-    data['resultsFolder'] = 'CFMoutput/Equi/' + str(Exp) + '/' + str(Model) + '/' + str(Folder) 
-    data['InputFileFolder'] = 'CFMinput/Equi/' + str(Exp) + '/' + str(Folder)
+    data['resultsFolder'] = 'CFMoutput/Equi2/' + str(Exp) + '/' + str(Model) + '/' + str(Folder) 
+    data['InputFileFolder'] = 'CFMinput/Equi2/' + str(Exp) + '/' + str(Folder)
     data['InputFileNameTemp'] = 'Temp.csv'
     data['InputFileNamebdot'] = 'Acc.csv'
     data['physRho'] = str(Model)
@@ -155,8 +155,8 @@ def Terminal_run_Amp(Model,Exp,Folder):
     data = json.load(file)
     data['grid_outputs'] = False
     data['resultsFileName'] = str(Exp) + '_' + str(Model) + str(Folder) +  '.hdf5'
-    data['resultsFolder'] = 'CFMoutput/EquiAmp/' + str(Exp) + '/' + str(Model) + '/' + str(Folder) 
-    data['InputFileFolder'] = 'CFMinput/EquiAmp/' + str(Exp) + '/' + str(Folder)
+    data['resultsFolder'] = 'CFMoutput/EquiAmp2/' + str(Exp) + '/' + str(Model) + '/' + str(Folder) 
+    data['InputFileFolder'] = 'CFMinput/EquiAmp2/' + str(Exp) + '/' + str(Folder)
     data['InputFileNameTemp'] = 'Temp.csv'
     data['InputFileNamebdot'] = 'Acc.csv'
     data['physRho'] = str(Model)
