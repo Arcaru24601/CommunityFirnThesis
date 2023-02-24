@@ -5,7 +5,7 @@ Created on Sat Sep 17 06:23:01 2022
 @author: jespe
 """
 
-
+import numpy as np
 #from reader import read
 import seaborn as sns 
 sns.set()
@@ -81,7 +81,7 @@ def Equi_run(Model,exp,folder):
 
 
 
-Equi_run(Models,Exp,Folder)
+#Equi_run(Models,Exp,Folder)
 
 
 def Equi_run_Amp(Model,exp,folder):
@@ -92,7 +92,24 @@ def Equi_run_Amp(Model,exp,folder):
             
                 print(exp[k],Model[j],folder[i])
                 je.Terminal_run_Amp(Model[j], exp[k], folder[i])
-Equi_run_Amp(Models,Exp,Folder_Amp)
+#Equi_run_Amp(Models,Exp,Folder_Amp)
+
+folder2 = './CFM/CFM_main/CFMinput/Equi2/Acc'
+folder2_amp = './CFM/CFM_main/CFMinput/EquiAmp2/Acc'
+
+
+Equi_Folder = [name for name in os.listdir(folder2) if os.path.isdir(os.path.join(folder2, name))]
+EquiAmp_Folder = [name for name in os.listdir(folder2_amp) if os.path.isdir(os.path.join(folder2_amp, name))]
+
+Equi_Folder2 = np.asarray([float(x[:-1]) for x in Equi_Folder])
+Equi_Folder2.sort()
+Equi_Folder = [str(x) + 'y' for x in Equi_Folder2]
+
+
+
+
+#Equi_run(Models,Exp,Equi_Folder)
+#Equi_run_Amp(Models,Exp,EquiAmp_Folder)
 
 
 

@@ -17,7 +17,7 @@ from Kindler_fit_ODR import input_file,expfunc
 os.chdir('../')
 import Test_script as je
 
-Input_temp,Input_acc,Beta = input_file(num = 10)
+Input_temp,Input_acc,Beta = input_file(num = 20)
 
 #Input_temp_round = Input_temp.round()
 def csv_gen(temp,bdot):
@@ -53,11 +53,11 @@ Models = ['HLdynamic','HLSigfus','Barnola1991','Goujon2003']
 def Equi_run(Model,temp,acc):
     for k in range(len(Model)):
         if Model[k] == 'Goujon2003':
-            Input_temp[-2] = 245
-            Input_acc[-2] = expfunc(Beta,Input_temp[-2])
+            Input_temp[-3] = 245
+            Input_acc[-3] = expfunc(Beta,Input_temp[-2])
         for i in range(len(temp)):
                 print(Model[k],int(temp[i]))
-                je.Terminal_run_Noise(Model[k],int(temp[i]),acc[i])
+                #je.Terminal_run_Noise(Model[k],int(temp[i]),acc[i])
 
 
 

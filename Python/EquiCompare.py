@@ -207,7 +207,7 @@ class CoD_plotter():
             Output[j*5+k,odd[i]] = Time_Const_CoD - 1500 - int(Rates[k][:-1])    
             Output[j*5+k,even[i]] = Time_Const_temp - 1500 - int(Rates[k][:-1])
         return Output[j*5+0:j*5+5,even[i]:odd[i]+1]
-rfolder = 'CFM/CFM_main/CFMoutput/Equi/'
+rfolder = r'D:/CFMoutput/Equi/'
 x = ['Temp','Acc','Both']
 
 
@@ -298,7 +298,7 @@ headers = {
 
 
 df.style.format(decimal='.', thousands=',', precision=1)
-df = df.astype(str)
+#df = df.astype(str)
 
 
 
@@ -308,3 +308,53 @@ with open('EquiDur.tex', 'w') as tf:
                 hrules=True, label="table:5", caption="Equilibrium time for duration",
                 multirow_align="c", multicol_align="c")  
               )
+
+
+
+
+palette = sns.color_palette('Dark2', 3)
+palette2 = sns.color_palette("Paired", 3)
+
+linestyle = ['solid','dotted','dashed']
+
+from matplotlib.lines import Line2D
+custom_lines = [Line2D([0], [0], color='k',linestyle='solid', lw=4),
+                Line2D([0], [0], color='k',linestyle='dotted', lw=4),
+                Line2D([0], [0], color='k',linestyle='dashed', lw=4)]
+
+
+
+
+
+fig, ax = plt.subplots(nrows = 3, ncols = 2,sharex=True,figsize=(10,7),constrained_layout=True)
+for k,exp in enumerate(['Temp','Acc','Both']):
+    for i, model in enumerate(['HLD','Bar','GOU']):
+        Array = df[str(model)].loc[str(exp)]
+        ax[k,0].set_title(exp + 'Temperature gradient')
+        ax[k,1].set_title(exp + 'Close-off depth')
+        #ax[k,1].set_title('Close-off depth')
+        ax[k,0].plot(Array['Temps'],color=palette[k],linestyle=linestyle[i],label=model,lw=2)
+        ax[k,1].plot(Array['CoD'],color=palette2[k],linestyle=linestyle[i],label=model,lw=2)
+        #ax[k,0].legend()
+        #ax[k,1].legend()
+        
+        fig.supylabel('Halfway-time to Equilibrium [y]')
+        fig.supxlabel('Duration of change [y]')
+        #ax[k,1].set_xlabel('Duration of change [y]')
+        #ax[k,0].set_ylabel('Temperature at close-off [K]')
+        #ax[k,1].set_ylabel('Close-off depth [m]')
+#fig.suptitle("This Main Title is Nicely Formatted", fontsize=16)
+plt.legend(custom_lines,['HLD','BAR','GOU'],loc='best',ncol=1)
+
+
+plt.savefig('Equiplot/Dur.png',dpi=300)
+
+
+
+
+
+
+
+
+
+

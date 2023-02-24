@@ -24,7 +24,7 @@ acc_interval = get_interval_acc(acc, ice_age_full, start_year, end_year)
 
 input_temp = np.array([ice_age_interval,temp_interval])
 input_acc = np.array([ice_age_interval, acc_interval])
-plt.close('all')
+#plt.close('all')
 #plt.figure()
 #plt.plot(temp_interval,acc_interval,'o')
 
@@ -52,7 +52,9 @@ def func(T):
     y = np.exp(-21.492 + 0.0811 * T)
     return y
 
-    
+
+
+
 #Y = func(X_fitted_Kelvin)
 #Y2 = func(X2)
 x = temp_interval+273.15
