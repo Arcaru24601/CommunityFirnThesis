@@ -9,6 +9,6 @@ import os
 
 os.system('python main.py')
 os.chdir('Optimization')
-os.system('python Kindler_csv.py')
-os.chdir('home/Documents/CommunityFirnThesis-main/Python/Optimization')
-os.system('python Steady_state.py')
+#os.system('python Kindler_csv.py')
+#os.chdir('home/Documents/CommunityFirnThesis-main/Python/Optimization')
+#os.system('python Steady_state.py')

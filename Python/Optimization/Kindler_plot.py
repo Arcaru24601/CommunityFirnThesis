@@ -100,7 +100,7 @@ d15N_firn = np.zeros((H,4))
 Test = np.zeros((H,4))
 TestN = np.zeros((H,4))
 CoD_T = np.zeros((H,4))
-rfolder = r'D:\GitHub/CommunityFirnThesis/CommunityFirnThesis/CFM/CFM_main/CFMoutput/Noise/Round4/'
+rfolder = 'CFM/CFM_main/CFMoutput/Noise/Round4/'
 
 for j in range(len(sub_folders)):
     T = folder_gen(sub_folders[j],False)
