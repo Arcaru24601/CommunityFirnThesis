@@ -106,7 +106,7 @@ Equi_Folder2.sort()
 Equi_Folder = [str(x) + 'y' for x in Equi_Folder2]
 
 
-
+print(2+2)
 
 #Equi_run(Models,Exp,Equi_Folder)
 #Equi_run_Amp(Models,Exp,EquiAmp_Folder)
