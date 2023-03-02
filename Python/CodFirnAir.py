@@ -87,17 +87,17 @@ class CoD_plotter():
     
     
     def plotting(self):
-        rows = 7
-        fig,ax = plt.subplots(rows,figsize=(15, 8), sharex=True,sharey=False)
+        rows = 3
+        fig,ax = plt.subplots(rows, sharex=True,sharey=False,constrained_layout=True)
         #labelFont = 15
         #legFont = 12
         #axFont = 13
         
         ax[0].plot(self.model_time, self.climate[:,2],'k')
         ax[0].grid(linestyle='--', color='gray', lw='0.5')
-        ax[0].set_ylabel(r'\centering Temperature \newline\centering Forcing [K]')
+        ax[0].set_ylabel(r'\centering Temperature \newline\centering Forcing [K]',fontsize=14)
         ax[0].set_yticks(np.arange(230,260, step=10))
-        
+        '''
         ax[1].plot(self.model_time, self.climate[:,1],'k')
         ax[1].grid(linestyle='--', color='gray', lw='0.5')
         ax[1].set_ylabel(r'\centering Acc. Forcing \newline\centering [$\mathrm{my}^{-1}$ ice eq.]')
@@ -122,26 +122,34 @@ class CoD_plotter():
         ax[4].grid(linestyle='--', color='gray', lw='0.5')
         ax[4].set_ylabel(r'$\Delta$age [y]')
         print(self.close_off_age[-10:]-self.ice_age_cod[-10:])
-        ax[5].plot(self.model_time,self.d15N_cod * 1000,'c-',label='$\delta^{15}$N')
-        ax[5].plot(self.model_time,self.d15N_th_cod * 1000,'c:',label='$\delta^{15}$N thermal')
-        ax[5].plot(self.model_time,self.d15n_grav_cod * 1000,'c--',label='$\delta^{15}$N gravitational')
-        ax[5].grid(linestyle='--', color='gray', lw='0.5')
-        ax[5].set_ylabel(r'$\delta^{15}N_{cod}$ [‰]')
-        ax[5].set_yticks(np.arange(0.0,0.55, step=0.25))
-        ax[5].legend(loc='right', fontsize=8)
+        '''
+        ax[1].plot(self.model_time,self.d15N_cod * 1000,'c-',label='$\delta^{15}$N')
+        ax[1].plot(self.model_time,self.d15N_th_cod * 1000,'c:',label='$\delta^{15}$N thermal')
+        ax[1].plot(self.model_time,self.d15n_grav_cod * 1000,'c--',label='$\delta^{15}$N gravitational')
+        ax[1].grid(linestyle='--', color='gray', lw='0.5')
+        ax[1].set_ylabel(r'$\delta^{15}N_{cod}$ [‰]',fontsize=14)
+        ax[1].set_yticks(np.arange(0.0,0.55, step=0.25))
+        box = ax[1].get_position()
+                    #ax[i,j].set_position([box.x0, box.y0, box.width * 0.8, box.height])
 
+        # Put a legend to the right of the current axis
+        ax[1].legend(loc='center left', bbox_to_anchor=(1, 0.5),fontsize=14)
         
         
-        ax[6].plot(self.model_time,self.d40Ar_cod/4 * 1000,'y-',label='$\delta^{40}$Ar')
-        ax[6].plot(self.model_time,self.d40Ar_th_cod/4 * 1000,'y:',label='$\delta^{40}$Ar thermal')
-        ax[6].plot(self.model_time,self.d40ar_grav_cod/4 * 1000,'y--',label='$\delta^{40}$Ar gravitational')
-        ax[6].grid(linestyle='--', color='gray', lw='0.5')
-        ax[6].set_ylabel(r'$\delta^{40}Ar_{cod}$ [‰]')
-        ax[6].set_yticks(np.arange(0.0,0.55, step=0.25))
-        ax[6].legend(loc='right', fontsize=8)
+        ax[2].plot(self.model_time,self.d40Ar_cod/4 * 1000,'y-',label='$\delta^{40}$Ar')
+        ax[2].plot(self.model_time,self.d40Ar_th_cod/4 * 1000,'y:',label='$\delta^{40}$Ar thermal')
+        ax[2].plot(self.model_time,self.d40ar_grav_cod/4 * 1000,'y--',label='$\delta^{40}$Ar gravitational')
+        ax[2].grid(linestyle='--', color='gray', lw='0.5')
+        ax[2].set_ylabel(r'$\delta^{40}Ar_{cod}$ [‰]',fontsize=14)
+        ax[2].set_yticks(np.arange(0.0,0.55, step=0.25))
+        #ax[2].legend(loc='right', fontsize=12)
+        #ax[2].set_ylabel('Model time [years]',fontsize=14)
+        box = ax[2].get_position()
+                    #ax[i,j].set_position([box.x0, box.y0, box.width * 0.8, box.height])
 
-        
-        
+        # Put a legend to the right of the current axis
+        ax[2].legend(loc='center left', bbox_to_anchor=(1, 0.5),fontsize=14)
+        ax[2].set_xlabel('Model time [years]',fontsize=14)
 
 rfolder = 'CFM/CFM_main/CFMoutput/DO_event/'
 x = ['Long', 'Short', 'Osc2','Osc']

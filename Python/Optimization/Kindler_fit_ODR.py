@@ -46,8 +46,8 @@ import scipy.odr as OD
 
 def expfunc(B,x):
    return np.exp(-B[0] + B[1]*x)
-
-
+'''
+temp_interval += 273.15
 func = OD.Model(expfunc)
 mydata = OD.Data(temp_interval, acc_interval, wd=1./np.power(3,2))
 myodr = OD.ODR(mydata, func, beta0=[21, 0.08])
@@ -56,16 +56,23 @@ myoutput.pprint()
 Test = np.linspace(np.min(temp_interval),np.max(temp_interval),1000)
 y = expfunc(myoutput.beta,Test)
 
+
+output_temp = np.linspace(np.min(Test),np.max(Test),10)
+output_acc = expfunc(myoutput.beta,output_temp)
+
+alpha,beta = myoutput.beta
+
 fig, ax = plt.subplots()
 ax.scatter(temp_interval, acc_interval, label='Raw data')
-
-ax.plot(Test,y,'k',label = r'Fitted function $exp(-a +b\cdot T)$')
+ax.plot(output_temp,output_acc,'ro',label='Forward points')
+ax.plot(Test,y,'k',label = r'Fitted function' + r' $\exp( -{0:.2f} + {1:.2f}\cdot T)$'.format(alpha,beta))
 #ax.set_title(r'Using curve\_fit() to fit an exponential function')
-ax.set_ylabel('Accumulation rate')
-ax.set_xlabel('Temperature [K]')
+ax.set_ylabel(r'Accumulation rate [m yr$^{-1}$]',fontsize=14)
+ax.set_xlabel('Temperature [K]',fontsize=14)
+ax.legend(fontsize=14)
+plt.savefig('Noise/TEst2.png',dpi=300)
 
-ax.legend()
-plt.savefig('TEst2.png',dpi=300)
+'''
 def input_file(num,temp=temp_interval,acc=acc_interval):
     temp += 273.15
     x = temp
@@ -76,11 +83,11 @@ def input_file(num,temp=temp_interval,acc=acc_interval):
     myodr = OD.ODR(mydata, func, beta0=[21, 0.08])
     myoutput = myodr.run()
     myoutput.pprint()
-    x2 = np.linspace(215,249,1000)
+    x2 = np.linspace(np.min(x),np.max(x),1000)
     y2 = expfunc(myoutput.beta,x2)
     
     output_temp = np.linspace(np.min(x2),np.max(x2),num)
-    output_acc = np.linspace(np.min(y2),np.max(y2),num)
+    output_acc = expfunc(myoutput.beta,output_temp)
     return output_temp, output_acc, myoutput.beta
 
 

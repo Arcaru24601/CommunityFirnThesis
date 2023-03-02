@@ -29,15 +29,15 @@ class CoD_plotter():
         self.filepath = filepath
         self.f1path = f1path
         self.KtC = KtC
-        self.rows,self.cols  = 6,1
-        self.fig,self.ax = plt.subplots(self.rows,self.cols,figsize=(15, 8), sharex=True,sharey=False)
+        self.rows,self.cols  = 3,1
+        self.fig,self.ax = plt.subplots(self.rows,self.cols, sharex=True,sharey=False,constrained_layout=True)
         #print(self.ax.shape)
         return
  
 
     def Plotter(self):
         
-        labels = ['Christo','Darcy','zero']
+        labels = ['Darcy','Christo','zero']
         
         for k in range(len(self.filepath)):
             if not os.path.exists(self.filepath[k]):
@@ -97,7 +97,7 @@ class CoD_plotter():
                 for i in range(self.rows):
                     for j in range(self.cols):
                         self.ax[i,j].grid(linestyle='--', color='gray', lw='0.5')
-                        self.ax[i,j].legend(loc='right', fontsize=8)
+                        #self.ax[i,j].legend(loc='right', fontsize=8)
             elif self.rows == 6:
                 #print(2+2)
                 self.ax[0].plot(self.model_time,self.d15N_cod * 1000,'--',label = labels[k])#,color=cmap(cmap_intervals[k]))
@@ -117,14 +117,49 @@ class CoD_plotter():
                 for i in range(self.rows):
                     #for j in range((len(self.ax[0,:]))):
                     self.ax[i].grid(linestyle='--', color='gray', lw='0.5')
-                    self.ax[i].legend(loc='right', fontsize=8)
+                    #self.ax[i].legend(loc='right', fontsize=8)
+            elif self.rows == 3:
+                #print(2+2)
+                self.ax[0].plot(self.model_time,self.climate[:,2],'b-',label='Temperature' if k==0 else '')#,color=cmap(cmap_intervals[k]))
+                #self.ax[1].plot(self.model_time,self.d15n_grav_cod * 1000,'--',label = labels[k])#,color=cmap(cmap_intervals[k]))
+                self.ax[1].plot(self.model_time,self.d15N_cod * 1000,'-',color=cmap(cmap_intervals[k]),label = labels[k])#,color=cmap(cmap_intervals[k]))
+                #ax2 = self.ax[2].twinx()
+
+                
+                self.ax[2].plot(self.model_time,self.d15n_grav_cod * 1000,':',color=cmap(cmap_intervals[k]),label = labels[k]+' grav frac.')#,color=cmap(cmap_intervals[k]))
+                self.ax[2].plot(self.model_time,self.d15N_th_cod*1000,'--',color=cmap(cmap_intervals[k]),label=labels[k] + ' therm frac')
+                #self.ax[4].plot(self.model_time,self.d40ar_grav_cod * 1000/4,'--',label = labels[k])#,color=cmap(cmap_intervals[k]))
+                #self.ax[5].plot(self.model_time,self.d40Ar_th_cod * 1000/4,'--',label = labels[k])#,color=cmap(cmap_intervals[k]))
+            
+                self.ax[0].set_ylabel('Temperature [K]',fontsize=14)
+                self.ax[1].set_ylabel(r'$\delta^{15}N_{cod}$ [‰]',fontsize=14)
+           
+                #self.ax[3].set_ylabel(r'$\delta^{40}Ar_{cod}$ [‰]')
+                #self.ax[4].set_ylabel(r'$\delta^{40}Ar_{cod,grav}$ [‰]')
+                #self.ax[5].set_ylabel(r'$\delta^{40}Ar_{cod,th}$ [‰]')
+                for i in range(self.rows):
+                    #for j in range((len(self.ax[0,:]))):
+                    self.ax[i].grid(linestyle='--', color='gray', lw='0.5')
+                    
+                    
+                    box = self.ax[i].get_position()
+                                #ax[i,j].set_position([box.x0, box.y0, box.width * 0.8, box.height])
+
+                    # Put a legend to the right of the current axis
+                    self.ax[i].legend(ncol=1,fontsize=12,loc='center left', bbox_to_anchor=(1, 0.5))
+                    #self.ax[i].legend(loc='right', fontsize=12)
+                self.ax[2].set_xlabel('Model time [years]',fontsize=14)
+                #.set_ylabel(r'$\delta^{15}N_{th}$ [‰]',fontsize=14)
+                self.ax[2].set_ylabel(r'$\delta^{15}N$ [‰]',fontsize=14)
+                self.ax[2].set_yticks(np.arange(0.0,0.55, step=0.25))
+
 rfolder = 'CFM/CFM_main/CFMoutput/DO_event/'
 
 
 def folder_gen(Model,exp,fold,FileFlag):
     X = [exp]
     X2 = [Model]
-    Y = ['Christo/', 'Darcy/']#, 'zero/']
+    Y = ['Darcy/', 'Christo/']#, 'zero/']
     Z = [fold]
     if FileFlag == True:
         X = [x[:-1] for x in X]

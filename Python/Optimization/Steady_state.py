@@ -26,7 +26,7 @@ np.random.seed(42)
 #217.97, 229.96
 Point_N = np.array([0.53,0.597,0.375,0.297])
 Point_T = np.array([215.06,217.97,235,244.99])
-#Point_A = np.array([0.0284,0.0535,0.1607,0.2621])
+Point_A = np.array([0.0284,0.0535,0.1607,0.2621])
 s = np.random.normal(Point_N[M],0.02,size=50)
 Data_d15N = s[(abs(s - s.mean())) < (3 * s.std())]
 

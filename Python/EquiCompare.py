@@ -68,17 +68,17 @@ class CoD_plotter():
         #if Exs == 'Acc/':
         #    fig, ax = plt.subplots(3, sharex=False, sharey=False)
         #else:
-        fig, ax = plt.subplots(4, sharex=False, sharey=False)
+        fig, ax = plt.subplots(3, sharex=True, sharey=False,constrained_layout=True)
         label = rate
-        fig.set_figheight(15)
-        fig.set_figwidth(8)
+        #fig.set_figheight(15)
+        #fig.set_figwidth(8)
 
         Rates = np.array([int(x[:-1]) for x in rate])
         #print(Rates)
         alpha = [1, 0.6, 0.3]
         alphas = [1,0.75,0.5,0.25]
+        ax[1].invert_yaxis()
         ax[2].invert_yaxis()
-        ax[3].invert_yaxis()
         for k in range(len(self.filepath)):
             if not os.path.exists(self.filepath[k]):
                 print('Results file does not exist', self.filepath[k][40:])
@@ -110,21 +110,22 @@ class CoD_plotter():
         
             #print(label,rate)
             #print(len(self.filepath))        
+            
             ax[0].plot(self.model_time, self.climate[:,2],color=cmap(cmap_intervals[k]))
             ax[0].grid(linestyle='--', color='gray', lw='0.5')
             ax[0].set_ylabel(r'\centering Temperature \newline\centering Forcing [K]')
             #ax[0].set_yticks(np.arange(230,260, step=10))
-            ax[0].set_xlabel(r"Model Time [y]", labelpad=-1.5, fontsize=9)
-            
+            #ax[0].set_xlabel(r"Model Time [y]", labelpad=-1.5, fontsize=9)
+            '''
             ax[1].plot(self.model_time, self.climate[:,1],color=cmap(cmap_intervals[k]))
             ax[1].grid(linestyle='--', color='gray', lw='0.5')
             ax[1].set_ylabel(r'\centering Acc. Forcing \newline\centering [$\mathrm{my}^{-1}$ ice eq.]')
             #ax[1].set_yticks(np.arange(0.05,0.6,step=0.2))
             ax[1].set_xlabel(r"Model Time [y]", labelpad=-1.5, fontsize=9)
-            
-            ax[2].plot(self.model_time, self.close_off_depth, color=cmap(cmap_intervals[k]), label=label[k])
-            ax[2].grid(linestyle='--', color='gray', lw='0.5')
-            ax[2].set_ylabel(r'\centering Close-off \newline\centering depth [m]')
+            '''
+            ax[1].plot(self.model_time, self.close_off_depth, color=cmap(cmap_intervals[k]), label=label[k])
+            ax[1].grid(linestyle='--', color='gray', lw='0.5')
+            ax[1].set_ylabel(r'\centering Close-off \newline\centering depth [m]')
             #ax[2].set_yticks(np.arange(30,120,step=30))
             
             #get_HalfTime(self.close_off_depth)
@@ -133,12 +134,17 @@ class CoD_plotter():
             #Time_Const = self.model_time[find_first_constant(self.close_off_depth[510:], tolerance=1e-6)+510]
             Time_Const = self.model_time[get_HalfTime(self.close_off_depth[slices:],mode='Endpoint')+slices]
             #print(Time_Const)
-            ax[2].axvline(x=Time_Const,color=cmap(cmap_intervals[k]),alpha=0.5,label=label[k]+'_'+str(Time_Const-1500-Rates[k]))
+            ax[1].axvline(x=Time_Const,color=cmap(cmap_intervals[k]),alpha=0.5)#,label=label[k]+'_'+str(Time_Const-1500-Rates[k]))
             #ax[2].legend(loc='lower right', fontsize=8)
-            ax[2].set_xlabel(r"Model Time [y]", labelpad=-1.5, fontsize=9)
-            ax[2].legend(loc='lower right', fontsize=8)
+            #ax[1].set_xlabel(r"Model Time [y]", labelpad=-1.5, fontsize=9)
+            #ax[1].legend(loc='lower right', fontsize=8)
             #print(self.model_time[1000:])
-            
+            box = ax[1].get_position()
+                        #ax[i,j].set_position([box.x0, box.y0, box.width * 0.8, box.height])
+
+            # Put a legend to the right of the current axis
+            ax[1].legend(ncol=1,fontsize=12,loc='center left', bbox_to_anchor=(1, 0.5))
+
 
     
             Times = np.array([0,Rates[k]+500,find_constant_row(self.temperature)])
@@ -147,16 +153,16 @@ class CoD_plotter():
             #    continue
             #else:
             Time_Const = self.model_time[get_HalfTime(self.delta_temp[slices:],mode='Endpoint')+slices]
-            ax[3].plot(self.model_time,self.delta_temp, color=cmap(cmap_intervals[k]), label=label[k])
-            ax[3].axvline(x=Time_Const,color=cmap(cmap_intervals[k]),alpha=0.5,label=label[k]+'_'+str(Time_Const-1500-Rates[k]))
-            ax[3].grid(linestyle='--', color='gray', lw='0.5')
+            ax[2].plot(self.model_time,self.delta_temp, color=cmap(cmap_intervals[k]))#, label=label[k])
+            ax[2].axvline(x=Time_Const,color=cmap(cmap_intervals[k]),alpha=0.5)#,label=label[k]+'_'+str(Time_Const-1500-Rates[k]))
+            ax[2].grid(linestyle='--', color='gray', lw='0.5')
             #ax[3].legend(loc='lower right', fontsize=8)
 
-            ax[3].set_xlabel(r"Temperature [K]", labelpad=-1.5, fontsize=9)
-            ax[3].legend(loc='lower right', fontsize=8)
+            ax[2].set_ylabel(r"\centering Temperature \newline \centering gradient [K]", labelpad=-1.5, fontsize=9)
+            #ax[2].legend(loc='lower right', fontsize=8)
+            ax[2].set_xlabel(r"Model Time [y]", labelpad=-1.5, fontsize=9)
 
-
-                
+             
                 
              
                
@@ -207,7 +213,7 @@ class CoD_plotter():
             Output[j*5+k,odd[i]] = Time_Const_CoD - 1500 - int(Rates[k][:-1])    
             Output[j*5+k,even[i]] = Time_Const_temp - 1500 - int(Rates[k][:-1])
         return Output[j*5+0:j*5+5,even[i]:odd[i]+1]
-rfolder = r'D:/CFMoutput/Equi/'
+rfolder = r'CFM/CFM_main/CFMoutput/Equi/'
 x = ['Temp','Acc','Both']
 
 
@@ -326,25 +332,30 @@ custom_lines = [Line2D([0], [0], color='k',linestyle='solid', lw=4),
 
 
 
-fig, ax = plt.subplots(nrows = 3, ncols = 2,sharex=True,figsize=(10,7),constrained_layout=True)
+fig, ax = plt.subplots(nrows = 3, ncols = 2,sharex=True,constrained_layout=True)
 for k,exp in enumerate(['Temp','Acc','Both']):
     for i, model in enumerate(['HLD','Bar','GOU']):
         Array = df[str(model)].loc[str(exp)]
-        ax[k,0].set_title(exp + 'Temperature gradient')
-        ax[k,1].set_title(exp + 'Close-off depth')
+        ax[k,0].set_title(exp + ' Temperature gradient',fontsize=14)
+        ax[k,1].set_title(exp + ' Close-off depth',fontsize=14)
         #ax[k,1].set_title('Close-off depth')
         ax[k,0].plot(Array['Temps'],color=palette[k],linestyle=linestyle[i],label=model,lw=2)
         ax[k,1].plot(Array['CoD'],color=palette2[k],linestyle=linestyle[i],label=model,lw=2)
         #ax[k,0].legend()
         #ax[k,1].legend()
         
-        fig.supylabel('Halfway-time to Equilibrium [y]')
-        fig.supxlabel('Duration of change [y]')
+        fig.supylabel('Halfway-time to Equilibrium [y]',fontsize=14)
+        fig.supxlabel('Duration of change [y]',fontsize=14)
         #ax[k,1].set_xlabel('Duration of change [y]')
         #ax[k,0].set_ylabel('Temperature at close-off [K]')
         #ax[k,1].set_ylabel('Close-off depth [m]')
 #fig.suptitle("This Main Title is Nicely Formatted", fontsize=16)
-plt.legend(custom_lines,['HLD','BAR','GOU'],loc='best',ncol=1)
+box = ax[1,1].get_position()
+            #ax[i,j].set_position([box.x0, box.y0, box.width * 0.8, box.height])
+
+# Put a legend to the right of the current axis
+ax[1,1].legend(custom_lines,['HLD','BAR','GOU'],ncol=1,fontsize=12,loc='center left', bbox_to_anchor=(1, 0.5))
+#plt.legend(custom_lines,['HLD','BAR','GOU'],loc='best',ncol=1,fontsize=12)
 
 
 plt.savefig('Equiplot/Dur.png',dpi=300)

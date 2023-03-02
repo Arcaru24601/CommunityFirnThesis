@@ -71,11 +71,16 @@ y2 = np.exp(-a * X2 + b)
 #X1 = X2 + 273.15
 #Y2 = func(X1)
 
+output_temp = np.linspace(np.min(X2),np.max(X2),10)
+output_acc = np.linspace(np.min(y2),np.max(y2),10)
+
+
 fig, ax = plt.subplots()
 ax.scatter(x, y, label='Raw data')
 #ax.plot(X_fitted_Kelvin, y_fitted, 'k', label='Fitted curve')
 #ax.plot(x_fitted,p(x_fitted),'r',label='Poly')
 ax.plot(X2+273.15,y2,'k',label = 'Func')
+ax.plot(output_temp,output_acc,'ro',label='Forward points')
 #ax.plot(X2,Y2,'r',label = 'Art')
 ax.set_title(r'Using curve\_fit() to fit an exponential function')
 ax.set_ylabel('y-Values')
