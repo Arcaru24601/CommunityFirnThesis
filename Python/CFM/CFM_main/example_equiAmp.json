@@ -7,7 +7,7 @@
   "InputFileNamemelt": "example_SMELT.csv",
   "InputFileNameStrain": "example_STRAIN.csv",
   "InputFileNameRain": "example_RAIN.csv",
-  "resultsFolder": "CFMoutput/EquiAmp2/Both/Goujon2003/3.0",
+  "resultsFolder": "CFMoutput/EquiAmp2/Both/HLdynamic/3.0",
   "initfirnFile": "example_firndata.csv",
   "initprofile": false,
   "input_type": "csv",
@@ -39,7 +39,7 @@
   "ReehCorrectedT": false,
   "FirnAir": true,
   "AirConfigName": "AirConfig.json",
-  "TWriteInt": 0.5,
+  "TWriteInt": 2,
   "TWriteStart": 0,
   "int_type": "linear",
   "int_type_options": [

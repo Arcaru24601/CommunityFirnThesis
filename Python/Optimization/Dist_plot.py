@@ -51,8 +51,8 @@ mus = np.zeros((4,8))
 mus_1 = np.zeros((4,8))
 # Loop over H5 files and load into a dataframe
 for i in range(len(Dist)):
-    s = np.random.normal(Point_N[i],0.02,size=50)
-    Data_d15N = s[(abs(s - s.mean())) < (3 * s.std())][:50]
+    s = np.random.normal(Point_N[i],0.02,size=2000)
+    Data_d15N = s[(abs(s - s.mean())) < (3 * s.std())][:250]
 
     fig, ax = plt.subplots(nrows=3,ncols=4,figsize=(10, 7), constrained_layout=True)
     for j in range(len(Models)):
