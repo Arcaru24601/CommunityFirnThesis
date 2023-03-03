@@ -8,7 +8,7 @@ Created on Fri Feb 24 13:13:30 2023
 import os
 
 os.system('python main.py')
-os.chdir('Optimization')
-os.system('python Kindler_csv.py')
-os.chdir('home/Documents/CommunityFirnThesis-main/Python/Optimization')
+#os.chdir('Optimization')
+#os.system('python Kindler_csv.py')
+os.chdir(r'/home/jesperholm/Documents/CommunityFirnThesis-main/Python/Optimization')
 os.system('python Steady_state.py')
