@@ -91,7 +91,7 @@ def Equi_run_Amp(Model,exp,folder):
             for i in range(len(folder)):
 
                 print(exp[k],Model[j],folder[i])
-                je.Terminal_run_Amp(Model[j], exp[k], folder[i])
+                #je.Terminal_run_Amp(Model[j], exp[k], folder[i])
 #Equi_run_Amp(Models,Exp,Folder_Amp)
 
 folder2 = './CFM/CFM_main/CFMinput/Equi2/Acc'
