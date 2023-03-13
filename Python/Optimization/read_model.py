@@ -30,7 +30,7 @@ def get_model_data(model_path):
     #print(T_means)
     d15N_cod_grav = (np.exp((delta_M*Grav*close_off_depth) / (R*temperature[0,1])) - 1) * 1000 
     
-    return d15N_cod_grav[-1], temperature[0,1],d15N_cod[-1]#,close_off_depth,model_time,z,climate,temperature
+    return d15N_cod_grav[-1], temperature[0,-1],d15N_cod[-1]#,close_off_depth,idx,z,d15N*1000,temperature
 
 def get_model_data2(model_path):
     f = hf.File(model_path)

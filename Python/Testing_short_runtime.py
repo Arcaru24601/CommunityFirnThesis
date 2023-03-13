@@ -8,7 +8,7 @@ Created on Wed Feb 15 13:46:35 2023
 
 #from reader import read
 import matplotlib.pyplot as plt 
-from celluloid import Camera
+#from celluloid import Camera
 plt.rcParams['font.size'] = '16'
 cmap = plt.cm.get_cmap('viridis')
 import numpy as np
@@ -17,8 +17,9 @@ sns.set()
 from pathlib import Path
 import os
 import h5py as hf
+temp = 227
+#model_path = 'CFM/CFM_main/CFMoutput/Noise/Round6/HLdynamic/' + str(temp) + 'K/HLdynamic' + str(temp) + 'K.hdf5'
 model_path = 'CFM/CFM_main/CFMoutput/OptiNoise/CFMresults.hdf5'
-
 
 def reads(path):
     
@@ -51,11 +52,11 @@ def reads(path):
 
 
 
-def plotter(i,ax,cm,temperature,forcing,d15N2,depth,density,model_time,CoD,d15N_cod_grav):
-        
-    ax[0,0].plot(forcing[:,0],forcing[:,1],'r-')
+def plotter(i,ax,cm,temperature,climate,d15N2,depth,density,model_time,CoD,d15N_cod_grav):
+    print(climate.shape)
+    ax[0,0].plot(model_time,climate[:,1],'r-')
     ax2=ax[0,0].twinx()
-    ax2.plot(forcing[:,0],forcing[:,2],'b-')
+    ax2.plot(model_time,climate[:,2],'b-')
     ax[0,0].set_xlabel(r'Model-time [yr]')
     ax[0,0].set_ylabel(r'Temperature forcing [K]')
     ax2.set_ylabel(r'Accumulation ice equivalent [m yr$^{-1}$]')
@@ -142,13 +143,12 @@ rfolder = 'CFM/CFM_main/CFMoutput//'
 # =============================================================================
 
 cmap_interval = np.linspace(0,1,7)
-
-
-
+plt.close('all')
+fig,ax = plt.subplots(nrows=2,ncols=3,constrained_layout=True)
 z,climate, model_time,close_off_depth, temperature, d15N, rho, d15N_cod_grav = reads(model_path)
 #path = Path('CFM/CFM_main/CFMoutput/' + Folder[j])
 #path.mkdir(parents=True, exist_ok=True)
-
+'''
 for i in range(len(model_time[::2])):
     rows, cols = 2,3
     fig, ax = plt.subplots(rows,cols,figsize=(15, 15), tight_layout=True)
@@ -158,5 +158,6 @@ for i in range(len(model_time[::2])):
     plt.savefig('ImageFolder/Testing/{0:03d}'.format(i)+'.png')
     plt.close(fig)
     #plt.clf()
+'''
 
-
+plotter(-1,ax,cmap_interval[0],temperature,climate,d15N,z,rho,model_time,close_off_depth,d15N_cod_grav)

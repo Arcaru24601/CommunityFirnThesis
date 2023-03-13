@@ -174,8 +174,8 @@ def Terminal_run_Noise(Model,temp,acc):
     data = json.load(file)
     data['grid_outputs'] = False
     data['resultsFileName'] = str(Model) + str(temp)  + 'K.hdf5'
-    data['resultsFolder'] = 'CFMoutput/Noise/Round5/' + str(Model) + '/' + str(temp) + 'K' 
-    data['InputFileFolder'] = 'CFMinput/Noise/Round5/' + str(temp) + 'K'
+    data['resultsFolder'] = 'CFMoutput/Noise/Round6/' + str(Model) + '/' + str(temp) + 'K' 
+    data['InputFileFolder'] = 'CFMinput/Noise/Round6/' + str(temp) + 'K'
     data['InputFileNameTemp'] = 'Temp.csv'
     data['InputFileNamebdot'] = 'Acc.csv'
     data['physRho'] = str(Model)

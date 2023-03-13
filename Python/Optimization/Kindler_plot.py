@@ -49,20 +49,20 @@ class CoD_plotter():
             #print(f.keys())
             self.d15N = f['d15N2'][:]-1
             self.d15N_cod = np.ones_like(self.close_off_depth)
-            self.temp_cod = np.ones_like(self.close_off_depth)
+            #self.temp_cod = np.ones_like(self.close_off_depth)
             for k in range(self.z.shape[0]):
                 idx = int(np.where(self.z[k, 1:] == self.close_off_depth[k])[0])
                 self.d15N_cod[k] = self.d15N[k,idx]
-                self.temp_cod[k] = self.temperature[k,idx]
+                #self.temp_cod[k] = self.temperature[k,idx]
             Grav = 9.81
             R = 8.3145
             delta_M = 1/1000  # Why is this 1/1000
             #print(T_means)
-            self.d15N_cod_grav = (np.exp((delta_M*Grav*self.close_off_depth) / (R*self.temp_cod)) - 1) * 1000 
+            self.d15N_cod_grav = (np.exp((delta_M*Grav*self.close_off_depth) / (R*self.temperature[0,-1])) - 1) * 1000 
             #¤print(self.d15N_cod_grav)
             print(j,i)
-            d15N_model[j,i] = self.d15N_cod[-1]*1000#self.d15N_cod_grav[-1]
-            d15N_firn[j,i] = self.d15N_cod[-1]
+            d15N_model[j,i] = self.d15N_cod_grav[-1]
+            d15N_firn[j,i] = self.d15N_cod[-1]*1000
             #print(self.close_off_depth.shape)
             CoD[j,i] = self.close_off_depth[-1]
                
@@ -88,9 +88,11 @@ def folder_gen(Fold,FileFlag):
     return Folder 
  
 os.chdir('../')
-folder = 'CFM/CFM_main/CFMinput/Noise/Round4/'
+folder = 'CFM/CFM_main/CFMinput/Noise/Round6/'
 
 sub_folders = [name for name in os.listdir(folder) if os.path.isdir(os.path.join(folder, name))]
+
+sub2 = [x[:-1] for x in sub_folders]
 sub_folders = [x + '/' for x in sub_folders]
 
 H = len(sub_folders)
@@ -101,7 +103,7 @@ d15N_firn = np.zeros((H,4))
 Test = np.zeros((H,4))
 TestN = np.zeros((H,4))
 CoD_T = np.zeros((H,4))
-rfolder = 'CFM/CFM_main/CFMoutput/Noise/Round4/'
+rfolder = 'CFM/CFM_main/CFMoutput/Noise/Round6/'
 
 for j in range(len(sub_folders)):
     T = folder_gen(sub_folders[j],False)
@@ -119,11 +121,13 @@ import pandas as pd
 
 Temp_str = [x[:-1] for x in sub_folders]
 df = pd.DataFrame(data = Test, 
-                  index = sub_folders, 
+                  index = sub2, 
                   columns = Mod)
 df2 = pd.DataFrame(data = TestN, 
-                  index = sub_folders, 
+                  index = sub2, 
                   columns = Mod)
+
+
 
 
 linestyle = ['o','v','D','d']
@@ -137,6 +141,11 @@ Point_A = np.array([0.2621])
 
 
 os.chdir('Optimization')
+
+df.to_csv('resultsFolder/out_model.csv')
+df2.to_csv('resultsFolder/out_diffu.csv')
+
+
 from Kindler_fit_ODR import input_file,expfunc
 Input_temp,Input_acc,Beta = input_file(num = 25)
 
@@ -145,29 +154,34 @@ Temps = Input_temp
 plt.close('all')
 fig = plt.figure(constrained_layout=True)
 ax1 = fig.add_subplot(111)
-ax2 = ax1.twiny()
+#ax2 = ax1.twiny()
 Point_N = np.array([0.53,0.597,0.375,0.297])
 Point_T = np.array([215.06,217.97,235,244.99])
 Point_A = np.array([0.0284,0.0535,0.1607,0.2621])
 
 #df['GOU'][-1] = df['BAR'][-1]-0.025
 for (index, column) in enumerate(df):
-    print(df.columns[index])
+    print(df.columns[index],column)
     d15N = np.asarray(df[column])
-    d15N_f = np.asarray(df[column])
+    d15N_f = np.asarray(df2[column])
     ax1.plot(Temps,d15N,label=str(df.columns[index]),color=cmap(cmap_intervals[index]))
     ax1.plot(Temps,d15N,linestyle[index],fillstyle='none',color=cmap(cmap_intervals[index]))
     #ax2.plot(Input_acc,d15N,label=str(df2.columns[index]),color=cmap(cmap_intervals[index]))
-    ax2.plot(Input_acc,np.ones_like(Input_acc),linestyle[index],fillstyle='none',color=cmap(cmap_intervals[index]))
+    #ax2.plot(Input_acc,np.ones_like(Input_acc),linestyle[index],fillstyle='none',color=cmap(cmap_intervals[index]))
     #ax1.plot(Point_T,Point_N,'ko',lw=3,label='Dist. point' if index == 3 else "")
     #ax1.axvline(Point_T[0],color='r',linestyle='--',label='Point 1' if index == 3 else '')
     #ax1.axvline(Point_T[3],color='r',linestyle=':',label='Point 4' if index == 3 else '')
-ax1.set_ylim(0.2,0.615)
-ax2.set_ylim(ax1.get_ylim())
+    ax1.plot(Temps,TestN[:,index],'o')
+    ax1.plot(Temps,Test[:,index],'v')
+    #ax1.plot(Temps,d15N_f,label=str(df2.columns[index]),color=cmap(cmap_intervals[index]))
+ax1.set_ylim(0.2,0.65)
+#ax2.set_ylim(ax1.get_ylim())
     #ax2 = ax1.twiny()    
     #plt.ylim((0.2,0.6))
 ax1.set_xlabel('Temperature [K]',fontsize=14)
-ax2.set_xlabel(r'Accumulation rate [m yr$^{-1}$]',fontsize=14)
+#.set_xlabel(r'Accumulation rate [m yr$^{-1}$]',fontsize=14)
+
+
 box = ax1.get_position()
             #ax[i,j].set_position([box.x0, box.y0, box.width * 0.8, box.height])
 

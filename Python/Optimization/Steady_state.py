@@ -19,7 +19,7 @@ from pathlib import Path
 
 M = 3
 
-Tem,Ac, Beta = input_file(num = 10)
+#Tem,Ac, Beta = input_file(num = 10)
 np.random.seed(42)
 
 #0.597, 0.463
@@ -39,7 +39,7 @@ def cost_func(d15N_ref,d15n_model):
 
 
 model_path = '../CFM/CFM_main/CFMoutput/OptiNoise/CFMresults.hdf5.' ### Insert name
-results_path = 'resultsFolder/minimizer.h5' #Add name
+results_path = 'resultsFolder/Version7/minimizer.h5' #Add name
 
 
 # =============================================================================
@@ -47,13 +47,13 @@ results_path = 'resultsFolder/minimizer.h5' #Add name
 # =============================================================================
 
 spin_year = 1000
-model_year = 400
+model_year = 1000
 spin_year2 = spin_year + model_year/2
 end_year = spin_year + model_year
 stpsPerYear = 0.5
 S_PER_YEAR = 60*60*24*365.25
 
-N_ref = Data_d15N.max() ##### Chosen from the 3sigma dist
+#N_ref = Data_d15N.max() ##### Chosen from the 3sigma dist
 temp_0 = Point_T[M] ##### Good guess from the original temp data
 #acc_0 = Point_A[M]
 
@@ -94,21 +94,23 @@ def func(temp,N_ref,var_dict):
     count = int(np.max(var_dict['count']))
     print('Iteration',count)
     
-    i_temp = np.full_like(Time,temp)
+    i_temp = np.full(len(Time),temp)
     input_temp = np.array([Time,i_temp])
-    i_acc = np.full(len(Time),expfunc(Beta, i_temp))
-    input_acc = np.array([Time, i_acc])
+    #i_acc = np.full(len(Time),expfunc(Beta, i_temp))
+    #input_acc = np.array([Time, i_acc])
     
     os.chdir('../CFM/CFM_main')
     
     np.savetxt('CFMinput/OptiNoise/optimize_temp.csv', input_temp, delimiter=',')
-    np.savetxt('CFMinput/OptiNoise/optimize_acc.csv', input_acc, delimiter=',')
+    #np.savetxt('CFMinput/OptiNoise/optimize_acc.csv', input_acc, delimiter=',')
     subprocess.run('python main.py FirnAir_Noise.json -n')
     
     os.chdir('../../Optimization')
     #print(model_path)
     if os.path.exists(model_path):
-        d15N_model, temperature_model,d15N_diffu = get_model_data(model_path)
+        d15N_mode, temperature_model,d15N_diffu = get_model_data(model_path)
+        d15N_model = d15N_mode
+        print(d15N_mode,d15N_diffu)
         cost_fun = cost_func(N_ref, d15N_model)
         print('Temperature', temperature_model)
         print('d15N@CoD', d15N_model)
@@ -128,7 +130,7 @@ def func(temp,N_ref,var_dict):
     count += 1
     var_dict['count'][count] = count
     print('Cost func', cost_fun)
-    print('Acc',i_acc[0])
+    #print('Acc',i_acc[0])
     
     return cost_fun
 '''
@@ -195,7 +197,7 @@ def root_find(path_to_result,N_ref):
                 'cost_func': np.zeros([N, 1])
                 }
 
-    res_c = brentq(func,a = 213,b = 260,args=(N_ref,var_dict),full_output = True,xtol=2e-10,rtol=8.88e-14)
+    res_c = brentq(func,a = 213,b = 250,args=(N_ref,var_dict),full_output = True,xtol=2e-8,rtol=8.88e-12)
     entry_0 = np.where(var_dict['count'] == 0)[0]
     var_dict['count'] = np.delete(var_dict['count'], entry_0[1:])
     var_dict['count'] = var_dict['count'][:-1]
@@ -216,11 +218,13 @@ for i in range(len(Point_N)):
     bins2 = np.histogram_bin_edges(Data_d15N, bins='auto')
     n, bins, patches = plt.hist(x=Data_d15N, bins=bins2,alpha=1-0.1*i, rwidth=0.85)
 
-
+import pandas as pd
+#df = pd.read_csv('resultsFolder/out_model.csv',sep=',')
+df = pd.read_csv('resultsFolder/out_diffu.csv',sep=',')
 
 model_path = '../CFM/CFM_main/CFMoutput/OptiNoise/CFMresults.hdf5.' ### Insert name
 #results_path = 'resultsFolder/minimizer.h5' #Add name
-folder_path1 = 'resultsFolder/Version1/'
+folder_path1 = 'resultsFolder/Version7/'
 def Data_crunch(Model,Dist):
     for i in range(len(Model)):
         os.chdir('../CFM/CFM_main')
@@ -238,6 +242,9 @@ def Data_crunch(Model,Dist):
             
             s = np.random.normal(Point_N[j],0.02,size=1000)
             d15N_dist = s[(abs(s - s.mean())) < (3 * s.std())][:1]
+            
+            
+            
             print(d15N_dist)
             for k in range(len(d15N_dist)):
                 print(Model[i],Dist[j],k)
@@ -256,14 +263,60 @@ def Data_crunch(Model,Dist):
 
 Model_n = ['HLdynamic']
 Dist_n = ['Dist_1']
-
+Input_temp,Input_acc,Beta = input_file(num=25)
 
 #T = Data_crunch(Model_n, Dist_n)
+Modela = ['HLD','HLS','BAR','GOU']
+
+def Data_crunch_Test(Model):
+    for i in range(len(Model)):
+        os.chdir('../')
+        file = open('CFM/CFM_main/FirnAir_Noise.json')
+        data = json.load(file)
+        data['physRho'] = str(Model[i])
+            
+        with open("CFM/CFM_main/FirnAir_Noise.json", 'w') as f:
+            json.dump(data, f,indent = 2)
+            
+            # Closing file
+        f.close()
+        
+        #for j in range(len(Dist)):
+            
+            #s = np.random.normal(Point_N[j],0.02,size=1000)
+            #d15N_dist = s[(abs(s - s.mean())) < (3 * s.std())][:1]
+        
+        d15N_dist = df[Modela[i]]    
+            
+        print(d15N_dist)
+        for k in range(len(d15N_dist)):
+            print(Model[i],k)
+            d15N_ref = d15N_dist[k]
+            
+            
+            
+            i_acc = np.full(len(Time),Input_acc[k])
+            input_acc = np.array([Time, i_acc])
+            
+            #D:\GitHub\CommunityFirnThesis\CommunityFirnThesis\Python\CFM\CFM_main\CFMinput\OptiNoise
+            np.savetxt(r'D:/GitHub/CommunityFirnThesis/CommunityFirnThesis/Python/CFM/CFM_main/CFMinput/OptiNoise/optimize_acc.csv', input_acc, delimiter=',')
+
+            os.chdir(r'D:/GitHub/CommunityFirnThesis/CommunityFirnThesis/Python/Optimization')
+            
+            
+            folder_path = folder_path1 + str(Model[i]) 
+            path = Path(folder_path)
+            path.mkdir(parents=True, exist_ok=True)
+            results_path = folder_path + '/' + 'Point'  + str(k) + '.h5'
+            try:
+                root_find(results_path,d15N_ref)
+                    
+            except Exception as e: print(e)
+                
+    return results_path
 
 
-
-
-
+T = Data_crunch_Test(Model_name)
 
 
 

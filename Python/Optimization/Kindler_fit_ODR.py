@@ -22,7 +22,7 @@ depth_interval, d18O_interval, ice_age_interval = get_interval_data_NoTimeGrid(d
 temp_interval, temp_err_interval = get_interval_temp(temp, temp_err, ice_age_full, start_year, end_year)
 acc_interval = get_interval_acc(acc, ice_age_full, start_year, end_year)
 
-
+'''
 plt.close('all')
 
 input_temp = np.array([ice_age_interval,temp_interval])
@@ -38,7 +38,7 @@ ax[1].set_xlabel('Ice Age/-x years ago [year]')
 fig.legend(handles, labels, loc='upper center',ncol=2)
 plt.savefig('Data.png',dpi=300)
 
-
+'''
 
 #plt.figure()
 #plt.plot(temp_interval,acc_interval,'o')
@@ -88,6 +88,7 @@ def input_file(num,temp=temp_interval,acc=acc_interval):
     
     output_temp = np.linspace(np.min(x2),np.max(x2),num)
     output_acc = expfunc(myoutput.beta,output_temp)
+    temp -= 273.15
     return output_temp, output_acc, myoutput.beta
 
 
