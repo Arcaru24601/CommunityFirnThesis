@@ -70,8 +70,8 @@ for i in range(len(Models)):
                 Temp[z] = h5fr['temp'][-1]
         except Exception as e: print(e)
     bins = 'freedman'
-    if i == 3:
-        Temp[np.where(Temp==0)] = float('NaN')
+    #if i == 3:
+    #    Temp[np.where(Temp==0)] = float('NaN')
     #hist(Data_d15N, bins=bins, ax=ax[0],histtype='stepfilled',color = palette[0],label=r'Input $\delta^{15}$N')
     #hist(Temp, bins=bins, ax=ax[1],histtype='stepfilled',color = palette[1],label='Output Temperature')
     #hist(count, bins=bins, ax=ax[2],histtype='stepfilled',color = palette[2],label='Iteration count')
