@@ -77,8 +77,8 @@ class CoD_plotter():
         #else:
         
 
-        Rates = np.array([int(x[:-1]) for x in rate])
-      
+        self.Rates = np.array([float(x[:-1]) for x in rate])
+        print(self.Rates)
             
         return
     
@@ -114,14 +114,14 @@ class CoD_plotter():
             
             
             
-            slices = 500+int(Rates[k][:-1])
+            slices = 500+int(self.Rates[k])
 
             Time_Const_CoD = self.model_time[get_HalfTime(self.close_off_depth[slices:],mode='Endpoint')+slices]
             Time_Const_temp = self.model_time[get_HalfTime(self.delta_temp[slices:],mode='Endpoint')+slices]
-            Output[j*5+k,odd[i]] = Time_Const_CoD - 1500 - int(Rates[k][:-1])    
-            Output[j*5+k,even[i]] = Time_Const_temp - 1500 - int(Rates[k][:-1])
-        return Output[j*5+0:j*5+5,even[i]:odd[i]+1]
-rfolder = r'D:/CFMoutput/Equi2/'
+            Output[j*25+k,odd[i]] = Time_Const_CoD - 1500 - int(self.Rates[k])    
+            Output[j*25+k,even[i]] = Time_Const_temp - 1500 - int(self.Rates[k])
+        return Output[j*25+0:j*25+25,even[i]:odd[i]+1]
+rfolder = 'CFM/CFM_main/CFMoutput/Equi2/'
 x = ['Temp','Acc','Both']
 
 
@@ -137,12 +137,12 @@ folder2 = './CFM/CFM_main/CFMinput/Equi2/Acc'
 Equi_Folder = [name for name in os.listdir(folder2) if os.path.isdir(os.path.join(folder2, name))]
 Equi_Folder2 = np.asarray([float(x[:-1]) for x in Equi_Folder])
 Equi_Folder2.sort()
-Rates = [str(x) + 'y' for x in Equi_Folder2]
+Rates2 = [str(x) + 'y' for x in Equi_Folder2]
 
 def folder_gen(Fold,Exp,FileFlag):
     X = [Exp]
     X2 = [Fold]
-    Y = [x + '/' for x in Rates] #### Move rate change to figure generation because of legend
+    Y = [x + '/' for x in Rates2] #### Move rate change to figure generation because of legend
     if FileFlag == True:
         X = [x[:-1] for x in X]
         X2 = [x[:-1] for x in X2]
@@ -157,15 +157,15 @@ def folder_gen(Fold,Exp,FileFlag):
         Folder = [(i+i2+j) for i in X for i2 in X2 for j in Y]
     
     return Folder
-
-Output = np.zeros((15,6))    
-Matrix = np.zeros((15,6))
+S = 75
+Output = np.zeros((75,6))    
+Matrix = np.zeros((75,6))
 even = np.arange(0,5,2)
 odd = np.arange(1,6,2)    
 Exp = ['Temp/','Acc/','Both/']
 
 
-
+Rates = [str(x) + 'y' for x in Equi_Folder2]
 
 Models = ['HLdynamic/','Barnola1991/','Goujon2003/']
 #Rates = ['50y','200y','500y','1000y','2000y']
@@ -177,8 +177,8 @@ for j in range(len(Exp)):
         print(Exp[j],Models[i])
         #print(path)
         Current_plot = CoD_plotter(j,i,filepath = path,rate = Rates,Exs = Exp[j])
-        Matrix[j*5+0:j*5+5,even[i]:odd[i]+1] = Current_plot.Equi_output()
-        Matrix[5:10,0:5:2] = 0
+        Matrix[j*25+0:j*25+25,even[i]:odd[i]+1] = Current_plot.Equi_output()
+        Matrix[25:50,0:5:2] = 0
 
 
     #            

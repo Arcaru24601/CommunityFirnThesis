@@ -106,12 +106,12 @@ EquiAmpF.sort()
 EquiAmp_Folder = [str(x) for x in EquiAmpF]
 
 
-Equi_Folder2 = np.asarray([float(x[:-1]) for x in Equi_Folder])
+Equi_Folder2 = np.asarray([int(x[:-1]) for x in Equi_Folder])
 Equi_Folder2.sort()
 Equi_Folder = [str(x) + 'y' for x in Equi_Folder2]
 
 
 Exp = ['Temp','Acc','Both']
-Models = ['HLdynamic','Barnola1991','Goujon2003']
+Models = ['Goujon2003']
 Equi_run(Models,Exp,Equi_Folder)
 Equi_run_Amp(Models,Exp,EquiAmp_Folder)

@@ -18,11 +18,11 @@ for fcnt in range(1,4,1):
         arr = np.random.random(10*10).reshape(10,10)
         h5fw.create_dataset('data',data=arr)
 
-
-cost_func = np.zeros(50)
-d15N = np.zeros(50)
-count = np.zeros(50)
-Temp = np.zeros(50)
+S = 100
+cost_func = np.zeros(S)
+d15N = np.zeros(S)
+count = np.zeros(S)
+Temp = np.zeros(S)
 np.random.seed(42)
 
 #0.597, 0.463
@@ -34,7 +34,7 @@ Point_T = np.array([215.06,217.97,235,244.99])
 plt.close('all')
 Models = ['HLdynamic','HLSigfus','Barnola1991','Goujon2003']
 Dist = ['Dist' + str(i) for i in range(4)]
-
+Dists2 = np.array([2,7,15,21])
 import seaborn as sns
 sns.set_theme()
 palette = sns.color_palette(None,3)
@@ -47,17 +47,23 @@ even = np.arange(0,7,2)
 odd = np.arange(1,8,2)  
 
 
+
+
 mus = np.zeros((4,8))
 mus_1 = np.zeros((4,8))
 # Loop over H5 files and load into a dataframe
 for i in range(len(Dist)):
+    
+    
     s = np.random.normal(Point_N[i],0.02,size=2000)
-    Data_d15N = s[(abs(s - s.mean())) < (3 * s.std())][:250]
+    Data_d15N = s[(abs(s - s.mean())) < (3 * s.std())][:S]
 
     fig, ax = plt.subplots(nrows=3,ncols=4,figsize=(10, 7), constrained_layout=True)
     for j in range(len(Models)):
-        print('resultsFolder/Version1/' + str(Models[j]) + '/' + str(Dist[i]) + '/*.h5')
-        for z,file in enumerate(glob.iglob('resultsFolder/Version1/' + str(Models[j]) + '/' + str(Dist[i]) + '/*.h5')):  
+        print('resultsFolder/Version1/' + str(Models[j]) + '/' + str(Dists2[i]) + '/*.h5')
+        #for z,file in enumerate(glob.iglob('resultsFolder/Version1/' + str(Models[j]) + '/' + str(Dist[i]) + '/*.h5')):  
+        for z in range(100):
+            file = 'resultsFolder/Test/Version5/' + str(Models[j]) + '/Dist' + str(Dists2[i]) + '/Point' + str(z) + '.h5'
             with h5py.File(file, 'r') as h5fr:
                 #print(h5fr.keys())
                 #print(2)
