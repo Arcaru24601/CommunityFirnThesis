@@ -25,7 +25,7 @@ sns.set()
 from scipy.signal import savgol_filter
 from scipy.ndimage.filters import uniform_filter1d
 cmap = plt.cm.get_cmap('plasma')
-cmap_intervals = np.linspace(0, 1, 5)
+cmap_intervals = np.linspace(0, 1, 28)
 from pathlib import Path
 import math
 
@@ -74,7 +74,107 @@ class CoD_plotter():
         #if Exs == 'Acc/':
         #    fig, ax = plt.subplots(3, sharex=False, sharey=False)
         #else:
+        fig, ax = plt.subplots(3, sharex=True, sharey=False,constrained_layout=True)
+        label = amp
+        #fig.set_figheight(15)
+        #fig.set_figwidth(8)
+
+        #Amplitude = np.array([int(x[:-1]) for x in amp])
+        #print(Rates)
+        alpha = [1, 0.6, 0.3]
+        alphas = [1,0.75,0.5,0.25]
+        ax[1].invert_yaxis()
+        ax[2].invert_yaxis()
+        for k in range(len(self.filepath)):
+            '''
+            if not os.path.exists(self.filepath[k]):
+                print('Results file does not exist', self.filepath[k][40:])
+                continue
+            '''
+            
+                
+            self.fpath = self.filepath[k]
+            try:
+                f = h5.File(self.fpath)
+            except Exception as e: print(e)
+
+            #self.fpath.mkdir(parents=True, exist_ok=True)
+            
+            self.z = f['depth'][:]
+            self.climate = f["Modelclimate"][:]
+            self.model_time = np.array(([a[0] for a in self.z[:]]))
+            self.close_off_depth = f["BCO"][:, 2]
+            
+            #### COD variables
+            self.temperature = f['temperature'][:]
+            self.temp_cod = np.ones_like(self.close_off_depth)
+
+            for i in range(self.z.shape[0]):
+                idx = int(np.where(self.z[i, 1:] == self.close_off_depth[i])[0])
+                self.temp_cod[i] = self.temperature[i,idx]
+                
+                
+                
+            self.delta_temp = self.climate[:,2] - self.temp_cod
+            #print(self.temp_cod.shape,self.climate[:,2].shape,self.delta_temp.shape)
+            if self.KtC:
+                self.climate[:,2] - 273.15
+
         
+                    
+            ax[0].plot(self.model_time, self.climate[:,2],color=cmap(cmap_intervals[k]))
+            ax[0].grid(linestyle='--', color='gray', lw='0.5')
+            ax[0].set_ylabel(r'\centering Temperature \newline\centering Forcing [K]')
+            #ax[0].set_xlabel(r"Model Time [y]", labelpad=-1.5, fontsize=9)
+            '''
+            ax[1].plot(self.model_time, self.climate[:,1],color=cmap(cmap_intervals[k]))
+            ax[1].grid(linestyle='--', color='gray', lw='0.5')
+            ax[1].set_ylabel(r'\centering Acc. Forcing \newline\centering [$\mathrm{my}^{-1}$ ice eq.]')
+            ax[1].set_xlabel(r"Model Time [y]", labelpad=-1.5, fontsize=9)
+            '''
+            ax[1].grid(linestyle='--', color='gray', lw='0.5')
+            ax[1].set_ylabel(r'\centering Close-off \newline\centering depth [m]')
+            
+            slices = int((500+300)/2)
+            #print(slices)
+            Time_Const = self.model_time[get_HalfTime(self.close_off_depth[slices:],mode='Endpoint')+slices]
+            #print(self.model_time[400:])          
+            
+            if Exp[j] == 'Temp/' or Exp[j] == 'Both/':
+                ax[1].plot(self.model_time, self.close_off_depth, color=cmap(cmap_intervals[k]), label=str(float(label[k][:-1])*10)+'K')
+                ax[1].axvline(x=Time_Const,color=cmap(cmap_intervals[k]),alpha=0.5)#,label=str(float(label[k][:-1])*10)+'K_'+str(Time_Const-1500-300))
+            elif Exp[j] == 'Acc/':
+                ax[1].plot(self.model_time, self.close_off_depth, color=cmap(cmap_intervals[k]))#, label="{:0.3f}".format(float(label[k][:-1])*0.075))
+                ax[1].axvline(x=Time_Const,color=cmap(cmap_intervals[k]),alpha=0.5)#,label="{:0.3f}".format(float(label[k][:-1])*0.075)+'_'+str(Time_Const-1500-300))
+            
+            ax[2].set_xlabel(r"Model Time [y]", labelpad=-1.5, fontsize=9)
+            #ax[1].legend(loc='lower right', fontsize=8)
+            
+
+    
+            Time_Const = self.model_time[get_HalfTime(self.delta_temp[slices:],mode='Endpoint')+slices]
+            if Exp[j] == 'Temp/' or Exp[j] == 'Both/':
+                ax[2].plot(self.model_time,self.delta_temp, color=cmap(cmap_intervals[k]))#, label=str(float(label[k][:-1])*10)+'K')    
+                ax[2].axvline(x=Time_Const,color=cmap(cmap_intervals[k]),alpha=0.5)#,label=str(float(label[k][:-1])*10)+'K_'+str(Time_Const-1500-300))
+            elif Exp[j] == 'Acc/':
+                ax[2].plot(self.model_time,self.delta_temp, color=cmap(cmap_intervals[k]), label="{:0.3f}".format(float(label[k][:-1])*0.075))    
+                ax[2].axvline(x=Time_Const,color=cmap(cmap_intervals[k]),alpha=0.5)#,label="{:0.3f}".format(float(label[k][:-1])*0.075)+'_'+str(Time_Const-1500-300))
+            ax[2].grid(linestyle='--', color='gray', lw='0.5')
+
+            ax[2].set_ylabel(r"\centering Temperature \newline \centering gradient [K]", labelpad=-1.5, fontsize=9)
+            #box = ax[1].get_position()
+                        #ax[i,j].set_position([box.x0, box.y0, box.width * 0.8, box.height])
+
+            # Put a legend to the right of the current axis
+            #ax[1].legend(ncol=1,fontsize=12,loc='center left', bbox_to_anchor=(1, 0.5))
+
+
+                
+                
+             
+               
+
+        f.close()
 
             
         return
@@ -86,9 +186,13 @@ class CoD_plotter():
         for k in range(len(self.filepath)):
             
             self.fpath = self.filepath[k]
-            f = h5.File(self.fpath)
-            #self.fpath.mkdir(parents=True, exist_ok=True)
             
+            try:
+                f = h5.File(self.fpath)
+            except Exception as e: print(e)
+
+            #self.fpath.mkdir(parents=True, exist_ok=True)
+            #print(self.fpath)
             self.z = f['depth'][:]
             self.climate = f["Modelclimate"][:]
             self.model_time = np.array(([a[0] for a in self.z[:]]))
@@ -106,19 +210,19 @@ class CoD_plotter():
                 
             self.delta_temp = self.climate[:,2] - self.temp_cod
             
+            f.close()
             
             
             
             
-            
-            slices = 500+300
+            slices = int((500+300)/2)
 
             Time_Const_CoD = self.model_time[get_HalfTime(self.close_off_depth[slices:],mode='Endpoint')+slices]
             Time_Const_temp = self.model_time[get_HalfTime(self.delta_temp[slices:],mode='Endpoint')+slices]
-            Output[j*5+k,odd[i]] = Time_Const_CoD - 1500 - 300    
-            Output[j*5+k,even[i]] = Time_Const_temp - 1500 - 300
-        return Output[j*5+0:j*5+5,even[i]:odd[i]+1]
-rfolder = r'D:/CFMoutput/EquiAmp2/'
+            Output[j*Num_int+k,odd[i]] = Time_Const_CoD - 1500 - 300    
+            Output[j*Num_int+k,even[i]] = Time_Const_temp - 1500 - 300
+        return Output[j*Num_int+0:j*Num_int+Num_int,even[i]:odd[i]+1]
+rfolder = 'CFM/CFM_main/CFMoutput/EquiAmp2/'
 x = ['Temp','Acc','Both']
 
 folder2 = './CFM/CFM_main/CFMinput/EquiAmp2/Acc'
@@ -146,9 +250,12 @@ def folder_gen(Fold,Exp,FileFlag):
         Folder = [(i+i2+j) for i in X for i2 in X2 for j in Y]
     
     return Folder
+Num_int = len(y)
+S = Num_int*3
 
-Output = np.zeros((15,6))    
-Matrix = np.zeros((15,6))
+
+Output = np.zeros((S,6))    
+Matrix = np.zeros((S,6))
 even = np.arange(0,5,2)
 odd = np.arange(1,6,2)    
 Exp = ['Temp/','Acc/','Both/']
@@ -162,8 +269,14 @@ for j in range(len(Exp)):
         print(Exp[j],Models[i])
         #print(path)
         Current_plot = CoD_plotter(j,i,filepath = path,amp = Multiplier,Exs = Exp[j])
-        Matrix[j*5+0:j*5+5,even[i]:odd[i]+1] = Current_plot.Equi_output()
-        Matrix[5:10,0:5:2] = 0
+        plt.savefig('CoDEquiAmp2/'+ str(Exp[j][:-1]) + str(Models[i][:-1]) +'.png',dpi=300)
+        plt.close('all')
+        try:
+            Matrix[j*Num_int+0:j*Num_int+Num_int,even[i]:odd[i]+1] = Current_plot.Equi_output()
+            #print(Matrix)
+        except Exception as e: print(e)
+
+        #Matrix[25:50,0:5:2] = 0
         
 
     #            
@@ -214,15 +327,17 @@ df.style.format(decimal='.', thousands=',', precision=1)
 
 
 
-
+x = np.arange(0.3,3.1,0.1).round(2)
 fig, ax = plt.subplots(nrows = 3, ncols = 2)
 for k,exp in enumerate(['Temp','Acc','Both']):
     for i, model in enumerate(['HLD','Bar','GOU']):
         Array = df[str(model)].loc[str(exp)]
-        
+        Temps = np.asarray(Array['Temps'])
+        CoD = np.asarray(Array['CoD'])
 
-        ax[k,0].plot(Array['Temps'])
-        ax[k,1].plot(Array['CoD'])
+
+        ax[k,0].plot(x,Temps)
+        ax[k,1].plot(x,CoD)
         fig.supxlabel('Magnitude of change')
         
 # =============================================================================

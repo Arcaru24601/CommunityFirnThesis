@@ -26,7 +26,7 @@ sns.set()
 from scipy.signal import savgol_filter
 from scipy.ndimage.filters import uniform_filter1d
 cmap = plt.cm.get_cmap('viridis')
-cmap_intervals = np.linspace(0, 1, 5)
+cmap_intervals = np.linspace(0, 1, 28)
 from pathlib import Path
 import math
 
@@ -77,9 +77,119 @@ class CoD_plotter():
         #else:
         
 
-        Rates = np.array([int(x[:-1]) for x in rate])
-      
+        self.Rates = np.array([float(x[:-1]) for x in rate])
+        print(self.Rates)
+        
+        
+        fig, ax = plt.subplots(3, sharex=True, sharey=False,constrained_layout=True)
+        label = rate
+        #fig.set_figheight(15)
+        #fig.set_figwidth(8)
+
+        #Rates = np.array([int(x[:-1]) for x in rate])
+        #print(Rates)
+        alpha = [1, 0.6, 0.3]
+        alphas = [1,0.75,0.5,0.25]
+        ax[1].invert_yaxis()
+        ax[2].invert_yaxis()
+        for k in range(len(self.filepath)):
+
+            self.fpath = self.filepath[k]
+            try:
+                f = h5.File(self.fpath)
+            except Exception as e: print(e)
+
+            #f = h5.File(self.fpath)
+            #self.fpath.mkdir(parents=True, exist_ok=True)
             
+            self.z = f['depth'][:]
+            self.climate = f["Modelclimate"][:]
+            self.model_time = np.array(([a[0] for a in self.z[:]]))
+            self.close_off_depth = f["BCO"][:, 2]
+            
+            #### COD variables
+            self.temperature = f['temperature'][:]
+            self.temp_cod = np.ones_like(self.close_off_depth)
+
+            for i in range(self.z.shape[0]):
+                idx = int(np.where(self.z[i, 1:] == self.close_off_depth[i])[0])
+                self.temp_cod[i] = self.temperature[i,idx]
+                
+                
+                
+            self.delta_temp = self.climate[:,2] - self.temp_cod
+            #print(self.temp_cod.shape,self.climate[:,2].shape,self.delta_temp.shape)
+            if self.KtC:
+                self.climate[:,2] - 273.15
+
+        
+            #print(label,rate)
+            #print(len(self.filepath))        
+            
+            ax[0].plot(self.model_time, self.climate[:,2],color=cmap(cmap_intervals[k]))
+            ax[0].grid(linestyle='--', color='gray', lw='0.5')
+            ax[0].set_ylabel(r'\centering Temperature \newline\centering Forcing [K]')
+            #ax[0].set_yticks(np.arange(230,260, step=10))
+            #ax[0].set_xlabel(r"Model Time [y]", labelpad=-1.5, fontsize=9)
+            '''
+            ax[1].plot(self.model_time, self.climate[:,1],color=cmap(cmap_intervals[k]))
+            ax[1].grid(linestyle='--', color='gray', lw='0.5')
+            ax[1].set_ylabel(r'\centering Acc. Forcing \newline\centering [$\mathrm{my}^{-1}$ ice eq.]')
+            #ax[1].set_yticks(np.arange(0.05,0.6,step=0.2))
+            ax[1].set_xlabel(r"Model Time [y]", labelpad=-1.5, fontsize=9)
+            '''
+            ax[1].plot(self.model_time, self.close_off_depth, color=cmap(cmap_intervals[k]), label=label[k])
+            ax[1].grid(linestyle='--', color='gray', lw='0.5')
+            ax[1].set_ylabel(r'\centering Close-off \newline\centering depth [m]')
+            #ax[2].set_yticks(np.arange(30,120,step=30))
+            
+            #get_HalfTime(self.close_off_depth)
+            #print()
+            slices = int((500+float(Rates[k][:-1]))/2)
+            #Time_Const = self.model_time[find_first_constant(self.close_off_depth[510:], tolerance=1e-6)+510]
+            Time_Const = self.model_time[get_HalfTime(self.close_off_depth[slices:],mode='Endpoint')+slices]
+            #print(Time_Const)
+            ax[1].axvline(x=Time_Const,color=cmap(cmap_intervals[k]),alpha=0.5)#,label=label[k]+'_'+str(Time_Const-1500-Rates[k]))
+            #ax[2].legend(loc='lower right', fontsize=8)
+            #ax[1].set_xlabel(r"Model Time [y]", labelpad=-1.5, fontsize=9)
+            #ax[1].legend(loc='lower right', fontsize=8)
+            #print(self.model_time[1000:])
+            #box = ax[1].get_position()
+                        #ax[i,j].set_position([box.x0, box.y0, box.width * 0.8, box.height])
+
+            # Put a legend to the right of the current axis
+            #ax[1].legend(ncol=1,fontsize=12,loc='center left', bbox_to_anchor=(1, 0.5))
+
+
+    
+            #Times = np.array([0,Rates[k]+500,find_constant_row(self.temperature)])
+            #print(Times)
+            #if Exs == 'Acc/':
+            #    continue
+            #else:
+            Time_Const = self.model_time[get_HalfTime(self.delta_temp[slices:],mode='Endpoint')+slices]
+            ax[2].plot(self.model_time,self.delta_temp, color=cmap(cmap_intervals[k]))#, label=label[k])
+            ax[2].axvline(x=Time_Const,color=cmap(cmap_intervals[k]),alpha=0.5)#,label=label[k]+'_'+str(Time_Const-1500-Rates[k]))
+            ax[2].grid(linestyle='--', color='gray', lw='0.5')
+            #ax[3].legend(loc='lower right', fontsize=8)
+
+            ax[2].set_ylabel(r"\centering Temperature \newline \centering gradient [K]", labelpad=-1.5, fontsize=9)
+            #ax[2].legend(loc='lower right', fontsize=8)
+            ax[2].set_xlabel(r"Model Time [y]", labelpad=-1.5, fontsize=9)
+
+             
+                
+             
+               
+            #plt.xlabel(r"Model Time [y]", labelpad=-1.5, fontsize=9)
+
+        f.close()
+            
+        
+            
+        
+        
+        
         return
     
     def Equi_output(self):
@@ -89,7 +199,9 @@ class CoD_plotter():
         for k in range(len(self.filepath)):
             
             self.fpath = self.filepath[k]
-            f = h5.File(self.fpath)
+            try:
+                f = h5.File(self.fpath)
+            except Exception as e: print(e)
             #self.fpath.mkdir(parents=True, exist_ok=True)
             
             self.z = f['depth'][:]
@@ -112,16 +224,16 @@ class CoD_plotter():
             
             
             
-            
-            
-            slices = 500+int(Rates[k][:-1])
+            #print(self.Rates,Rates)
+            #print(self.Rates[k][:-1])
+            slices = int(500+float(self.Rates[k])/2)
 
             Time_Const_CoD = self.model_time[get_HalfTime(self.close_off_depth[slices:],mode='Endpoint')+slices]
             Time_Const_temp = self.model_time[get_HalfTime(self.delta_temp[slices:],mode='Endpoint')+slices]
-            Output[j*5+k,odd[i]] = Time_Const_CoD - 1500 - int(Rates[k][:-1])    
-            Output[j*5+k,even[i]] = Time_Const_temp - 1500 - int(Rates[k][:-1])
-        return Output[j*5+0:j*5+5,even[i]:odd[i]+1]
-rfolder = r'D:/CFMoutput/Equi2/'
+            Output[j*28+k,odd[i]] = Time_Const_CoD - 1500 - int(self.Rates[k])    
+            Output[j*28+k,even[i]] = Time_Const_temp - 1500 - int(self.Rates[k])
+        return Output[j*28+0:j*28+28,even[i]:odd[i]+1]
+rfolder = 'CFM/CFM_main/CFMoutput/Equi2/'
 x = ['Temp','Acc','Both']
 
 
@@ -137,35 +249,36 @@ folder2 = './CFM/CFM_main/CFMinput/Equi2/Acc'
 Equi_Folder = [name for name in os.listdir(folder2) if os.path.isdir(os.path.join(folder2, name))]
 Equi_Folder2 = np.asarray([float(x[:-1]) for x in Equi_Folder])
 Equi_Folder2.sort()
-Rates = [str(x) + 'y' for x in Equi_Folder2]
+Rates2 = [str(x) + 'y' for x in Equi_Folder2]
 
 def folder_gen(Fold,Exp,FileFlag):
     X = [Exp]
     X2 = [Fold]
-    Y = [x + '/' for x in Rates] #### Move rate change to figure generation because of legend
+    Y = [x + '/' for x in Rates2] #### Move rate change to figure generation because of legend
     if FileFlag == True:
         X = [x[:-1] for x in X]
         X2 = [x[:-1] for x in X2]
-        Y = [x[:-1] for x in Y]
-
+        Y = [x[:-4] + 'y' for x in Y]
+        print(Y)
         #X2 = [s + '_' for s in X2]
         X = [s + '_' for s in X]
         Folder = [(i+i2+j) for i in X for i2 in X2 for j in Y]
     else:
         #X2 = [x[:-1] for x in X2]
-        
+        Y = [x[:-4] + 'y/' for x in Y]
+        print(Y)
         Folder = [(i+i2+j) for i in X for i2 in X2 for j in Y]
     
     return Folder
-
-Output = np.zeros((15,6))    
-Matrix = np.zeros((15,6))
+S = 28*3
+Output = np.zeros((S,6))    
+Matrix = np.zeros((S,6))
 even = np.arange(0,5,2)
 odd = np.arange(1,6,2)    
 Exp = ['Temp/','Acc/','Both/']
 
 
-
+Rates = [str(x) + 'y' for x in Equi_Folder2]
 
 Models = ['HLdynamic/','Barnola1991/','Goujon2003/']
 #Rates = ['50y','200y','500y','1000y','2000y']
@@ -177,8 +290,8 @@ for j in range(len(Exp)):
         print(Exp[j],Models[i])
         #print(path)
         Current_plot = CoD_plotter(j,i,filepath = path,rate = Rates,Exs = Exp[j])
-        Matrix[j*5+0:j*5+5,even[i]:odd[i]+1] = Current_plot.Equi_output()
-        Matrix[5:10,0:5:2] = 0
+        Matrix[j*28+0:j*28+28,even[i]:odd[i]+1] = Current_plot.Equi_output()
+        Matrix[28:28*2,0:5:2] = 0
 
 
     #            

@@ -91,7 +91,7 @@ def Equi_run_Amp(Model,exp,folder):
             for i in range(len(folder)):
 
                 print(exp[k],Model[j],folder[i])
-                #je.Terminal_run_Amp(Model[j], exp[k], folder[i])
+                je.Terminal_run_Amp(Model[j], exp[k], folder[i])
 #Equi_run_Amp(Models,Exp,Folder_Amp)
 
 folder2 = './CFM/CFM_main/CFMinput/Equi2/Acc'
@@ -106,14 +106,12 @@ EquiAmpF.sort()
 EquiAmp_Folder = [str(x) for x in EquiAmpF]
 
 
-Equi_Folder2 = np.asarray([float(x[:-1]) for x in Equi_Folder])
+Equi_Folder2 = np.asarray([int(x[:-1]) for x in Equi_Folder])
 Equi_Folder2.sort()
 Equi_Folder = [str(x) + 'y' for x in Equi_Folder2]
 
-Exp = ['Both']
-Models = ['Barnola1991','Goujon2003']
-print(2+2)
+
 Exp = ['Temp','Acc','Both']
-Models = ['HLdynamic','Barnola1991','Goujon2003']
+Models = ['Goujon2003']
 Equi_run(Models,Exp,Equi_Folder)
 Equi_run_Amp(Models,Exp,EquiAmp_Folder)

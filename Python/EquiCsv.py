@@ -71,7 +71,7 @@ def csv_gen_amp(mode, multp):
         
     Temp_csv = np.array([Time,Temp])
     Bdot_csv = np.array([Time,Bdot])
-    print(str(multp))
+    #"print(str(multp))
     np.savetxt('CFM/CFM_main/CFMinput/EquiAmp2/'+str(mode)+'/' + str(multp) + '/Acc.csv',Bdot_csv,delimiter=',')
     np.savetxt('CFM/CFM_main/CFMinput/EquiAmp2/'+str(mode)+'/' + str(multp) + '/Temp.csv',Temp_csv,delimiter=',')
 
@@ -90,8 +90,11 @@ for j in range(len(Modes)):
         csv_gen_amp(Modes[j],Multiplier[i]) 
 '''
    
-Multiplier2 = np.linspace(start=0.3, stop=3, num=25)
-Rates2 = np.linspace(start=10, stop=2000, num=25)        
+Multiplier2 = np.arange(0.3,3.1,0.1).round(2)
+Rates1 = np.array([10,20,30,40,50,70,90])
+Rates3 = np.linspace(100,2000,21,dtype=int)
+Rates2 = np.concatenate((Rates1,Rates3))
+
 for j in range(len(Modes)):
     for i in range(len(Rates2)):
         path = Path('CFM/CFM_main/CFMinput/Equi2/' + str(Modes[j]) + '/'+ str(Rates2[i])+ 'y')
@@ -101,6 +104,6 @@ for j in range(len(Modes)):
         path.mkdir(parents=True, exist_ok=True)
         csv_gen_amp(Modes[j],Multiplier2[i])         
         
-        
+  
         
         
