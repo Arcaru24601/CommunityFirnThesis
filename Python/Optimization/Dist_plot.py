@@ -6,7 +6,7 @@ Created on Tue Feb 21 15:25:28 2023
 """
 
 from matplotlib import pyplot as plt
-
+from Kindler_fit_ODR import input_file, expfunc
 import numpy as np
 import pandas as pd
 import glob
@@ -45,25 +45,32 @@ a.encode('utf-8')
 
 even = np.arange(0,7,2)
 odd = np.arange(1,8,2)  
+Input_temp,Input_acc,Beta = input_file(num=25)
 
-
+dfc = pd.read_csv('resultsFolder/out_model.csv',sep=',')
+Modela = ['HLD','HLS','BAR','GOU']
 
 
 mus = np.zeros((4,8))
 mus_1 = np.zeros((4,8))
 # Loop over H5 files and load into a dataframe
 for i in range(len(Dist)):
+    j2 = Dists2[i]
     
-    
-    s = np.random.normal(Point_N[i],0.02,size=2000)
-    Data_d15N = s[(abs(s - s.mean())) < (3 * s.std())][:S]
 
     fig, ax = plt.subplots(nrows=3,ncols=4,figsize=(10, 7), constrained_layout=True)
     for j in range(len(Models)):
-        print('resultsFolder/Version1/' + str(Models[j]) + '/' + str(Dists2[i]) + '/*.h5')
+        j1 = Dists2[j]
+        Csv_point = dfc[str(Modela[j])]
+        s = np.random.normal(Csv_point[j1],0.02,size=2000)
+        Data_d15N = s[(abs(s - s.mean())) < (3 * s.std())][:S]
+
+        print(j2)
         #for z,file in enumerate(glob.iglob('resultsFolder/Version1/' + str(Models[j]) + '/' + str(Dist[i]) + '/*.h5')):  
         for z in range(100):
             file = 'resultsFolder/Test/Version5/' + str(Models[j]) + '/Dist' + str(Dists2[i]) + '/Point' + str(z) + '.h5'
+            #print(file)
+            
             with h5py.File(file, 'r') as h5fr:
                 #print(h5fr.keys())
                 #print(2)
@@ -71,7 +78,7 @@ for i in range(len(Dist)):
                 d15N[z] = h5fr['d15N@CoD'][-1]
                 count[z] = h5fr['count'][-1]
                 Temp[z] = h5fr['temp'][-1]
-       
+                #print(np.mean(Temp))
        
        
         #table = pd.DataFrame(xdata).reset_index()
@@ -84,13 +91,13 @@ for i in range(len(Dist)):
         
         mu = np.mean(Temp)
         std = np.std(Temp,ddof=1)
-        ax[1,j].axvline(mu,color='k',linestyle="--",label='Mean' if j ==3 else '')
+        ax[1,j].axvline(mu,color='g',linestyle="--",label='Mean' if j ==3 else '')
         ax[1,j].hlines(y=1,xmin=mu-std,xmax=mu+std,color='y',linestyle="-",label=r'1$\sigma$ deviation' if j ==3 else '')
-        ax[1,j].axvline(Point_T[i],color='g',linestyle="--",label='Expected Temperature' if j ==3 else '')
+        ax[1,j].axvline(Input_temp[j2],color='k',linestyle="--",label='Expected Temperature' if j ==3 else '')
         
         mus[i,even[j]] = '{0:.2f}'.format(mu) 
         mus[i,odd[j]] = '{0:.1f}'.format(std)
-        print(mu)
+        print(mu,Input_temp[j2])
         mua = np.mean(Data_d15N)
         stda = np.std(Data_d15N,ddof=1)
         ax[0,j].axvline(mua,color='k',linestyle="--",label='Mean' if j ==3 else '')
@@ -132,7 +139,7 @@ for i in range(len(Dist)):
                 #ax[1,3].legend(loc='upper right')
                 #ax[2,3].legend(loc='upper right')
     #fig.legend(ncol=3,loc='lower center')
-    plt.savefig('Plots/Dist'+str(i)+'.png',dpi=300)
+    plt.savefig('Plots5/Dist'+str(j2)+'.png',dpi=300)
         
 
 
