@@ -28,7 +28,7 @@ cmap = plt.cm.get_cmap('plasma')
 cmap_intervals = np.linspace(0, 1, 28)
 from pathlib import Path
 import math
-
+import pandas as pd 
 plt.rc('text', usetex=True)
 plt.rc('font', family='serif')
 
@@ -109,9 +109,9 @@ class CoD_plotter():
             self.temperature = f['temperature'][:]
             self.temp_cod = np.ones_like(self.close_off_depth)
 
-            for i in range(self.z.shape[0]):
-                idx = int(np.where(self.z[i, 1:] == self.close_off_depth[i])[0])
-                self.temp_cod[i] = self.temperature[i,idx]
+            for g in range(self.z.shape[0]):
+                idx = int(np.where(self.z[g, 1:] == self.close_off_depth[g])[0])
+                self.temp_cod[g] = self.temperature[g,idx]
                 
                 
                 
@@ -135,11 +135,11 @@ class CoD_plotter():
             ax[1].grid(linestyle='--', color='gray', lw='0.5')
             ax[1].set_ylabel(r'\centering Close-off \newline\centering depth [m]')
             
-            slices = int((500+300)/2)
+            slices = int((500+300))
             #print(slices)
             Time_Const = self.model_time[get_HalfTime(self.close_off_depth[slices:],mode='Endpoint')+slices]
             #print(self.model_time[400:])          
-            
+            print(Time_Const)
             if Exp[j] == 'Temp/' or Exp[j] == 'Both/':
                 ax[1].plot(self.model_time, self.close_off_depth, color=cmap(cmap_intervals[k]), label=str(float(label[k][:-1])*10)+'K')
                 ax[1].axvline(x=Time_Const,color=cmap(cmap_intervals[k]),alpha=0.5)#,label=str(float(label[k][:-1])*10)+'K_'+str(Time_Const-1500-300))
@@ -153,6 +153,7 @@ class CoD_plotter():
 
     
             Time_Const = self.model_time[get_HalfTime(self.delta_temp[slices:],mode='Endpoint')+slices]
+            print(Time_Const)
             if Exp[j] == 'Temp/' or Exp[j] == 'Both/':
                 ax[2].plot(self.model_time,self.delta_temp, color=cmap(cmap_intervals[k]))#, label=str(float(label[k][:-1])*10)+'K')    
                 ax[2].axvline(x=Time_Const,color=cmap(cmap_intervals[k]),alpha=0.5)#,label=str(float(label[k][:-1])*10)+'K_'+str(Time_Const-1500-300))
@@ -167,9 +168,18 @@ class CoD_plotter():
 
             # Put a legend to the right of the current axis
             #ax[1].legend(ncol=1,fontsize=12,loc='center left', bbox_to_anchor=(1, 0.5))
+            
+            x = np.arange(0.3,3.1,0.1).round(2)
 
-
-                
+            #print(j,i)
+            Expa = ['Temp/','Acc/','Both/']
+            Modelas = ['HLdynamic/','Barnola1991/','Goujon2003/']
+            
+            path = Path('TestAmp/'+ Expa[j] + Modelas[i])
+            path.mkdir(parents=True, exist_ok=True)
+            
+            df = pd.DataFrame({'Model_time':self.model_time, 'temp':self.climate[:,2],'Acc':self.climate[:,1], 'delta_temp':self.delta_temp, 'CoD':self.close_off_depth})
+            df.to_csv('TestAmp/'+ Expa[j] + Modelas[i] + str(x[k]) + '.csv')                
                 
              
                
@@ -215,8 +225,10 @@ class CoD_plotter():
             
             
             
-            slices = int((500+300)/2)
-
+            
+            
+            slices = int((500+300))
+            #print(self.model_time[800])
             Time_Const_CoD = self.model_time[get_HalfTime(self.close_off_depth[slices:],mode='Endpoint')+slices]
             Time_Const_temp = self.model_time[get_HalfTime(self.delta_temp[slices:],mode='Endpoint')+slices]
             Output[j*Num_int+k,odd[i]] = Time_Const_CoD - 1500 - 300    

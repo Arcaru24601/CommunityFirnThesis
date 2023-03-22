@@ -29,6 +29,9 @@ cmap = plt.cm.get_cmap('viridis')
 cmap_intervals = np.linspace(0, 1, 28)
 from pathlib import Path
 import math
+import pandas as pd
+
+
 
 plt.rc('text', usetex=True)
 plt.rc('font', family='serif')
@@ -111,9 +114,9 @@ class CoD_plotter():
             self.temperature = f['temperature'][:]
             self.temp_cod = np.ones_like(self.close_off_depth)
 
-            for i in range(self.z.shape[0]):
-                idx = int(np.where(self.z[i, 1:] == self.close_off_depth[i])[0])
-                self.temp_cod[i] = self.temperature[i,idx]
+            for g in range(self.z.shape[0]):
+                idx = int(np.where(self.z[g, 1:] == self.close_off_depth[g])[0])
+                self.temp_cod[g] = self.temperature[g,idx]
                 
                 
                 
@@ -122,7 +125,11 @@ class CoD_plotter():
             if self.KtC:
                 self.climate[:,2] - 273.15
 
-        
+            
+            
+            
+            
+            
             #print(label,rate)
             #print(len(self.filepath))        
             
@@ -145,7 +152,9 @@ class CoD_plotter():
             
             #get_HalfTime(self.close_off_depth)
             #print()
-            slices = int((500+float(Rates[k][:-1]))/2)
+            slices = int((500+float(Rates[k][:-1])))
+            #print(self.model_time[slices:])
+
             #Time_Const = self.model_time[find_first_constant(self.close_off_depth[510:], tolerance=1e-6)+510]
             Time_Const = self.model_time[get_HalfTime(self.close_off_depth[slices:],mode='Endpoint')+slices]
             #print(Time_Const)
@@ -177,16 +186,29 @@ class CoD_plotter():
             #ax[2].legend(loc='lower right', fontsize=8)
             ax[2].set_xlabel(r"Model Time [y]", labelpad=-1.5, fontsize=9)
 
-             
-                
-             
+            
+            
+            
+            
+            
+            #print(j,i)
+            Expa = ['Temp/','Acc/','Both/']
+            Modelas = ['HLdynamic/','Barnola1991/','Goujon2003/']
+            
+            path = Path('Test/'+ Expa[j] + Modelas[i])
+            path.mkdir(parents=True, exist_ok=True)
+            
+            df = pd.DataFrame({'Model_time':self.model_time, 'temp':self.climate[:,2],'Acc':self.climate[:,1], 'delta_temp':self.delta_temp, 'CoD':self.close_off_depth})
+            df.to_csv('Test/'+ Expa[j] + Modelas[i] + Rates[k] + '.csv')  
+            
                
             #plt.xlabel(r"Model Time [y]", labelpad=-1.5, fontsize=9)
 
         f.close()
-            
+        #delta_temp, model_time, climate, close_off_depth
+
         
-            
+           
         
         
         
@@ -226,8 +248,7 @@ class CoD_plotter():
             
             #print(self.Rates,Rates)
             #print(self.Rates[k][:-1])
-            slices = int(500+float(self.Rates[k])/2)
-
+            slices = int(500+float(self.Rates[k]))
             Time_Const_CoD = self.model_time[get_HalfTime(self.close_off_depth[slices:],mode='Endpoint')+slices]
             Time_Const_temp = self.model_time[get_HalfTime(self.delta_temp[slices:],mode='Endpoint')+slices]
             Output[j*28+k,odd[i]] = Time_Const_CoD - 1500 - int(self.Rates[k])    
@@ -289,7 +310,9 @@ for j in range(len(Exp)):
         path = [rfolder + m+n + '.hdf5' for m,n in zip(T,P)]
         print(Exp[j],Models[i])
         #print(path)
-        Current_plot = CoD_plotter(j,i,filepath = path,rate = Rates,Exs = Exp[j])
+        Current_plot = CoD_plotter(j,i,filepath = path,rate = Rates,Exs = Exp)
+        plt.savefig('CoDEqui2/'+ str(Exp[j][:-1]) + str(Models[i][:-1]) +'.png',dpi=300)
+        plt.close('all')
         Matrix[j*28+0:j*28+28,even[i]:odd[i]+1] = Current_plot.Equi_output()
         Matrix[28:28*2,0:5:2] = 0
 
@@ -338,17 +361,22 @@ df.style.format(decimal='.', thousands=',', precision=1)
 #df = df.astype(str)
 
 
+Rates1 = np.array([10,20,30,40,50,70,90])
+Rates3 = np.linspace(100,2000,21,dtype=int)
+Rates2 = np.concatenate((Rates1,Rates3))
 
-
-
+x = Rates2
 
 fig, ax = plt.subplots(nrows = 3, ncols = 2,sharex=True)
 for k,exp in enumerate(['Temp','Acc','Both']):
     for i, model in enumerate(['HLD','Bar','GOU']):
         Array = df[str(model)].loc[str(exp)]
-        ax[k,0].plot(Array['Temps'])
-        ax[k,1].plot(Array['CoD'])
-        
+        Temps = np.asarray(Array['Temps'])
+        CoD = np.asarray(Array['CoD'])
+
+
+        ax[k,0].plot(x,Temps)
+        ax[k,1].plot(x,CoD)
         
         
         fig.supxlabel('Duration of change [y]')

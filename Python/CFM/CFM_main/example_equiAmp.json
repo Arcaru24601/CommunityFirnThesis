@@ -1,5 +1,5 @@
 {
-  "InputFileFolder": "CFMinput/EquiAmp/Both/3.0",
+  "InputFileFolder": "CFMinput/EquiAmp2/Both/3.0",
   "InputFileNameTemp": "Temp.csv",
   "InputFileNamebdot": "Acc.csv",
   "InputFileNameIso": "example_ISOTOPE.csv",
@@ -7,7 +7,7 @@
   "InputFileNamemelt": "example_SMELT.csv",
   "InputFileNameStrain": "example_STRAIN.csv",
   "InputFileNameRain": "example_RAIN.csv",
-  "resultsFolder": "CFMoutput/EquiAmp/Both/Goujon2003/3.0",
+  "resultsFolder": "CFMoutput/EquiAmp2/Both/Goujon2003/3.0",
   "initfirnFile": "example_firndata.csv",
   "initprofile": false,
   "input_type": "csv",
