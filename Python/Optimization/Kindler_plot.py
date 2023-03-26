@@ -8,7 +8,7 @@ import h5py as h5
 import os
 from matplotlib import pyplot as plt
 import numpy as np
-cmap = plt.cm.get_cmap('viridis')
+cmap = plt.cm.get_cmap('Dark2')
 import seaborn as sns 
 #plt.rc('text', usetex=True)
 #plt.rc('font', family='serif')
@@ -171,23 +171,25 @@ for (index, column) in enumerate(df):
     #ax1.plot(Point_T,Point_N,'ko',lw=3,label='Dist. point' if index == 3 else "")
     #ax1.axvline(Point_T[0],color='r',linestyle='--',label='Point 1' if index == 3 else '')
     #ax1.axvline(Point_T[3],color='r',linestyle=':',label='Point 4' if index == 3 else '')
-    ax1.plot(Temps,TestN[:,index],'o')
-    ax1.plot(Temps,Test[:,index],'v')
+    #ax1.plot(Temps,TestN[:,index],'o')
+    #ax1.plot(Temps,Test[:,index],'v')
     #ax1.plot(Temps,d15N_f,label=str(df2.columns[index]),color=cmap(cmap_intervals[index]))
 ax1.set_ylim(0.2,0.65)
+ax1.tick_params(axis='both', which='major', labelsize=16)
+
 #ax2.set_ylim(ax1.get_ylim())
     #ax2 = ax1.twiny()    
     #plt.ylim((0.2,0.6))
-ax1.set_xlabel('Temperature [K]',fontsize=14)
+ax1.set_xlabel('Temperature [K]',fontsize=18)
 #.set_xlabel(r'Accumulation rate [m yr$^{-1}$]',fontsize=14)
 
 
-box = ax1.get_position()
+#box = ax1.get_position()
             #ax[i,j].set_position([box.x0, box.y0, box.width * 0.8, box.height])
 
 # Put a legend to the right of the current axis
-ax1.legend(loc='center left', bbox_to_anchor=(1, 0.5),fontsize=14)
-ax1.set_ylabel(u'$\delta^{15}$N [\u2030]',fontsize=14)
+ax1.legend(loc='best',fontsize=12)
+ax1.set_ylabel(u'$\delta^{15}$N [\u2030]',fontsize=18)
 plt.savefig('Noise/NoiseTemp22.png',dpi=300)
 
 fig = plt.figure(constrained_layout=True)

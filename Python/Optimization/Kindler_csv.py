@@ -64,7 +64,7 @@ def Equi_run(Model,temp,acc):
 
 
 
-#Equi_run(Models,Input_temp,Input_acc)
+Equi_run(Models,Input_temp,Input_acc)
 
 
 

@@ -90,8 +90,22 @@ def input_file(num,temp=temp_interval,acc=acc_interval):
     output_acc = expfunc(myoutput.beta,output_temp)
     temp -= 273.15
     return output_temp, output_acc, myoutput.beta
+'''
+plt.close('all')
+output_temp,output_acc,beta = input_file(num=25)
 
-
+fig, ax = plt.subplots(constrained_layout=True)
+ax.scatter(temp_interval+273.15, acc_interval, label='Raw data')
+ax.plot(output_temp,output_acc,'ro',label='Forward points')
+ax.plot(output_temp,output_acc,'k',label = r' $\exp( -{0:.2f} + {1:.2f}\cdot T)$'.format(beta[0],beta[1]))
+#ax.set_title(r'Using curve\_fit() to fit an exponential function')
+ax.set_ylabel(r'Accumulation rate [m yr$^{-1}$]',fontsize=18)
+ax.tick_params(axis='both', which='major', labelsize=16)
+#ax.tick_params(axis='both', which='minor', labelsize=8)
+ax.set_xlabel('Temperature [K]',fontsize=18)
+ax.legend(fontsize=12)
+plt.savefig('Noise/TEst2.png',dpi=300)
+'''
 
 
 

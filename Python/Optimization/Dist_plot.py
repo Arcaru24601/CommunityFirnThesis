@@ -90,7 +90,7 @@ for i in range(len(Dist)):
         hist(count, bins=bins, ax=ax[2,j],histtype='stepfilled',color = palette[2],label='Iteration count' if j ==3 else '')
         
         mu = np.mean(Temp)
-        std = np.std(Temp,ddof=1)
+        std = np.std(Temp)
         ax[1,j].axvline(mu,color='g',linestyle="--",label='Mean' if j ==3 else '')
         ax[1,j].hlines(y=1,xmin=mu-std,xmax=mu+std,color='y',linestyle="-",label=r'1$\sigma$ deviation' if j ==3 else '')
         ax[1,j].axvline(Input_temp[j2],color='k',linestyle="--",label='Expected Temperature' if j ==3 else '')
@@ -99,7 +99,7 @@ for i in range(len(Dist)):
         mus[i,odd[j]] = '{0:.1f}'.format(std)
         print(mu,Input_temp[j2])
         mua = np.mean(Data_d15N)
-        stda = np.std(Data_d15N,ddof=1)
+        stda = np.std(Data_d15N)
         ax[0,j].axvline(mua,color='k',linestyle="--",label='Mean' if j ==3 else '')
         ax[0,j].hlines(y=1,xmin=mua-stda,xmax=mua+stda,color='y',linestyle="-",label=r'1$\sigma$ deviation' if j ==3 else '')
         #ax[1,j].axvline(Point_T[i],color='g',linestyle="--")
