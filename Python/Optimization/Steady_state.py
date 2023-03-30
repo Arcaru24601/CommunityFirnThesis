@@ -39,7 +39,7 @@ def cost_func(d15N_ref,d15n_model):
 
 
 model_path = '../CFM/CFM_main/CFMoutput/OptiNoise/CFMresults.hdf5.' ### Insert name
-results_path = 'resultsFolder/Version7/minimizer.h5' #Add name
+results_path = 'resultsFolder/Version8/minimizer.h5' #Add name
 
 
 # =============================================================================
@@ -47,7 +47,7 @@ results_path = 'resultsFolder/Version7/minimizer.h5' #Add name
 # =============================================================================
 
 spin_year = 1000
-model_year = 1000
+model_year = 500
 spin_year2 = spin_year + model_year/2
 end_year = spin_year + model_year
 stpsPerYear = 0.5
@@ -197,7 +197,7 @@ def root_find(path_to_result,N_ref):
                 'cost_func': np.zeros([N, 1])
                 }
 
-    res_c = brentq(func,a = 213,b = 250,args=(N_ref,var_dict),full_output = True,xtol=2e-8,rtol=8.88e-12)
+    res_c = brentq(func,a = 213,b = 250,args=(N_ref,var_dict),full_output = True,xtol=2e-3,rtol=8.88e-6)
     entry_0 = np.where(var_dict['count'] == 0)[0]
     var_dict['count'] = np.delete(var_dict['count'], entry_0[1:])
     var_dict['count'] = var_dict['count'][:-1]
@@ -220,11 +220,11 @@ for i in range(len(Point_N)):
 
 import pandas as pd
 #df = pd.read_csv('resultsFolder/out_model.csv',sep=',')
-df = pd.read_csv('resultsFolder/out_diffu.csv',sep=',')
+df = pd.read_csv('resultsFolder/out_model.csv',sep=',')
 
 model_path = '../CFM/CFM_main/CFMoutput/OptiNoise/CFMresults.hdf5.' ### Insert name
 #results_path = 'resultsFolder/minimizer.h5' #Add name
-folder_path1 = 'resultsFolder/Version7/'
+folder_path1 = 'resultsFolder/Version8/'
 def Data_crunch(Model,Dist):
     for i in range(len(Model)):
         os.chdir('../CFM/CFM_main')

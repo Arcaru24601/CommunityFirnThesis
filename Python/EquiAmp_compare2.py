@@ -153,7 +153,7 @@ class CoD_plotter():
 
     
             Time_Const = self.model_time[get_HalfTime(self.delta_temp[slices:],mode='Endpoint')+slices]
-            print(Time_Const)
+            #print(Time_Const)
             if Exp[j] == 'Temp/' or Exp[j] == 'Both/':
                 ax[2].plot(self.model_time,self.delta_temp, color=cmap(cmap_intervals[k]))#, label=str(float(label[k][:-1])*10)+'K')    
                 ax[2].axvline(x=Time_Const,color=cmap(cmap_intervals[k]),alpha=0.5)#,label=str(float(label[k][:-1])*10)+'K_'+str(Time_Const-1500-300))
@@ -335,28 +335,46 @@ headers = {
 df.style.format(decimal='.', thousands=',', precision=1)
 #df = df.astype(str)
 
+palette = sns.color_palette('Dark2', 3)
+palette2 = sns.color_palette("Paired", 3)
+
+
+linestyle = ['solid','dotted','dashed']
+
+from matplotlib.lines import Line2D
+custom_lines = [Line2D([0], [0], color='k',linestyle='solid', lw=4),
+                Line2D([0], [0], color='k',linestyle='dotted', lw=4),
+                Line2D([0], [0], color='k',linestyle='dashed', lw=4)]
+
+
 
 
 
 
 x = np.arange(0.3,3.1,0.1).round(2)
-fig, ax = plt.subplots(nrows = 3, ncols = 2)
+fig, ax = plt.subplots(nrows = 3, ncols = 2,sharex=True,constrained_layout=True)
 for k,exp in enumerate(['Temp','Acc','Both']):
     for i, model in enumerate(['HLD','Bar','GOU']):
         Array = df[str(model)].loc[str(exp)]
         Temps = np.asarray(Array['Temps'])
         CoD = np.asarray(Array['CoD'])
+        ax[k,0].set_title(exp + ' Temperature gradient',fontsize=14)
+        ax[k,1].set_title(exp + ' Close-off depth',fontsize=14)
 
-
-        ax[k,0].plot(x,Temps)
-        ax[k,1].plot(x,CoD)
-        fig.supxlabel('Magnitude of change')
+        ax[k,0].plot(x,Temps,color=palette[k],linestyle=linestyle[i],label=model)
+        ax[k,1].plot(x,CoD,color=palette2[k],linestyle=linestyle[i],label=model)
+        fig.supylabel('Halfway-time to Equilibrium [y]',fontsize=14)
+        fig.supxlabel('Multiplier of change',fontsize=14)
         
 # =============================================================================
 #         Find way to have multiple common ylabels
 # =============================================================================
         
-        
+box = ax[1,1].get_position()
+            #ax[i,j].set_position([box.x0, box.y0, box.width * 0.8, box.height])
+
+# Put a legend to the right of the current axis
+ax[1,1].legend(custom_lines,['HLD','BAR','GOU'],ncol=1,fontsize=12,loc='center left', bbox_to_anchor=(1, 0.5))
         #ax[k,0].set_ylabel('Temperature at close-off [K]')
         #ax[k,1].set_ylabel('Close-off depth [m]')
 plt.savefig('Equiplot/Amp2.png',dpi=300)
