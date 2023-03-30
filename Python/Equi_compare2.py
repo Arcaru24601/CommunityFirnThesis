@@ -366,23 +366,42 @@ Rates3 = np.linspace(100,2000,21,dtype=int)
 Rates2 = np.concatenate((Rates1,Rates3))
 
 x = Rates2
+palette = sns.color_palette('Dark2', 3)
+palette2 = sns.color_palette("Paired", 3)
 
-fig, ax = plt.subplots(nrows = 3, ncols = 2,sharex=True)
+linestyle = ['solid','dotted','dashed']
+
+from matplotlib.lines import Line2D
+custom_lines = [Line2D([0], [0], color='k',linestyle='solid', lw=4),
+                Line2D([0], [0], color='k',linestyle='dotted', lw=4),
+                Line2D([0], [0], color='k',linestyle='dashed', lw=4)]
+
+
+
+fig, ax = plt.subplots(nrows = 3, ncols = 2,sharex=True,constrained_layout=True)
 for k,exp in enumerate(['Temp','Acc','Both']):
     for i, model in enumerate(['HLD','Bar','GOU']):
         Array = df[str(model)].loc[str(exp)]
         Temps = np.asarray(Array['Temps'])
         CoD = np.asarray(Array['CoD'])
+        ax[k,0].set_title(exp + ' Temperature gradient',fontsize=14)
+        ax[k,1].set_title(exp + ' Close-off depth',fontsize=14)
 
-
-        ax[k,0].plot(x,Temps)
-        ax[k,1].plot(x,CoD)
+        ax[k,0].plot(x,Temps,color=palette[k],linestyle=linestyle[i],label=model,lw=2)
+        ax[k,1].plot(x,CoD,color=palette2[k],linestyle=linestyle[i],label=model,lw=2)
         
-        
-        fig.supxlabel('Duration of change [y]')
+        fig.supylabel('Halfway-time to Equilibrium [y]',fontsize=14)
+        fig.supxlabel('Duration of change [y]',fontsize=14)
+        #fig.supxlabel('Duration of change [y]')
         #ax[k,1].set_xlabel('Duration of change [y]')
-        ax[k,0].set_ylabel('Temperature at close-off [K]')
-        ax[k,1].set_ylabel('Close-off depth [m]')
+        #ax[k,0].set_ylabel('Temperature at close-off [K]')
+        #ax[k,1].set_ylabel('Close-off depth [m]')
+        
+box = ax[1,1].get_position()
+            #ax[i,j].set_position([box.x0, box.y0, box.width * 0.8, box.height])
+
+# Put a legend to the right of the current axis
+ax[1,1].legend(custom_lines,['HLD','BAR','GOU'],ncol=1,fontsize=12,loc='center left', bbox_to_anchor=(1, 0.5))
 plt.savefig('Equiplot/Dur2.png',dpi=300)
 
 

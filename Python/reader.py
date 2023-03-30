@@ -24,7 +24,7 @@ def read(rfolder):
     Various arrays.
 
     '''
-    rfile = 'HLdynamic250K.hdf5'
+    rfile = 'Temp_HLdynamic1.1.hdf5'
     fn = os.path.join(rfolder,rfile)
     f = h5.File(fn,'r')
     
@@ -33,7 +33,7 @@ def read(rfolder):
     model_time = np.array(([a[0] for a in z[:]]))
     close_off_depth = f["BCO"][:, 2]
     close_off_age = f["BCO"][:,1]
-    
+    age_dist = f['gas_age'][:]
     #### COD variables
     temperature = f['temperature'][:]
     temp_cod = np.ones_like(close_off_depth)
@@ -81,7 +81,7 @@ def read(rfolder):
     f.close()
     with h5.File(fn,'r') as hf:
         print(hf.keys())
-    return model_time,z,temperature,climate,d15N,close_off_depth
+    return model_time,z,temperature,climate,d15N,close_off_depth,age_dist
 
 
 def find_constant_row(matrix, tolerance=1e-6):
@@ -110,7 +110,7 @@ ax.legend
 '''
 
 
-timesteps,depth,temperature,climate,d15N2,Bubble = read('CFM/CFM_main/CFMoutput/Noise/HLdynamic/250K')
+timesteps,depth,temperature,climate,d15N2,Bubble,age_dist = read('CFM/CFM_main/CFMoutput/EquiAmp2/Temp/HLdynamic/1.1')
 
 
 

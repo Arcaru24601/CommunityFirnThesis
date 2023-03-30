@@ -55,9 +55,9 @@ for i in range(len(Models)):
     #Data_d15N = s[(abs(s - s.mean())) < (3 * s.std())][:250]
     Data_d15N = df[Modela[i]]
     fig, ax = plt.subplots(nrows=3,figsize=(10,7),constrained_layout=True)
-    print('resultsFolder/Version5/' + str(Models[i]) + '/*.h5')
+    print('resultsFolder/Version8/' + str(Models[i]) + '/*.h5')
     for z in range(len(Input_temp)):
-        file = 'resultsFolder/Version5/' + str(Models[i]) + '/Point' + str(z) + '.h5'
+        file = 'resultsFolder/Version8/' + str(Models[i]) + '/Point' + str(z) + '.h5'
         #print(file)
         
         try:
@@ -79,7 +79,16 @@ for i in range(len(Models)):
     x = Temp - Input_temp
     m = np.nanmean(x)
     s = np.nanstd(x)
+    
+    x2 = Data_d15N - d15N
+    m2 = np.nanmean(x2)
+    s2 = np.nanstd(x2)
+    
+    
     ax[0].plot(Input_temp,Data_d15N-d15N,'o',label='Deviation in d15N')
+    ax[0].fill_between(Input_temp, (m2-s2), (m2+s2),alpha=0.25,label='std ' + f'{s2:.3}')
+    ax[0].plot(Input_temp,np.full_like(Input_temp,m2),label='Mean '+ f'{m2:.3}')
+    
     
     ax[1].plot(Input_temp,Temp-Input_temp,'o',label='Deviation in temperature')
     ax[2].plot(Input_temp,count,'o',label='Iteration count')
