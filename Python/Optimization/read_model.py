@@ -55,3 +55,8 @@ def get_model_data2(model_path):
 
 
 #Test = get_model_data2('../CFM/CFM_main/CFMoutput/OptiNoise/CFMresults.hdf5')
+
+
+Tst = get_model_data2(r'C:/Users/jespe/Desktop/CFMoutput/OptiNoise/CFMresults.hdf5')
+
+

@@ -197,7 +197,7 @@ def root_find(path_to_result,N_ref):
                 'cost_func': np.zeros([N, 1])
                 }
 
-    res_c = brentq(func,a = 213,b = 250,args=(N_ref,var_dict),full_output = True,xtol=2e-8,rtol=8.88e-12)
+    res_c = brentq(func,a = 213,b = 250,args=(N_ref,var_dict),full_output = True,xtol=2e-8,rtol=8.88e-12)#0.02/10
     entry_0 = np.where(var_dict['count'] == 0)[0]
     var_dict['count'] = np.delete(var_dict['count'], entry_0[1:])
     var_dict['count'] = var_dict['count'][:-1]

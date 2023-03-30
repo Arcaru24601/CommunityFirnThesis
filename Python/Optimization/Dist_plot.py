@@ -18,7 +18,7 @@ for fcnt in range(1,4,1):
         arr = np.random.random(10*10).reshape(10,10)
         h5fw.create_dataset('data',data=arr)
 
-S = 100
+S = 200
 cost_func = np.zeros(S)
 d15N = np.zeros(S)
 count = np.zeros(S)
@@ -27,8 +27,8 @@ np.random.seed(42)
 
 #0.597, 0.463
 #217.97, 229.96
-Point_N = np.array([0.53,0.597,0.375,0.297])
-Point_T = np.array([215.06,217.97,235,244.99])
+#Point_N = np.array([0.53,0.597,0.375,0.297])
+#Point_T = np.array([215.06,217.97,235,244.99])
 #Point_A = np.array([0.0284,0.0535,0.1607,0.2621])
 
 plt.close('all')
@@ -58,17 +58,17 @@ for i in range(len(Dist)):
     j2 = Dists2[i]
     
 
-    fig, ax = plt.subplots(nrows=3,ncols=4,figsize=(10, 7), constrained_layout=True)
+    fig, ax = plt.subplots(nrows=3,ncols=4,figsize=(15,12), constrained_layout=True)
     for j in range(len(Models)):
         j1 = Dists2[j]
         Csv_point = dfc[str(Modela[j])]
-        s = np.random.normal(Csv_point[j1],0.02,size=2000)
+        s = np.random.normal(Csv_point[j2],0.02,size=2000)
         Data_d15N = s[(abs(s - s.mean())) < (3 * s.std())][:S]
 
-        print(j2)
+        print(j2,j1,Models[j])
         #for z,file in enumerate(glob.iglob('resultsFolder/Version1/' + str(Models[j]) + '/' + str(Dist[i]) + '/*.h5')):  
-        for z in range(100):
-            file = 'resultsFolder/Test/Version5/' + str(Models[j]) + '/Dist' + str(Dists2[i]) + '/Point' + str(z) + '.h5'
+        for z in range(S):
+            file = 'resultsFolder/Test/Version6/' + str(Models[j]) + '/Dist' + str(Dists2[i]) + '/Point' + str(z) + '.h5'
             #print(file)
             
             with h5py.File(file, 'r') as h5fr:
@@ -83,7 +83,7 @@ for i in range(len(Dist)):
        
         #table = pd.DataFrame(xdata).reset_index()
         #print(table)
-        bins = 'knuth'
+        bins = 'freedman'
         
         hist(Data_d15N, bins=bins, ax=ax[0,j],histtype='stepfilled',color = palette[0],label=r'Input $\delta^{15}$N' if j ==3 else '')
         hist(Temp, bins=bins, ax=ax[1,j],histtype='stepfilled',color = palette[1],label='Output Temperature' if j ==3 else '')
@@ -115,26 +115,28 @@ for i in range(len(Dist)):
         #ax[2,j].hist(count,bins='fd',color = palette[2]) ### Accumulation
         #ax[3,j].plot(cost_func,color=palette[3]) ### Cost function
         
-        ax[0,j].set_xlabel(u'$\delta^{15}$N [\u2030]',fontsize=14)
-        ax[1,j].set_xlabel('Temperature [K]',fontsize=14)
-        ax[2,j].set_xlabel('Point nr.',fontsize=14)
+        ax[0,j].set_xlabel(u'$\delta^{15}$N [\u2030]',fontsize=20)
+        ax[1,j].set_xlabel('Temperature [K]',fontsize=20)
+        #ax[2,j].set_xlabel('Point nr.',fontsize=18)
         #ax[3,j].set_xlabel('Point nr.')
-        ax[2,j].set_ylabel('Iteration count',fontsize=14)
+        ax[2,j].set_xlabel('Iteration count',fontsize=20)
         #ax[3,j].set_ylabel('Cost function')
-        ax[0,j].set_title(str(Models[j]))
+        ax[0,j].set_title(str(Models[j]),fontsize=20)
         #ax[3,j].yaxis.set_major_formatter(mtick.FormatStrFormatter('%.1e'))
         #ax[3,j].xaxis.set_major_formatter(mtick.FormatStrFormatter('%.1e'))
         #ax[3,j].xaxis.set_major_locator(plt.MaxNLocator(3))
         #t = ax[3,j].yaxis.get_offset_text()
+        for l, axes in enumerate(fig.axes):
+            axes.tick_params(axis='both', which='major', labelsize=18)
         #t.set_x(1.0)
         #ax[3,j].yaxis._update_offset_text_position = types.MethodType(bottom_offset, ax.xaxis)
         if j == 3:
             for z in range(3):
                 box = ax[z,j].get_position()
-                #ax[i,j].set_position([box.x0, box.y0, box.width * 0.8, box.height])
+                #ax[i,j].set_position([box.x0, box.y0, box.width * 0.8, bo6x.height])
 
     # Put a legend to the right of the current axis
-                ax[z,j].legend(loc='center left', bbox_to_anchor=(1, 0.5),fontsize=14)
+                ax[z,j].legend(loc='center left', bbox_to_anchor=(1, 0.5),fontsize=16)
                 #ax[0,3].legend(loc='upper right')
                 #ax[1,3].legend(loc='upper right')
                 #ax[2,3].legend(loc='upper right')
@@ -184,7 +186,7 @@ headers = {
 
 
 
-df.style.format(decimal='.', thousands=',', precision=1)
+#df.style.format(decimal='.', thousands=',', precision=1)
 df = df.astype(str)
 
 
