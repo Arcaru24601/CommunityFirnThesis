@@ -88,7 +88,7 @@ def folder_gen(Fold,FileFlag):
     return Folder 
  
 os.chdir('../')
-folder = 'CFM/CFM_main/CFMinput/Noise/Round6/'
+folder = 'CFM/CFM_main/CFMinput/Noise/Integer/'
 
 sub_folders = [name for name in os.listdir(folder) if os.path.isdir(os.path.join(folder, name))]
 
@@ -103,7 +103,7 @@ d15N_firn = np.zeros((H,4))
 Test = np.zeros((H,4))
 TestN = np.zeros((H,4))
 CoD_T = np.zeros((H,4))
-rfolder = 'CFM/CFM_main/CFMoutput/Noise/Round6/'
+rfolder = 'CFM/CFM_main/CFMoutput/Noise/Integer/'
 
 for j in range(len(sub_folders)):
     T = folder_gen(sub_folders[j],False)
@@ -142,12 +142,12 @@ Point_A = np.array([0.2621])
 
 os.chdir('Optimization')
 
-df.to_csv('resultsFolder/out_model.csv')
-df2.to_csv('resultsFolder/out_diffu.csv')
+df.to_csv('resultsFolder/Integer_model.csv')
+df2.to_csv('resultsFolder/Integer_diffu.csv')
 
 
-from Kindler_fit_ODR import input_file,expfunc
-Input_temp,Input_acc,Beta = input_file(num = 25)
+from Kindler_fit_Clear import input_file,expfunc
+Input_temp,Input_acc,Beta = input_file()
 
 Temps = Input_temp
 
@@ -164,8 +164,8 @@ for (index, column) in enumerate(df):
     print(df.columns[index],column)
     d15N = np.asarray(df[column])
     d15N_f = np.asarray(df2[column])
-    ax1.plot(Temps,d15N,label=str(df.columns[index]),color=cmap(cmap_intervals[index]))
-    ax1.plot(Temps,d15N,linestyle[index],fillstyle='none',color=cmap(cmap_intervals[index]))
+    ax1.plot(Temps,d15N_f,label=str(df.columns[index]),color=cmap(cmap_intervals[index]))
+    ax1.plot(Temps,d15N_f,linestyle[index],fillstyle='none',color=cmap(cmap_intervals[index]))
     #ax2.plot(Input_acc,d15N,label=str(df2.columns[index]),color=cmap(cmap_intervals[index]))
     #ax2.plot(Input_acc,np.ones_like(Input_acc),linestyle[index],fillstyle='none',color=cmap(cmap_intervals[index]))
     #ax1.plot(Point_T,Point_N,'ko',lw=3,label='Dist. point' if index == 3 else "")

@@ -178,7 +178,7 @@ class FirnAir:
         ind                 = self.por_cl>self.por_tot # where (if anywhere) closed porosity exceeds total porosity
         self.por_cl[ind]    = self.por_tot[ind] # fix por_cl in that case so it cannot exceed
         self.por_op         = self.por_tot - self.por_cl # Open Porosity
-
+        #print(self.por_op,self.por_cl[ind])
         co_ind              = np.where(self.por_op<=1e-10)[0][0]
         self.rho_co         = self.rho[co_ind]
         self.LIDRho         = self.rho_co - 14 #LID depth (Blunier and Schwander, 2000)
@@ -193,7 +193,7 @@ class FirnAir:
         # print('open',self.rho[op_i])
         # print('bco',self.z[co_i])
         # print('bco',self.rho[co_i])
-        # print('porosity',self.por_tot[co_i])
+        #print('porosity',self.por_tot[co_i])
         # print('LID z',self.z[li_i])
         # print('LID rho',self.rho[li_i])
         # print('liz width',self.z[co_i]-self.z[li_i])

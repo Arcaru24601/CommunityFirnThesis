@@ -37,16 +37,16 @@ class CoD_plotter():
         self.model_time = np.array(([a[0] for a in self.z[:]]))
         self.close_off_depth = f["BCO"][:, 2]
         self.d15N = (f["d15N2"][:]-1.) * 1000
-        self.d40Ar = (f["d40Ar"][:]-1.) * 1000
+        #self.d40Ar = (f["d40Ar"][:]-1.) * 1000
         
         self.d15N_cod = np.ones_like(self.model_time)
-        self.d40Ar_cod = np.ones_like(self.model_time)
+        #self.d40Ar_cod = np.ones_like(self.model_time)
         
         
         for i in range(self.z.shape[0]):
             idx = int(np.where(self.z[i, 1:] == self.close_off_depth[i])[0])
             self.d15N_cod[i] = self.d15N[i,idx]
-            self.d40Ar_cod[i] = self.d40Ar[i,idx]
+            #self.d40Ar_cod[i] = self.d40Ar[i,idx]
         
     
         #print(self.d15N_cod.shape)
@@ -100,10 +100,10 @@ class CoD_plotter():
         self.ax[0,2].set_ylabel("Depth [m]",fontsize=labelFont)
         self.ax[0,2].set_xlabel("$\delta^{15}N$ [‰]",fontsize=labelFont)
         
-        self.ax10 = self.ax[1,0].twinx()
+        #self.ax10 = self.ax[1,0].twinx()
         
         self.ax[1,0].set_ylabel("$\delta^{15}N_{cod}$ [‰]",color=cmap(cmap_interval[2]),fontsize=labelFont)
-        self.ax10.set_ylabel("$\delta^{40}Ar_{cod}$ [‰]",color=cmap(cmap_interval[1]),fontsize=labelFont)
+        #self.ax10.set_ylabel("$\delta^{40}Ar_{cod}$ [‰]",color=cmap(cmap_interval[1]),fontsize=labelFont)
         self.ax[1,0].set_xlabel("Model-time [yr]",fontsize=labelFont)
         
         self.ax[1,1].set_ylabel("Depth [m]",fontsize=labelFont)
@@ -135,7 +135,7 @@ class CoD_plotter():
         
         
         self.ax[1,0].plot(self.model_time,self.d15N_cod,color=cmap(cmap_interval[2]),linewidth=0.7)
-        self.ax10.plot(self.model_time,self.d40Ar_cod/4,color=cmap(cmap_interval[1]),linewidth=0.7)
+        #self.ax10.plot(self.model_time,self.d40Ar_cod/4,color=cmap(cmap_interval[1]),linewidth=0.7)
         self.ax[1,2].plot(self.z[:, 0],self.close_off_depth,linewidth=0.7)
         #self.ax[1,2].set_ylim(90,60)
         self.ax[0,1].legend(loc='lower left',fontsize=legFont)

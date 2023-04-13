@@ -30,7 +30,7 @@ def get_model_data(model_path):
     #print(T_means)
     d15N_cod_grav = (np.exp((delta_M*Grav*close_off_depth) / (R*temperature[0,1])) - 1) * 1000 
     
-    return d15N_cod_grav[-1], temperature[0,-1],d15N_cod[-1]#,close_off_depth,idx,z,d15N*1000,temperature
+    return d15N_cod_grav[-1], temperature[0,-1],d15N_cod[-1],close_off_depth[-1],climate[-1,1]#,idx,z,d15N*1000,temperature
 
 def get_model_data2(model_path):
     f = hf.File(model_path)
@@ -56,7 +56,6 @@ def get_model_data2(model_path):
 
 #Test = get_model_data2('../CFM/CFM_main/CFMoutput/OptiNoise/CFMresults.hdf5')
 
-
-Tst = get_model_data2(r'C:/Users/jespe/Desktop/CFMoutput/OptiNoise/CFMresults.hdf5')
+#Tst = get_model_data2(r'C:/Users/jespe/Desktop/CFMoutput/OptiNoise/CFMresults.hdf5')
 
 

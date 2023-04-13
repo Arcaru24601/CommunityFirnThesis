@@ -13,7 +13,7 @@ from read_model import get_model_data
 from scipy.optimize import brentq,least_squares
 import h5py as hf
 import subprocess
-from Kindler_fit_ODR import input_file,expfunc
+from Kindler_fit_ODR import input_file,expfunc,rho_0,rho_bco
 import json
 from pathlib import Path
 
@@ -38,8 +38,8 @@ def cost_func(d15N_ref,d15n_model):
 
 
 
-model_path = '../CFM/CFM_main/CFMoutput/OptiNoise/CFMresults.hdf5.' ### Insert name
-results_path = 'resultsFolder/Version8/minimizer.h5' #Add name
+model_path = '../CFM/CFM_main/CFMoutput/OptiNoise/CFMresults.hdf5' ### Insert name
+results_path = 'resultsFolder/Normal/minimizer.h5' #Add name
 
 
 # =============================================================================
@@ -108,7 +108,7 @@ def func(temp,N_ref,var_dict):
     os.chdir('../../Optimization')
     #print(model_path)
     if os.path.exists(model_path):
-        d15N_mode, temperature_model,d15N_diffu = get_model_data(model_path)
+        d15N_mode, temperature_model,d15N_diffu,CoD,Acc = get_model_data(model_path)
         d15N_model = d15N_mode
         print(d15N_mode,d15N_diffu)
         cost_fun = cost_func(N_ref, d15N_model)
@@ -117,7 +117,11 @@ def func(temp,N_ref,var_dict):
     
         var_dict['d15N@CoD'][count] = d15N_model
         var_dict['temp'][count] = temperature_model
-    
+        rho_co = rho_bco(temp)
+        var_dict['rho_co'][count] = rho_co
+        var_dict['CoD'][count] = CoD
+        rho_s = rho_0(temperature_model, Acc)
+        var_dict['rho_s'][count] = rho_s
     else:
         print('There is no output file -_- ')
         #os.chdir('../icecore_data/src/')
@@ -194,7 +198,10 @@ def root_find(path_to_result,N_ref):
     var_dict = {'count': np.zeros([N, 1], dtype=int),
                 'd15N@CoD' : np.zeros([N, 1]),
                 'temp' : np.zeros([N, 1]),
-                'cost_func': np.zeros([N, 1])
+                'cost_func': np.zeros([N, 1]),
+                'CoD': np.zeros([N,1]),
+                'rho_co': np.zeros([N,1]),
+                'rho_s': np.zeros([N,1])
                 }
 
     res_c = brentq(func,a = 213,b = 250,args=(N_ref,var_dict),full_output = True,xtol=2e-3,rtol=8.88e-6)
@@ -222,9 +229,9 @@ import pandas as pd
 #df = pd.read_csv('resultsFolder/out_model.csv',sep=',')
 df = pd.read_csv('resultsFolder/out_model.csv',sep=',')
 
-model_path = '../CFM/CFM_main/CFMoutput/OptiNoise/CFMresults.hdf5.' ### Insert name
+model_path = '../CFM/CFM_main/CFMoutput/OptiNoise/CFMresults.hdf5' ### Insert name
 #results_path = 'resultsFolder/minimizer.h5' #Add name
-folder_path1 = 'resultsFolder/Version8/'
+folder_path1 = 'resultsFolder/Normal/'
 def Data_crunch(Model,Dist):
     for i in range(len(Model)):
         os.chdir('../CFM/CFM_main')
@@ -264,9 +271,10 @@ def Data_crunch(Model,Dist):
 Model_n = ['HLdynamic']
 Dist_n = ['Dist_1']
 Input_temp,Input_acc,Beta = input_file(num=25)
-
+Indices_d15N = np.array([2,7,15])
 #T = Data_crunch(Model_n, Dist_n)
 Modela = ['HLD','HLS','BAR','GOU']
+#Modela = #['Freitag', 'Schwander', 'Severinghaus', 'Witrant', 'Battle', 'Adolph']
 
 def Data_crunch_Test(Model):
     for i in range(len(Model)):
@@ -286,37 +294,45 @@ def Data_crunch_Test(Model):
             #s = np.random.normal(Point_N[j],0.02,size=1000)
             #d15N_dist = s[(abs(s - s.mean())) < (3 * s.std())][:1]
         
-        d15N_dist = df[Modela[i]]    
+        
+        for j in range(len(Indices_d15N)):
+            mu_d15n = df[Modela[i]][Indices_d15N[j]]
+            s = np.random.normal(np.asarray(mu_d15n),0.02,size=1000)
+            d15N_dist = s[(abs(s - s.mean())) < (3 * s.std())][:50]
+        
+       
             
-        print(d15N_dist)
-        for k in range(len(d15N_dist)):
-            print(Model[i],k)
-            d15N_ref = d15N_dist[k]
+            print(d15N_dist)
+            for k in range(len(d15N_dist)):
+                print(Model[i],k)
+                d15N_ref = mu_d15n#d15N_dist[k]
+                print(k,Indices_d15N[j])
+                print('Target d15N', d15N_ref)
+                print('Target temp', Input_temp[Indices_d15N[j]])
             
-            
-            
-            i_acc = np.full(len(Time),Input_acc[k])
-            input_acc = np.array([Time, i_acc])
+                i_acc = np.full(len(Time),Input_acc[Indices_d15N[j]])
+                input_acc = np.array([Time, i_acc])
             
             #D:\GitHub\CommunityFirnThesis\CommunityFirnThesis\Python\CFM\CFM_main\CFMinput\OptiNoise
-            np.savetxt(r'D:/GitHub/CommunityFirnThesis/CommunityFirnThesis/Python/CFM/CFM_main/CFMinput/OptiNoise/optimize_acc.csv', input_acc, delimiter=',')
+                np.savetxt(r'D:/GitHub/CommunityFirnThesis/CommunityFirnThesis/Python/CFM/CFM_main/CFMinput/OptiNoise/optimize_acc.csv', input_acc, delimiter=',')
 
-            os.chdir(r'D:/GitHub/CommunityFirnThesis/CommunityFirnThesis/Python/Optimization')
+                os.chdir(r'D:/GitHub/CommunityFirnThesis/CommunityFirnThesis/Python/Optimization')
             
             
-            folder_path = folder_path1 + str(Model[i]) 
-            path = Path(folder_path)
-            path.mkdir(parents=True, exist_ok=True)
-            results_path = folder_path + '/' + 'Point'  + str(k) + '.h5'
-            try:
-                root_find(results_path,d15N_ref)
+                folder_path = folder_path1 + str(Model[i]) 
+                path = Path(folder_path)
+                path.mkdir(parents=True, exist_ok=True)
+                results_path = folder_path + '/' + 'Point'  + str(k) + '.h5'
+                try:
+                    root_find(results_path,d15N_ref)
                     
-            except Exception as e: print(e)
+                except Exception as e: print(e)
                 
-    return results_path
+    return results_path,d15N_dist
 
+#Diffus = ['Freitag', 'Schwander', 'Severinghaus', 'Witrant', 'Battle', 'Adolph']
 
-T = Data_crunch_Test(Model_name)
+T,d15N_dist = Data_crunch_Test(Model_name)
 
 
 

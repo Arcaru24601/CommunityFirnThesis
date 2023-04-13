@@ -10,5 +10,3 @@ import os
 os.system('python main.py')
 #os.chdir('Optimization')
 #os.system('python Kindler_csv.py')
-os.chdir(r'/home/jesperholm/Documents/CommunityFirnThesis-main/Python/Optimization')
-os.system('python Steady_state.py')

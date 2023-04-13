@@ -18,7 +18,7 @@ for fcnt in range(1,4,1):
         arr = np.random.random(10*10).reshape(10,10)
         h5fw.create_dataset('data',data=arr)
 
-S = 200
+S = 100
 cost_func = np.zeros(S)
 d15N = np.zeros(S)
 count = np.zeros(S)
@@ -34,7 +34,7 @@ np.random.seed(42)
 plt.close('all')
 Models = ['HLdynamic','HLSigfus','Barnola1991','Goujon2003']
 Dist = ['Dist' + str(i) for i in range(4)]
-Dists2 = np.array([2,7,15,21])
+Dists2 = np.arange(0,25,2)
 import seaborn as sns
 sns.set_theme()
 palette = sns.color_palette(None,3)
@@ -51,24 +51,24 @@ dfc = pd.read_csv('resultsFolder/out_model.csv',sep=',')
 Modela = ['HLD','HLS','BAR','GOU']
 
 
-mus = np.zeros((4,8))
-mus_1 = np.zeros((4,8))
+mus = np.zeros((13,8))
+mus_1 = np.zeros((13,8))
 # Loop over H5 files and load into a dataframe
-for i in range(len(Dist)):
-    j2 = Dists2[i]
+for i,val in enumerate(Dists2):
+    #j2 = Dists2[i]
     
 
     fig, ax = plt.subplots(nrows=3,ncols=4,figsize=(15,12), constrained_layout=True)
     for j in range(len(Models)):
-        j1 = Dists2[j]
+        #j1 = Dists2[j]
         Csv_point = dfc[str(Modela[j])]
-        s = np.random.normal(Csv_point[j2],0.02,size=2000)
+        s = np.random.normal(Csv_point[val],0.02,size=2000)
         Data_d15N = s[(abs(s - s.mean())) < (3 * s.std())][:S]
 
-        print(j2,j1,Models[j])
+        print(val,Models[j])
         #for z,file in enumerate(glob.iglob('resultsFolder/Version1/' + str(Models[j]) + '/' + str(Dist[i]) + '/*.h5')):  
         for z in range(S):
-            file = 'resultsFolder/Test/Version6/' + str(Models[j]) + '/Dist' + str(Dists2[i]) + '/Point' + str(z) + '.h5'
+            file = 'resultsFolder/FullTest/' + str(Models[j]) + '/Dist' + str(Dists2[i]) + '/Point' + str(z) + '.h5'
             #print(file)
             
             with h5py.File(file, 'r') as h5fr:
@@ -93,17 +93,24 @@ for i in range(len(Dist)):
         std = np.std(Temp)
         ax[1,j].axvline(mu,color='g',linestyle="--",label='Mean' if j ==3 else '')
         ax[1,j].hlines(y=1,xmin=mu-std,xmax=mu+std,color='y',linestyle="-",label=r'1$\sigma$ deviation' if j ==3 else '')
-        ax[1,j].axvline(Input_temp[j2],color='k',linestyle="--",label='Expected Temperature' if j ==3 else '')
+        ax[1,j].axvline(Input_temp[val],color='k',linestyle="--",label='Expected Temperature' if j ==3 else '')
+        ax[1,j].text(0, 0.9, r'$\mu$:{0:.2f}'.format(mu), size=14, ha='left', va='center',transform=ax[1,j].transAxes)
+        ax[1,j].text(0, 0.8, r'$\sigma$:{0:.1f}'.format(std), size=14, ha='left', va='center',transform=ax[1,j].transAxes)
+        ax[1,j].text(0, 0.7, r'$T_r$:{0:.2f}'.format(Input_temp[val]), size=14, ha='left', va='center',transform=ax[1,j].transAxes)
         
-        mus[i,even[j]] = '{0:.2f}'.format(mu) 
-        mus[i,odd[j]] = '{0:.1f}'.format(std)
-        print(mu,Input_temp[j2])
+        
+        
+        
+        mus[i,even[j]] = '{0:.3f}'.format(mu) 
+        mus[i,odd[j]] = '{0:.2f}'.format(std)
+        print(mu,Input_temp[val])
         mua = np.mean(Data_d15N)
         stda = np.std(Data_d15N)
         ax[0,j].axvline(mua,color='k',linestyle="--",label='Mean' if j ==3 else '')
         ax[0,j].hlines(y=1,xmin=mua-stda,xmax=mua+stda,color='y',linestyle="-",label=r'1$\sigma$ deviation' if j ==3 else '')
         #ax[1,j].axvline(Point_T[i],color='g',linestyle="--")
-        
+        #ax[0,j].text(0, 0.9, r'$\mu$:{0:.2f}'.format(mua), size=14, ha='left', va='center',transform=ax[0,j].transAxes)
+        #ax[0,j].text(0, 0.8, r'$\sigma$:{0:.1f}'.format(stda), size=14, ha='left', va='center',transform=ax[0,j].transAxes)
         mus_1[i,even[j]] = '{0:.3f}'.format(mua) 
         mus_1[i,odd[j]] = '{0:.2f}'.format(stda)
 
@@ -141,7 +148,7 @@ for i in range(len(Dist)):
                 #ax[1,3].legend(loc='upper right')
                 #ax[2,3].legend(loc='upper right')
     #fig.legend(ncol=3,loc='lower center')
-    plt.savefig('Plots5/Dist'+str(j2)+'.png',dpi=300)
+    plt.savefig('Plots5/Dist'+str(val)+'.png',dpi=300)
         
 
 
@@ -150,7 +157,7 @@ Output = ['Mean',r'$\sigma$']
 
 Iter1 = [Models,Output]
 Mode = ['Temp','Nitrogen']
-Dist = ['Dist1','Dist2','Dist3','Dist4']
+Dist = ['Dist' + str(x) for x in np.arange(0,25,2)]
 Iter2 = [Mode,Dist]
 
 

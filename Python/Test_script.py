@@ -174,8 +174,8 @@ def Terminal_run_Noise(Model,temp,acc):
     data = json.load(file)
     data['grid_outputs'] = False
     data['resultsFileName'] = str(Model) + str(temp)  + 'K.hdf5'
-    data['resultsFolder'] = 'CFMoutput/Noise/Round6/' + str(Model) + '/' + str(temp) + 'K' 
-    data['InputFileFolder'] = 'CFMinput/Noise/Round6/' + str(temp) + 'K'
+    data['resultsFolder'] = 'CFMoutput/Noise/Integer/' + str(Model) + '/' + str(temp) + 'K' 
+    data['InputFileFolder'] = 'CFMinput/Noise/Integer/' + str(temp) + 'K'
     data['InputFileNameTemp'] = 'Temp.csv'
     data['InputFileNamebdot'] = 'Acc.csv'
     data['physRho'] = str(Model)
@@ -191,10 +191,59 @@ def Terminal_run_Noise(Model,temp,acc):
     
     subprocess.run('python main.py Firn_Noise.json -n', shell=True, cwd='CFM/CFM_main/')
 
+def Terminal_run_Noise_Diffusivity(Diffu,temp,acc):
+    file = open('CFM/CFM_main/Firn_Noise.json')
+    data = json.load(file)
+    data['grid_outputs'] = False
+    data['resultsFileName'] = str(Diffu) + str(temp)  + 'K.hdf5'
+    data['resultsFolder'] = 'CFMoutput/Noise/bco/' + str(Diffu) + '/' + str(temp) + 'K' 
+    data['InputFileFolder'] = 'CFMinput/Noise/Round6/' + str(temp) + 'K'
+    data['InputFileNameTemp'] = 'Temp.csv'
+    data['InputFileNamebdot'] = 'Acc.csv'
+    #data['physRho'] = str(Model)
+        
+    with open("CFM/CFM_main/Firn_Noise.json", 'w') as f:
+        json.dump(data, f,indent = 2)
+        
+        # Closing file
+    f.close()    
+    
+    file = open('CFM/CFM_main/Air_Noise.json')
+    data = json.load(file)
+    data['Diffu_param'] = str(Diffu)
+    with open("CFM/CFM_main/Air_Noise.json", 'w') as f:
+        json.dump(data, f,indent = 2)
+        
+        # Closing file
+    f.close()
+    subprocess.run('python main.py Firn_Noise.json -n', shell=True, cwd='CFM/CFM_main/')
 
 
 
 
 
+def Terminal_run_Noise_rhos(Model,temp,acc,rho_s):
+    file = open('CFM/CFM_main/Firn_Noise.json')
+    data = json.load(file)
+    data['grid_outputs'] = False
+    data['resultsFileName'] = str(Model) + str(temp)  + 'K.hdf5'
+    data['resultsFolder'] = 'CFMoutput/Noise/surf/' + str(Model) + '/' + str(temp) + 'K' 
+    data['InputFileFolder'] = 'CFMinput/Noise/Round6/' + str(temp) + 'K'
+    data['InputFileNameTemp'] = 'Temp.csv'
+    data['InputFileNamebdot'] = 'Acc.csv'
+    data['physRho'] = str(Model)
+    data['rhos0'] = rho_s
+    with open("CFM/CFM_main/Firn_Noise.json", 'w') as f:
+        json.dump(data, f,indent = 2)
+        
+        # Closing file
+    f.close() 
+    subprocess.run('python main.py Firn_Noise.json -n', shell=True, cwd='CFM/CFM_main/')
 
-
+    
+    
+    
+    
+    
+    
+    

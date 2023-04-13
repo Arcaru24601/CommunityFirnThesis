@@ -64,7 +64,14 @@ def get_HalfTime(array,mode):
     idx = (np.abs(array - value)).argmin()
     #print(idx)
     return idx
-    
+
+def get_std_time(array):
+        #print(value)
+    #print(np.mean(array))
+    #print(value)
+    idx = (np.abs(array - 0.02)).argmin()
+    #print(idx)
+    return idx
     
 class CoD_plotter():
 
@@ -74,7 +81,7 @@ class CoD_plotter():
         #if Exs == 'Acc/':
         #    fig, ax = plt.subplots(3, sharex=False, sharey=False)
         #else:
-        fig, ax = plt.subplots(3, sharex=True, sharey=False,constrained_layout=True)
+        fig, ax = plt.subplots(4, sharex=True, sharey=False,constrained_layout=True)
         label = amp
         #fig.set_figheight(15)
         #fig.set_figwidth(8)
@@ -104,6 +111,7 @@ class CoD_plotter():
             self.climate = f["Modelclimate"][:]
             self.model_time = np.array(([a[0] for a in self.z[:]]))
             self.close_off_depth = f["BCO"][:, 2]
+            #self.d15N = (f['d15N2'][:]-1)*1000
             
             #### COD variables
             self.temperature = f['temperature'][:]
@@ -114,8 +122,17 @@ class CoD_plotter():
                 self.temp_cod[g] = self.temperature[g,idx]
                 
                 
-                
+            T_h = self.climate[:,2]
+            T_c = self.temp_cod
             self.delta_temp = self.climate[:,2] - self.temp_cod
+            temp_mean = (T_h * T_c) / (T_h - T_c) * np.log((T_h / T_c))
+            alpha = (8.856 - 1232/temp_mean) * 10**(-3)
+            omega = alpha/temp_mean * 10**(3)
+            
+            d15N_Temp = omega * self.delta_temp            
+
+            
+            
             #print(self.temp_cod.shape,self.climate[:,2].shape,self.delta_temp.shape)
             if self.KtC:
                 self.climate[:,2] - 273.15
@@ -161,16 +178,20 @@ class CoD_plotter():
                 ax[2].plot(self.model_time,self.delta_temp, color=cmap(cmap_intervals[k]), label="{:0.3f}".format(float(label[k][:-1])*0.075))    
                 ax[2].axvline(x=Time_Const,color=cmap(cmap_intervals[k]),alpha=0.5)#,label="{:0.3f}".format(float(label[k][:-1])*0.075)+'_'+str(Time_Const-1500-300))
             ax[2].grid(linestyle='--', color='gray', lw='0.5')
-
+            #ax[2].plot(self.model_time,d15N_Temp,linestyle=':',color=cmap(cmap_intervals[k]))
             ax[2].set_ylabel(r"\centering Temperature \newline \centering gradient [K]", labelpad=-1.5, fontsize=9)
             #box = ax[1].get_position()
                         #ax[i,j].set_position([box.x0, box.y0, box.width * 0.8, box.height])
 
             # Put a legend to the right of the current axis
             #ax[1].legend(ncol=1,fontsize=12,loc='center left', bbox_to_anchor=(1, 0.5))
-            
+            #Time_d15N = self.model_time[get_std_time(d15N_Temp[slices:],mode='Endpoint')+slices]
+            #print(slices)
             x = np.arange(0.3,3.1,0.1).round(2)
-
+            ax[3].grid(linestyle='--', color='gray', lw='0.5')
+            ax[3].plot(self.model_time,d15N_Temp,color=cmap(cmap_intervals[k]))
+            ax[3].set_ylabel(r"$\delta^{15}$N", labelpad=-1.5, fontsize=9)
+            #ax[3].axvline(x=Time_d15N,color=cmap(cmap_intervals[k]))
             #print(j,i)
             Expa = ['Temp/','Acc/','Both/']
             Modelas = ['HLdynamic/','Barnola1991/','Goujon2003/']
@@ -222,18 +243,27 @@ class CoD_plotter():
             
             f.close()
             
-            
-            
-            
-            
-            
             slices = int((500+300))
+            
+            T_h = self.climate[:,2]
+            T_c = self.temp_cod
+            self.delta_temp = self.climate[:,2] - self.temp_cod
+            temp_mean = (T_h * T_c) / (T_h - T_c) * np.log((T_h / T_c))
+            alpha = (8.856 - 1232/temp_mean) * 10**(-3)
+            omega = alpha/temp_mean * 10**(3)
+            
+            d15N_Temp = omega * self.delta_temp            
+            
+            plt.figure(99)
+            plt.plot(self.model_time,d15N_Temp)
+            plt.savefig('Equiplot/'+str(k)+'.png',dpi=300)
+            plt.close(99)
             #print(self.model_time[800])
             Time_Const_CoD = self.model_time[get_HalfTime(self.close_off_depth[slices:],mode='Endpoint')+slices]
             Time_Const_temp = self.model_time[get_HalfTime(self.delta_temp[slices:],mode='Endpoint')+slices]
             Output[j*Num_int+k,odd[i]] = Time_Const_CoD - 1500 - 300    
             Output[j*Num_int+k,even[i]] = Time_Const_temp - 1500 - 300
-        return Output[j*Num_int+0:j*Num_int+Num_int,even[i]:odd[i]+1]
+        return Output[j*Num_int+0:j*Num_int+Num_int,even[i]:odd[i]+1],d15N_Temp
 rfolder = 'CFM/CFM_main/CFMoutput/EquiAmp2/'
 x = ['Temp','Acc','Both']
 
@@ -284,7 +314,7 @@ for j in range(len(Exp)):
         plt.savefig('CoDEquiAmp2/'+ str(Exp[j][:-1]) + str(Models[i][:-1]) +'.png',dpi=300)
         plt.close('all')
         try:
-            Matrix[j*Num_int+0:j*Num_int+Num_int,even[i]:odd[i]+1] = Current_plot.Equi_output()
+            Matrix[j*Num_int+0:j*Num_int+Num_int,even[i]:odd[i]+1],d15N_Temp = Current_plot.Equi_output()
             #print(Matrix)
         except Exception as e: print(e)
 

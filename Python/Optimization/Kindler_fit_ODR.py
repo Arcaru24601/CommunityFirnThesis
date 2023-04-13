@@ -90,6 +90,19 @@ def input_file(num,temp=temp_interval,acc=acc_interval):
     output_acc = expfunc(myoutput.beta,output_temp)
     temp -= 273.15
     return output_temp, output_acc, myoutput.beta
+
+def rho_0(T,A,W=2.31):
+    rho0 = 7.36e-2 + 1.06e-3 * T + 6.69e-2 * A + 4.77e-3*W
+    return rho0*1000
+
+def rho_bco(T):
+    rho_co = 1 / (1 / (917.0) + T * 6.95E-7 - 4.3e-5)
+    return rho_co
+
+#Input_temp,Input_acc,Beta = input_file(25)
+#rho_s = rho_0(Input_temp,Input_acc)
+#rho_co = rho_bco(Input_temp)
+
 '''
 plt.close('all')
 output_temp,output_acc,beta = input_file(num=25)
