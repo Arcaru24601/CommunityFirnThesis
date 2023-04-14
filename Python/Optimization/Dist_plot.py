@@ -6,7 +6,7 @@ Created on Tue Feb 21 15:25:28 2023
 """
 
 from matplotlib import pyplot as plt
-from Kindler_fit_ODR import input_file, expfunc
+from Kindler_fit_Clear import input_file, expfunc
 import numpy as np
 import pandas as pd
 import glob
@@ -18,7 +18,7 @@ for fcnt in range(1,4,1):
         arr = np.random.random(10*10).reshape(10,10)
         h5fw.create_dataset('data',data=arr)
 
-S = 100
+S = 191
 cost_func = np.zeros(S)
 d15N = np.zeros(S)
 count = np.zeros(S)
@@ -34,7 +34,7 @@ np.random.seed(42)
 plt.close('all')
 Models = ['HLdynamic','HLSigfus','Barnola1991','Goujon2003']
 Dist = ['Dist' + str(i) for i in range(4)]
-Dists2 = np.arange(0,25,2)
+Dists2 = np.array([5])
 import seaborn as sns
 sns.set_theme()
 palette = sns.color_palette(None,3)
@@ -45,9 +45,9 @@ a.encode('utf-8')
 
 even = np.arange(0,7,2)
 odd = np.arange(1,8,2)  
-Input_temp,Input_acc,Beta = input_file(num=25)
+Input_temp,Input_acc,Beta = input_file()
 
-dfc = pd.read_csv('resultsFolder/out_model.csv',sep=',')
+dfc = pd.read_csv('resultsFolder/Integer_diffu.csv',sep=',')
 Modela = ['HLD','HLS','BAR','GOU']
 
 
@@ -59,16 +59,16 @@ for i,val in enumerate(Dists2):
     
 
     fig, ax = plt.subplots(nrows=3,ncols=4,figsize=(15,12), constrained_layout=True)
-    for j in range(len(Models)):
+    for j in range(1):
         #j1 = Dists2[j]
         Csv_point = dfc[str(Modela[j])]
-        s = np.random.normal(Csv_point[val],0.02,size=2000)
-        Data_d15N = s[(abs(s - s.mean())) < (3 * s.std())][:S]
+        Data_d15N = np.random.normal(Csv_point[val],0.02,size=600)
+        #Data_d15N = s[(abs(s - s.mean())) < (3 * s.std())][:S]
 
         print(val,Models[j])
         #for z,file in enumerate(glob.iglob('resultsFolder/Version1/' + str(Models[j]) + '/' + str(Dist[i]) + '/*.h5')):  
         for z in range(S):
-            file = 'resultsFolder/FullTest/' + str(Models[j]) + '/Dist' + str(Dists2[i]) + '/Point' + str(z) + '.h5'
+            file = 'resultsFolder/Ulti2/' + str(Modela[j]) + '/' + str(Dists2[i]) + '/Point' + str(z) + '.h5'
             #print(file)
             
             with h5py.File(file, 'r') as h5fr:
