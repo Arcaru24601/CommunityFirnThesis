@@ -17,7 +17,7 @@
   ],
   "DFresample": "1M",
   "DFfile": "CFM_example_input_df.pkl",
-  "physRho": "HLD",
+  "physRho": "HLdynamic",
   "physRho_options": [
     "HLdynamic",
     "HLSigfus",
@@ -38,7 +38,7 @@
   "RAIN": false,
   "ReehCorrectedT": false,
   "FirnAir": true,
-  "AirConfigName": "Air_OptiNoise_diffu.json",
+  "AirConfigName": "Air_OptiNoise_Ulti.json",
   "TWriteInt": 1,
   "TWriteStart": 0,
   "int_type": "linear",
@@ -81,7 +81,7 @@
     "param",
     "noise"
   ],
-  "rhos0": 331.3434065372217,
+  "rhos0": 340.55543244955714,
   "r2s0": 1e-08,
   "AutoSpinUpTime": false,
   "yearSpin": 1000,
