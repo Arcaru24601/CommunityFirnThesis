@@ -169,6 +169,73 @@ plt.legend()
 
 
 
+def read2(rfolder):
+    '''
+    Parameters
+    ----------
+    rfoler : filepath
+        filepath of savefolder.
+    saver : Boolean
+        True for figure saving.
+
+    Returns
+    -------
+    Various arrays.
+
+    '''
+    rfile = 'CFMresults.hdf5'
+    fn = os.path.join(rfolder,rfile)
+    f = h5.File(fn,'r')
+    
+    z = f['depth'][:]
+    climate = f["Modelclimate"][:]
+    model_time = np.array(([a[0] for a in z[:]]))
+    f_close_off_depth = f["BCO"][:, -1]
+    close_off_depth = f["BCO"][:, 2]
+    LID = f["BCO"][:, 6]
+    close_off_age = f["BCO"][:,1]
+    age_dist = f['gas_age'][:]
+    #### COD variables
+    temperature = f['temperature'][:]
+    temp_cod = np.ones_like(close_off_depth)
+    density = f['density'][:]
+    
+    d15N = f['d15N2'][:]-1
+
+    diffusivity = f['diffusivity'][:]
+    index = np.zeros(np.shape(diffusivity)[0])
+    d15n_cod_diff = np.zeros(np.shape(diffusivity)[0])
+    close_off_depth_diff = np.zeros(np.shape(diffusivity)[0])
+    
+    for i in range(np.shape(diffusivity)[0]):
+        index[i] = np.max(np.where(diffusivity[i, 1:] > 10**(-20))) +1
+
+        close_off_depth_diff[i] = z(i, int(index[i]))
+
+        d15n_cod_diff[i] = d15N(i, int(index[i]))
+    
+    d15N_cod = np.ones_like(close_off_depth)
+    #d15n_grav = f1['d15N2'][:]-1
+    d15n_grav_cod = np.ones_like(close_off_depth)
+
+    for i in range(z.shape[0]):
+        idx = int(np.where(z[i, 1:] == close_off_depth[i])[0])
+        d15N_cod[i] = d15N[i,idx]
+ 
+        temp_cod[i] = temperature[i,idx]
+   
+
+    delta_temp = climate[:,2] - temp_cod
+    d15N_th_cod = d15N_cod - d15n_grav_cod
+
+    
+    
+    
+    f.close()
+    with h5.File(fn,'r') as hf:
+        print(hf.keys())
+    return model_time,z,temperature,climate,d15N*1000,close_off_depth,age_dist,density,LID,f_close_off_depth,close_off_depth_diff,d15n_cod_diff
 
 
+timesteps,depth,temperature,climate,d15N2,Bubble,age_dist,density,LiD,z_cod,diff_cod,d15n_cod_diff = read('CFM/CFM_main/CFMoutput/OptiNoise')
 
