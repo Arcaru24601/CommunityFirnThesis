@@ -294,10 +294,10 @@ def Data_crunch_Ulti(Model,Indices,sath,N,rho_surface_uncertainty_Flag,diff_para
             path = Path(folder_path)
             path.mkdir(parents=True, exist_ok=True)
             results_path = folder_path + '/' + 'Point'  + str(k) + '.h5'
-            #try:
-            #    root_find(results_path,d15N_ref,bco_param_flag)
+            try:
+                root_find(results_path,d15N_ref,bco_param_flag)
                     
-            #except Exception as e: print(e)
+            except Exception as e: print(e)
                 
     return None
 path_Temp = 'resultsFolder/Ulti_Temp/'
