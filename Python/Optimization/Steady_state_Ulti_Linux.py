@@ -89,7 +89,7 @@ def func(temp,N_ref,var_dict,bco_param_flag):
     data = json.load(file)
     rhos = data['rhos0'] 
     file.close() 
-    print('Using',rhos,'surface density')
+    #print('Using',rhos,'surface density')
   
   
     
@@ -179,8 +179,8 @@ def root_find(path_to_result,N_ref,bco_param_flag):
     var_dict.clear()
     return None    
 
-tminmax = get_min_max_temp()
-temp_test = np.linspace(tminmax[0],tminmax[1],1000)
+temp_NGRIP_min, temp_NGRIP_max = get_min_max_temp()
+temp_test = np.linspace(temp_NGRIP_min,temp_NGRIP_max,1000)+273.15
 bco = rho_bco(temp_test)
 
 
@@ -200,7 +200,7 @@ def Data_crunch_Ulti(Model,Indices,sath,N,rho_surface_uncertainty_Flag,diff_para
         d15N_dist = np.random.normal(np.asarray(mu_d15n),0.02,size=N)
         print(mu_d15n,Input_temp[Indices[j]],Input_acc[Indices[j]],expfunc(Beta,Input_temp[Indices[j]]))    
         rho_s_distribution = np.random.normal(330,20,size=N)
-        bco_distribution = np.random.normal(np.mean(bco),np.std(bco),size=800)
+        bco_distribution = np.random.normal(np.mean(bco),2*np.std(bco),size=N)
 
             
             
@@ -257,12 +257,13 @@ def Data_crunch_Ulti(Model,Indices,sath,N,rho_surface_uncertainty_Flag,diff_para
             #   Close off density          
             # =============================================================================
             if bco_param_flag == True:
-                bco_dist = np.random.choice(bco_distribution,1)
-                
+                bco_dist = np.random.choice(bco_distribution)
+                #print(bco_d)
                 file = open('CFM/CFM_main/Air_OptiNoise_Ulti.json')
                 data = json.load(file)
                 data['bco_dist'] = bco_dist
-                    
+                data['noisy_bco'] = True
+                #print(bco_dist)
                 with open("CFM/CFM_main/Air_OptiNoise_Ulti.json", 'w') as f:
                     json.dump(data, f,indent = 2)
                     
@@ -303,15 +304,35 @@ path_Temp = 'resultsFolder/Ulti_Temp/'
 path_rho = 'resultsFolder/Ulti_rho/'
 path_Deff = 'resultsFolder/Ulti_Deff/'
 path_bco = 'resultsFolder/Ulti_Bco/'
+
+path_bco_rho = 'resultsFolder/Ulti_bco_rho/'
+path_Deff_only = 'resultsFolder/Ulti_Deff_only/'
+path_bco_only = 'resultsFolder/Ulti_bco_only/'
+
 #for j,val in enumerate(Input_temp):
 Temp_input = np.array([3,5])
 
 reset_to_factory()
 
-Data_crunch_Ulti('HLD',Temp_input,path_Temp,800,False,False,False)
-Data_crunch_Ulti('HLD',Temp_input,path_rho,800,True,False,False)
+#Data_crunch_Ulti('HLD',Temp_input,path_Temp,1,False,False,False)
+#Data_crunch_Ulti('HLD',Temp_input,path_rho,800,True,False,False)
 #Data_crunch_Ulti('HLD',Temp_input,path_Deff,800,True,True,False)
-Data_crunch_Ulti('HLD',Temp_input,path_bco,800,True,False,True)
+#Data_crunch_Ulti('HLD',Temp_input,path_bco,800,True,False,True)
+
+m = 800 # Num repetitions
+Data_crunch_Ulti('HLD',Temp_input,path_bco_only,m,False,False,True)
+reset_to_factory()
+
+Data_crunch_Ulti('HLD',Temp_input,path_bco_rho,m,True,False,True)
+reset_to_factory()
+
+Data_crunch_Ulti('HLD',Temp_input,path_Deff_only,m,False,True,False)
+
+
+reset_to_factory()
+
+
+
 
 #rint(Time)
 
