@@ -106,6 +106,11 @@ def rho_bco(T):
     rho_co = 1 / (1 / (917.0) + T * 6.95E-7 - 4.3e-5)
     return rho_co
 
+def get_min_max_temp(x=temp_interval):
+    return np.min(x),np.max(x)
+
+
+
 #Input_temp,Input_acc,Beta = input_file(25)
 #rho_s = rho_0(Input_temp,Input_acc)
 #rho_co = rho_bco(Input_temp)

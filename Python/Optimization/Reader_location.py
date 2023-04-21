@@ -212,15 +212,7 @@ def bco_rho(temp):
 
 temp_test = np.linspace(215,250,10000)
 bco = bco_rho(temp_test)
-
-
-
-
-
-
-s = np.random.normal((bco[0]+bco[-1])/2,1.5*np.std(bco),size=800)
-
-
+s = np.random.normal(np.mean(bco),np.std(bco),size=800)
 bco_rho = np.random.choice(s,1)
 
 
