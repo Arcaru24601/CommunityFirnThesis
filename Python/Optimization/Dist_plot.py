@@ -18,7 +18,7 @@ for fcnt in range(1,4,1):
         arr = np.random.random(10*10).reshape(10,10)
         h5fw.create_dataset('data',data=arr)
 
-S = 191
+S = 200
 cost_func = np.zeros(S)
 d15N = np.zeros(S)
 count = np.zeros(S)
@@ -68,7 +68,7 @@ for i,val in enumerate(Dists2):
         print(val,Models[j])
         #for z,file in enumerate(glob.iglob('resultsFolder/Version1/' + str(Models[j]) + '/' + str(Dist[i]) + '/*.h5')):  
         for z in range(S):
-            file = 'resultsFolder/Ulti2/' + str(Modela[j]) + '/' + str(Dists2[i]) + '/Point' + str(z) + '.h5'
+            file = 'resultsFolder/Ulti_Deff/' + str(Modela[j]) + '/' + str(Dists2[i]) + '/Point' + str(z) + '.h5'
             #print(file)
             
             with h5py.File(file, 'r') as h5fr:

@@ -58,13 +58,39 @@ Time = np.array([spin_year,spin_year2,end_year])
 df = pd.read_csv('resultsFolder/Integer_diffu.csv',sep=',')
 Input_temp,Input_acc,Beta = input_file()
 
+def reset_to_factory():
+    
+    file = open(r'/home/jesperholm/Documents/GitHub/CommunityFirnThesis/Python/CFM/CFM_main/Air_OptiNoise_Ulti.json')
+    data = json.load(file)
+    data['Diffu_param'] = 'Schwander'
+    
+    with open(r"/home/jesperholm/Documents/GitHub/CommunityFirnThesis/Python/CFM/CFM_main/Air_OptiNoise_Ulti.json", 'w') as f:
+        json.dump(data, f,indent = 2)
+    
+    # Closing file
+    f.close()
 
+    file = open(r'/home/jesperholm/Documents/GitHub/CommunityFirnThesis/Python/CFM/CFM_main/FirnAir_Noise_Ulti.json')
+    data = json.load(file)
+    data['rhos0'] = 350.0
 
-def func(temp,N_ref,var_dict,rhos):
+    with open(r"/home/jesperholm/Documents/GitHub/CommunityFirnThesis/Python/CFM/CFM_main/FirnAir_Noise_Ulti.json", 'w') as f:
+        json.dump(data, f,indent = 2)
+
+    # Closing file
+    f.close()
+    return None
+
+def func(temp,N_ref,var_dict):
     
     count = int(np.max(var_dict['count']))
     print('Iteration',count)
-    
+    file = open(r'/home/jesperholm/Documents/GitHub/CommunityFirnThesis/Python/CFM/CFM_main/FirnAir_Noise_Ulti.json')
+    data = json.load(file)
+    rhos = data['rhos0'] 
+    file.close() 
+    print('Using',rhos,'surface density')
+  
   
     
     i_temp = np.full(len(Time),temp)
@@ -100,7 +126,7 @@ def func(temp,N_ref,var_dict,rhos):
         var_dict['rho_co'][count] = rho_co
         var_dict['CoD'][count] = CoD
         #rho_s = rho_0(temperature_model, Acc)
-        var_dict['rho_s'][count] = rho_0(temp,Acc)
+        var_dict['rho_s'][count] = rhos
         
         
     else:
@@ -120,7 +146,7 @@ def func(temp,N_ref,var_dict,rhos):
 
 
 
-def root_find(path_to_result,N_ref,rhos):
+def root_find(path_to_result,N_ref):
     count = 0
     
     var_dict = {'count': np.zeros([N, 1], dtype=int),
@@ -132,7 +158,7 @@ def root_find(path_to_result,N_ref,rhos):
                 'rho_s': np.zeros([N,1])
                 }
 
-    res_c = brentq(func,a = 215,b = 250,args=(N_ref,var_dict,rhos),full_output = True,xtol=2e-3,rtol=8.88e-6)
+    res_c = brentq(func,a = 215,b = 250,args=(N_ref,var_dict),full_output = True,xtol=2e-3,rtol=8.88e-6)
     entry_0 = np.where(var_dict['count'] == 0)[0]
     var_dict['count'] = np.delete(var_dict['count'], entry_0[1:])
     var_dict['count'] = var_dict['count'][:-1]
@@ -169,8 +195,8 @@ def Data_crunch_Ulti(Model,Indices,sath,N,rho_surface_uncertainty_Flag,diff_para
     for j,val in enumerate(Indices):
         mu_d15n = df[str(Model)][Indices[j]]
         d15N_dist = np.random.normal(np.asarray(mu_d15n),0.02,size=N)
-            
-        
+        print(mu_d15n,Input_temp[Indices[j]],Input_acc[Indices[j]],expfunc(Beta,Input_temp[Indices[j]]))    
+        rho_s_distribution = np.random.normal(330,20,size=N)
            
             
             
@@ -189,7 +215,7 @@ def Data_crunch_Ulti(Model,Indices,sath,N,rho_surface_uncertainty_Flag,diff_para
             # =============================================================================
             
             if rho_surface_uncertainty_Flag == True:
-                rho_s_distribution = np.random.normal(330,20,size=N)
+                
                 file = open('CFM/CFM_main/FirnAir_Noise_Ulti.json')
                 data = json.load(file)
                 data['rhos0'] = rho_s_distribution[k]
@@ -241,18 +267,22 @@ def Data_crunch_Ulti(Model,Indices,sath,N,rho_surface_uncertainty_Flag,diff_para
             path.mkdir(parents=True, exist_ok=True)
             results_path = folder_path + '/' + 'Point'  + str(k) + '.h5'
             try:
-                root_find(results_path,d15N_ref,rho_s_distribution[k])
+                root_find(results_path,d15N_ref)
                     
             except Exception as e: print(e)
                 
     return None
-path1 = 'resultsFolder/Ulti1/'
-path2 = 'resultsFolder/Ulti2/'
+path_Temp = 'resultsFolder/Ulti_Temp/'
+path_rho = 'resultsFolder/Ulti_rho/'
+path_Deff = 'resultsFolder/Ulti_Deff/'
 #for j,val in enumerate(Input_temp):
-Temp_input = np.array([1,3,5])
-Data_crunch_Ulti('HLD',Temp_input,path1,750,False,False)
-Data_crunch_Ulti('HLD',Temp_input,path1,750,True,False)
-Data_crunch_Ulti('HLD',Temp_input,path2,750,True,True)
+Temp_input = np.array([3,5])
+
+reset_to_factory()
+
+Data_crunch_Ulti('HLD',Temp_input,path_Temp,800,False,False)
+Data_crunch_Ulti('HLD',Temp_input,path_rho,800,True,False)
+Data_crunch_Ulti('HLD',Temp_input,path_Deff,800,True,True)
 #rint(Time)
 
 
