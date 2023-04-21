@@ -1,5 +1,12 @@
 # -*- coding: utf-8 -*-
 """
+Created on Thu Apr 20 20:13:11 2023
+
+@author: Jesper Holm
+"""
+
+# -*- coding: utf-8 -*-
+"""
 Created on Sat Sep 17 06:15:36 2022
 
 @author: jespe
@@ -118,7 +125,7 @@ ax.legend
 
 
 #timesteps,depth,temperature,climate,d15N2,Bubble,age_dist = read('CFM/CFM_main/CFMoutput/EquiAmp2/Temp/HLdynamic/1.1')
-timesteps,depth,temperature,climate,d15N2,Bubble,age_dist,density,LiD,z_cod,diff_cod,d15n_cod_diff,diffu,d15n_z,d15n_cod = read('CFM/CFM_main/CFMoutput/OptiNoise')
+timesteps,depth,temperature,climate,d15N2,Bubble,age_dist,density,LiD,z_cod,diff_cod,d15n_cod_diff,diffu,d15n_z,d15n_cod = read('../CFM/CFM_main/CFMoutput/OptiNoise')
 
 
 bcoMart =  1 / (1 / (917.0) + temperature[-1,-1] * 6.95E-7 - 4.3e-5)
@@ -214,7 +221,7 @@ bco = bco_rho(temp_test)
 s = np.random.normal((bco[0]+bco[-1])/2,1.5*np.std(bco),size=800)
 
 
-
+bco_rho = np.random.choice(s,1)
 
 
 
