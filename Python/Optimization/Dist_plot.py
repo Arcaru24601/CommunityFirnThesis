@@ -18,7 +18,7 @@ for fcnt in range(1,4,1):
         arr = np.random.random(10*10).reshape(10,10)
         h5fw.create_dataset('data',data=arr)
 
-S = 200
+S = 800
 cost_func = np.zeros(S)
 d15N = np.zeros(S)
 count = np.zeros(S)
@@ -34,7 +34,7 @@ np.random.seed(42)
 plt.close('all')
 Models = ['HLdynamic','HLSigfus','Barnola1991','Goujon2003']
 Dist = ['Dist' + str(i) for i in range(4)]
-Dists2 = np.array([5])
+Dists2 = np.array([3,5])
 import seaborn as sns
 sns.set_theme()
 palette = sns.color_palette(None,3)
@@ -50,7 +50,7 @@ Input_temp,Input_acc,Beta = input_file()
 dfc = pd.read_csv('resultsFolder/Integer_diffu.csv',sep=',')
 Modela = ['HLD','HLS','BAR','GOU']
 
-
+Models = ['Ulti_Temp','Ulti_rho','Ulti_Deff']
 mus = np.zeros((13,8))
 mus_1 = np.zeros((13,8))
 # Loop over H5 files and load into a dataframe
@@ -58,17 +58,17 @@ for i,val in enumerate(Dists2):
     #j2 = Dists2[i]
     
 
-    fig, ax = plt.subplots(nrows=3,ncols=4,figsize=(15,12), constrained_layout=True)
-    for j in range(1):
+    fig, ax = plt.subplots(nrows=3,ncols=3,figsize=(15,12), constrained_layout=True)
+    for j in range(len(Models)):
         #j1 = Dists2[j]
-        Csv_point = dfc[str(Modela[j])]
+        Csv_point = dfc['HLD']
         Data_d15N = np.random.normal(Csv_point[val],0.02,size=600)
         #Data_d15N = s[(abs(s - s.mean())) < (3 * s.std())][:S]
 
         print(val,Models[j])
         #for z,file in enumerate(glob.iglob('resultsFolder/Version1/' + str(Models[j]) + '/' + str(Dist[i]) + '/*.h5')):  
         for z in range(S):
-            file = 'resultsFolder/Ulti_Deff/' + str(Modela[j]) + '/' + str(Dists2[i]) + '/Point' + str(z) + '.h5'
+            file = 'resultsFolder/' + str(Models[j]) + '/HLD/' + str(Dists2[i]) + '/Point' + str(z) + '.h5'
             #print(file)
             
             with h5py.File(file, 'r') as h5fr:
@@ -83,7 +83,7 @@ for i,val in enumerate(Dists2):
        
         #table = pd.DataFrame(xdata).reset_index()
         #print(table)
-        bins = 'freedman'
+        bins = 50
         
         hist(Data_d15N, bins=bins, ax=ax[0,j],histtype='stepfilled',color = palette[0],label=r'Input $\delta^{15}$N' if j ==3 else '')
         hist(Temp, bins=bins, ax=ax[1,j],histtype='stepfilled',color = palette[1],label='Output Temperature' if j ==3 else '')
@@ -101,8 +101,8 @@ for i,val in enumerate(Dists2):
         
         
         
-        mus[i,even[j]] = '{0:.3f}'.format(mu) 
-        mus[i,odd[j]] = '{0:.2f}'.format(std)
+        mus[i,even[j]] = '{0:.4f}'.format(mu) 
+        mus[i,odd[j]] = '{0:.3f}'.format(std)
         print(mu,Input_temp[val])
         mua = np.mean(Data_d15N)
         stda = np.std(Data_d15N)
@@ -111,8 +111,8 @@ for i,val in enumerate(Dists2):
         #ax[1,j].axvline(Point_T[i],color='g',linestyle="--")
         #ax[0,j].text(0, 0.9, r'$\mu$:{0:.2f}'.format(mua), size=14, ha='left', va='center',transform=ax[0,j].transAxes)
         #ax[0,j].text(0, 0.8, r'$\sigma$:{0:.1f}'.format(stda), size=14, ha='left', va='center',transform=ax[0,j].transAxes)
-        mus_1[i,even[j]] = '{0:.3f}'.format(mua) 
-        mus_1[i,odd[j]] = '{0:.2f}'.format(stda)
+        mus_1[i,even[j]] = '{0:.4f}'.format(mua) 
+        mus_1[i,odd[j]] = '{0:.3f}'.format(stda)
 
         
         
