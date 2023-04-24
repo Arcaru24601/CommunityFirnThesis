@@ -18,8 +18,8 @@
   "steady_bdot": 0.05,
   "StepsPerYear": 1,
   "z_resolution": 0.5,
-  "noisy_bco": false,
-  "bco_dist": 825.6267198350106,
+  "noisy_bco": true,
+  "bco_dist": 827.5298636981998,
   "UserData": false,
   "Diffu_param": "Schwander",
   "Diffu_options": [

@@ -18,7 +18,7 @@ for fcnt in range(1,4,1):
         arr = np.random.random(10*10).reshape(10,10)
         h5fw.create_dataset('data',data=arr)
 
-S = 200
+S = 800
 cost_func = np.zeros(S)
 d15N = np.zeros(S)
 count = np.zeros(S)
@@ -34,7 +34,7 @@ np.random.seed(42)
 plt.close('all')
 Models = ['HLdynamic','HLSigfus','Barnola1991','Goujon2003']
 Dist = ['Dist' + str(i) for i in range(4)]
-Dists2 = np.array([5])
+Dists2 = np.array([3,5])
 import seaborn as sns
 sns.set_theme()
 palette = sns.color_palette(None,3)
@@ -49,7 +49,7 @@ Input_temp,Input_acc,Beta = input_file()
 
 dfc = pd.read_csv('resultsFolder/Integer_diffu.csv',sep=',')
 Modela = ['HLD','HLS','BAR','GOU']
-
+Models = ['Ulti_bco_only','Ulti_bco_rho','Ulti_Deff_only']
 
 mus = np.zeros((13,8))
 mus_1 = np.zeros((13,8))
@@ -58,29 +58,35 @@ for i,val in enumerate(Dists2):
     #j2 = Dists2[i]
     
 
-    fig, ax = plt.subplots(nrows=3,ncols=4,figsize=(15,12), constrained_layout=True)
-    for j in range(1):
+    fig, ax = plt.subplots(nrows=3,ncols=3,figsize=(15,12), constrained_layout=True)
+    for j in range(len(Models)):
         #j1 = Dists2[j]
-        Csv_point = dfc[str(Modela[j])]
+        Csv_point = dfc['HLD']
         Data_d15N = np.random.normal(Csv_point[val],0.02,size=600)
         #Data_d15N = s[(abs(s - s.mean())) < (3 * s.std())][:S]
 
         print(val,Models[j])
         #for z,file in enumerate(glob.iglob('resultsFolder/Version1/' + str(Models[j]) + '/' + str(Dist[i]) + '/*.h5')):  
         for z in range(S):
-            file = 'resultsFolder/Ulti_Deff/' + str(Modela[j]) + '/' + str(Dists2[i]) + '/Point' + str(z) + '.h5'
+            file = 'resultsFolder/' +str(Models[j]) + '/HLD/' + str(Dists2[i]) + '/Point' + str(z) + '.h5'
             #print(file)
             
-            with h5py.File(file, 'r') as h5fr:
+            try:
+            	with h5py.File(file, 'r') as h5fr:
                 #print(h5fr.keys())
                 #print(2)
-                cost_func[z] = h5fr['cost_func'][-1]
-                d15N[z] = h5fr['d15N@CoD'][-1]
-                count[z] = h5fr['count'][-1]
-                Temp[z] = h5fr['temp'][-1]
-                #print(np.mean(Temp))
-       
-       
+                	cost_func[z] = h5fr['cost_func'][-1]
+                	d15N[z] = h5fr['d15N@CoD'][-1]
+                	count[z] = h5fr['count'][-1]
+                	Temp[z] = h5fr['temp'][-1]
+                	#print(np.mean(Temp))
+           
+       	    except:
+       	    	print('File not found')
+       	    	cost_func[z] = cost_func[z-1]
+       	    	d15N[z] = d15N[z-1]
+       	    	count[z] = count[z-1]
+       	    	Temp[z] = Temp[z-1]
         #table = pd.DataFrame(xdata).reset_index()
         #print(table)
         bins = 'freedman'

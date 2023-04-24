@@ -659,7 +659,7 @@ class FirnDensityNoSpin:
             self.gas_age      = np.zeros_like(self.rho)
             self.w_air        = np.ones_like(self.rho)
             self.w_firn       = np.ones_like(self.rho)
-
+            #print(self.cg)
             for gas in self.cg['gaschoice']:
                 if (gas=='d15N2' or gas=='d40Ar'):
                     input_year_gas = input_year_temp
