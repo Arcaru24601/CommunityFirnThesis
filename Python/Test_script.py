@@ -115,7 +115,7 @@ def Terminal_run2(Model,Folder,Priority,effect,advec):
     elif effect == 'full':
         subprocess.run('python main.py example_Air.json -n', shell=True, cwd='CFM/CFM_main/')
     
-def Terminal_run_Models(Model,Folder,Priority,effect,advec):
+def Terminal_run_Modelss(Model,Folder,Priority,effect,advec):
     Config_Edit(Model,Folder,Priority,effect,advec)
     Air_Edit(Model,effect,advec)
     if Model == 'HLdynamic':
@@ -135,7 +135,7 @@ def Terminal_run_Models(Model,Exp,Folder):
     data = json.load(file)
     data['grid_outputs'] = False
     data['resultsFileName'] = str(Exp) + '_' + str(Model) + str(Folder) +  '.hdf5'
-    data['resultsFolder'] = 'CFMoutput/Equi2/' + str(Exp) + '/' + str(Model) + '/' + str(Folder) 
+    data['resultsFolder'] = 'CFMoutput/Equi2_Temp/' + str(Exp) + '/' + str(Model) + '/' + str(Folder) 
     data['InputFileFolder'] = 'CFMinput/Equi2/' + str(Exp) + '/' + str(Folder)
     data['InputFileNameTemp'] = 'Temp.csv'
     data['InputFileNamebdot'] = 'Acc.csv'
@@ -155,7 +155,7 @@ def Terminal_run_Amp(Model,Exp,Folder):
     data = json.load(file)
     data['grid_outputs'] = False
     data['resultsFileName'] = str(Exp) + '_' + str(Model) + str(Folder) +  '.hdf5'
-    data['resultsFolder'] = 'CFMoutput/EquiAmp2/' + str(Exp) + '/' + str(Model) + '/' + str(Folder) 
+    data['resultsFolder'] = 'CFMoutput/EquiAmp2_Temp/' + str(Exp) + '/' + str(Model) + '/' + str(Folder) 
     data['InputFileFolder'] = 'CFMinput/EquiAmp2/' + str(Exp) + '/' + str(Folder)
     data['InputFileNameTemp'] = 'Temp.csv'
     data['InputFileNamebdot'] = 'Acc.csv'

@@ -60,6 +60,8 @@ def read(rfolder):
     for i in range(z.shape[0]):
         idx = int(np.where(z[i, 1:] == close_off_depth[i])[0])
         d15N_cod[i] = d15N[i,idx]
+        
+        
         #d15n_grav_cod[i] = d15n_grav[i,idx]
      #   d40Ar_cod[i] = d40Ar[i,idx]
         #d40ar_grav_cod[i] = d40ar_grav[i,idx]
@@ -113,8 +115,11 @@ ax.legend
 '''
 
 
+
+timesteps,depth,temperature,climate,d15N2,Bubble,age_dist,density,LiD,z_cod = read('CFM/CFM_main/CFMoutput/OptiNoise/252')
+
 #timesteps,depth,temperature,climate,d15N2,Bubble,age_dist = read('CFM/CFM_main/CFMoutput/EquiAmp2/Temp/HLdynamic/1.1')
-timesteps,depth,temperature,climate,d15N2,Bubble,age_dist,density,LiD,z_cod = read('CFM/CFM_main/CFMoutput/OptiNoise')
+timestepsa,deptha,temperaturea,climatea,d15N2a,Bubblea,age_dista,densitya,LiDa,z_coda = read('CFM/CFM_main/CFMoutput/OptiNoise/242')
 
 
 bcoMart =  1 / (1 / (917.0) + temperature[-1,-1] * 6.95E-7 - 4.3e-5)
@@ -140,32 +145,42 @@ from matplotlib import pyplot as plt
 
 
 
-fig, ax = plt.subplots(nrows=1, ncols=3, sharey=True)
+
+fig, ax = plt.subplots(nrows=1, ncols=3, sharey=True,figsize=(10,7))
 
 ax[0].invert_yaxis()
+ax[0].plot(density[-1,1:125],depth[-1,1:125],'k')
+ax[0].set_ylabel('Depth [m]',fontsize=18)
+ax[0].set_xlabel(r'Density [kg/m$^{3}$]',fontsize=18)
+ax[0].axhline(LiD[-1],linestyle='--',label='LiD')
+ax[0].axhline(z_cod[-1],linestyle='--',label='zCoD')
 
-ax[1].plot(s_cl[0:261],depth[-1,1:262],label=r'$s_cl$')
-ax[1].plot(s_op[0:261],depth[-1,1:262],label=r'$s_op$')
-ax[0].set_xlabel('Porosity')
-ax[1].set_ylabel('Depth')
-ax[0].set_xlabel('Density')
-ax[0].axhline(LiD[-1],label='LiD')
-ax[0].axhline(z_cod[-1],label='zCoD')
-ax[1].axhline(z_cod[-1],label='zCoD')
-ax[1].axhline(LiD[-1],label='LiD')
-ax[1].axhline(Bubble[-1],label='CoD',color='k')
-ax[0].axhline(Bubble[-1],label='CoD',color='k')
+ax[0].legend(fontsize=16)
 
-ax[0].plot(density[-1,1:262],depth[-1,1:262],label=r'$density$')
-ax[2].set_xlabel(r'$\delta^{15}$N')
-ax[2].plot(d15N2[-1,1:262],depth[-1,1:262])
-ax[2].axhline(z_cod[-1],label='zCoD')
-ax[2].axhline(LiD[-1],label='LiD')
-ax[2].axhline(Bubble[-1],label='CoD',color='k')
-
-plt.legend()
+ax[1].axhline(z_cod[-1],linestyle='--')
+ax[1].axhline(LiD[-1],linestyle='--')
+#ax[1].axhline(Bubble[-1],label='CoD',color='k')
+#ax[0].axhline(Bubble[-1],label='CoD',color='k')
+ax[1].plot(s_cl[0:124],depth[-1,1:125],'g',label=r'$s_{cl}$')
+ax[1].plot(s_op[0:124],depth[-1,1:125],'y',label=r'$s_{op}$')
+ax[1].set_xlabel(r'Porosity [m$^{3}$/m$^{3}$]',fontsize=18)
 
 
+ax[1].legend(fontsize=16)
+
+
+
+
+ax[2].set_xlabel(u'$\delta^{15}$N [‰] ',fontsize=18)
+ax[2].plot(d15N2[-1,1:125],depth[-1,1:125],'r',label='252 K')
+#ax[2].plot(d15N2a[-1,1:125],deptha[-1,1:125],'r',label='242 K')
+ax[2].axhline(z_cod[-1],linestyle='--')
+ax[2].axhline(LiD[-1],linestyle='--')
+#ax[2].plot(Bubble[-1],linestyle='--',label='CoD',color='k')
+
+ax[2].legend(fontsize=16)
+
+plt.savefig('Testing/Plot.png',dpi=300)
 
 
 

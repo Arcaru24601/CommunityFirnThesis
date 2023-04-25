@@ -8,7 +8,7 @@
     "d15N2"
   ],
   "gravity": "on",
-  "thermal": "off",
+  "thermal": "on",
   "runtype": "transient",
   "runtype_options": [
     "steady",

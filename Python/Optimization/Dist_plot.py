@@ -18,7 +18,7 @@ for fcnt in range(1,4,1):
         arr = np.random.random(10*10).reshape(10,10)
         h5fw.create_dataset('data',data=arr)
 
-S = 191
+S = 800
 cost_func = np.zeros(S)
 d15N = np.zeros(S)
 count = np.zeros(S)
@@ -34,7 +34,7 @@ np.random.seed(42)
 plt.close('all')
 Models = ['HLdynamic','HLSigfus','Barnola1991','Goujon2003']
 Dist = ['Dist' + str(i) for i in range(4)]
-Dists2 = np.array([5])
+Dists2 = np.array([3,5])
 import seaborn as sns
 sns.set_theme()
 palette = sns.color_palette(None,3)
@@ -68,7 +68,7 @@ for i,val in enumerate(Dists2):
         print(val,Models[j])
         #for z,file in enumerate(glob.iglob('resultsFolder/Version1/' + str(Models[j]) + '/' + str(Dist[i]) + '/*.h5')):  
         for z in range(S):
-            file = 'resultsFolder/Ulti2/' + str(Modela[j]) + '/' + str(Dists2[i]) + '/Point' + str(z) + '.h5'
+            file = 'resultsFolder/Ulti_Temp/' + str(Modela[j]) + '/' + str(Dists2[i]) + '/Point' + str(z) + '.h5'
             #print(file)
             
             with h5py.File(file, 'r') as h5fr:

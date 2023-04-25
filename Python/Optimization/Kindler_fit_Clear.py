@@ -112,7 +112,7 @@ def rho_bco(T):
 
 '''
 plt.close('all')
-output_temp,output_acc,beta = input_file(num=25)
+output_temp,output_acc,beta = input_file()
 
 fig, ax = plt.subplots(constrained_layout=True)
 ax.scatter(temp_interval+273.15, acc_interval, label='Raw data')
