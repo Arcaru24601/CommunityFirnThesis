@@ -659,7 +659,7 @@ class FirnDensityNoSpin:
             self.gas_age      = np.zeros_like(self.rho)
             self.w_air        = np.ones_like(self.rho)
             self.w_firn       = np.ones_like(self.rho)
-
+            #print(self.cg)
             for gas in self.cg['gaschoice']:
                 if (gas=='d15N2' or gas=='d40Ar'):
                     input_year_gas = input_year_temp
@@ -1309,7 +1309,9 @@ class FirnDensityNoSpin:
         '''
 
         try:
-            if (self.c['FirnAir'] and self.cg['runtype']=='steady'):
+            if (self.c['FirnAir'] and self.cg['noisy_bco']):
+                bcoMartRho = self.cg['bco_dist']
+            elif (self.c['FirnAir'] and self.cg['runtype']=='steady'):
                 bcoMartRho  = 1 / (1 / (917.0) + self.cg['steady_T'] * 6.95E-7 - 4.3e-5)  # Martinerie density at close off
             else:
                 bcoMartRho  = 1 / (1 / (917.0) + self.T_mean[iii] * 6.95E-7 - 4.3e-5)  # Martinerie density at close off; see Buizert thesis (2011), Blunier & Schwander (2000), Goujon (2003)
@@ -1318,7 +1320,7 @@ class FirnDensityNoSpin:
             #print('Mart density', bcoMartRho)
             bcoAgeMart  = min(self.age[self.rho >= bcoMartRho]) / S_PER_YEAR  # close-off age from Martinerie
             bcoDepMart  = min(self.z[self.rho >= (bcoMartRho)])
-            #print('Mart CoD',bcoDepMart)            
+            #('Mart CoD',bcoDepMart)            
             # bubble close-off age and depth assuming rho_crit = 815kg/m^3
             bcoAge830   = min(self.age[self.rho >= 830.0]) / S_PER_YEAR  # close-off age where rho = 815 kg m^-3
             bcoDep830   = min(self.z[self.rho >= 830.0])

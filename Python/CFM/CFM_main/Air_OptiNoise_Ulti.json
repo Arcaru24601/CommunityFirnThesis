@@ -18,8 +18,10 @@
   "steady_bdot": 0.05,
   "StepsPerYear": 1,
   "z_resolution": 0.5,
+  "noisy_bco": false,
+  "bco_dist": 824.2837901730041,
   "UserData": false,
-  "Diffu_param": "Battle",
+  "Diffu_param": "Schwander",
   "Diffu_options": [
     "Freitag",
     "Schwander",
@@ -41,13 +43,15 @@
     "diffusivity",
     "air_advection_rate",
     "firn_advection_rate",
-    "gas_age"
+    "gas_age",
+    "rho_co"
   ],
   "output_options": [
     "gasses",
     "diffusivity",
     "air_advection_rate",
     "firn_advection_rate",
-    "gas_age"
+    "gas_age",
+    "rho_co"
   ]
 }
