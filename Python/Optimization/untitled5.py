@@ -6,8 +6,8 @@ Created on Sun Apr 23 17:30:51 2023
 """
 
 from multiprocessing import Process
-
-
+import multiprocessing
+print(multiprocessing.cpu_count())
 def add(a, b):
     total = 0
     for a1, b1 in zip(a, b):

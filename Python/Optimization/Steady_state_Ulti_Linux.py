@@ -40,7 +40,7 @@ def cost_func(d15N_ref,d15n_model):
 # =============================================================================
 
 spin_year = 1000
-model_year = 500
+model_year = 650
 spin_year2 = spin_year + model_year/2
 end_year = spin_year + model_year
 
@@ -171,7 +171,7 @@ def root_find(path_to_result,N_ref,bco_param_flag,file_id):
                 'diffusivity': np.zeros([N,1])
                 }
 
-    res_c = brentq(func,a = 215,b = 250,args=(N_ref,var_dict,bco_param_flag,file_id),full_output = True,xtol=2e-3,rtol=8.88e-6)
+    res_c = brentq(func,a = 215,b = 255,args=(N_ref,var_dict,bco_param_flag,file_id),full_output = True,xtol=2e-3,rtol=8.88e-6)
     entry_0 = np.where(var_dict['count'] == 0)[0]
     var_dict['count'] = np.delete(var_dict['count'], entry_0[1:])
     var_dict['count'] = var_dict['count'][:-1]
@@ -189,9 +189,9 @@ temp_NGRIP_min, temp_NGRIP_max = get_min_max_temp()
 temp_test = np.linspace(temp_NGRIP_min,temp_NGRIP_max,1000)+273.15
 bco = rho_bco(temp_test)
 
+Temp_input = np.array([1,2,3,4,5,6])
 
-
-def Data_crunch_Ulti(Model,Indices,sath,N,rho_surface_uncertainty_Flag,diff_param_Flag,bco_param_flag,file_id):
+def Data_crunch_Ulti(sath,N,rho_surface_uncertainty_Flag,diff_param_Flag,bco_param_flag,file_id,Model='HLD',Indices=Temp_input):
     print(os.getcwd())
 
     os.chdir('../')
@@ -203,7 +203,9 @@ def Data_crunch_Ulti(Model,Indices,sath,N,rho_surface_uncertainty_Flag,diff_para
         
     for j,val in enumerate(Indices):
         mu_d15n = df[str(Model)][Indices[j]]
-        d15N_dist = np.random.normal(np.asarray(mu_d15n),0.02,size=N)
+        d = np.random.normal(np.asarray(mu_d15n),0.02,size=2000)
+        d15N_dist = d[(abs(d - d.mean())) < (3 * d.std())][:800]
+ 
         print(mu_d15n,Input_temp[Indices[j]],Input_acc[Indices[j]],expfunc(Beta,Input_temp[Indices[j]]))    
         rho_s_distribution = np.random.normal(330,20,size=N)
         bco_distribution = np.random.normal(np.mean(bco),15,size=N)
@@ -316,28 +318,50 @@ path_Deff_only = 'resultsFolder/Ulti_Deff_only/'
 path_bco_only = 'resultsFolder/Ulti_bco_only/'
 
 #for j,val in enumerate(Input_temp):
-Temp_input = np.array([3])
-Test = np.arange(13)
+
 print(Input_temp)
-m = 1# Num repetitions
+m = 800# Num repetitions
 for g in range(3):
 	reset_to_factory(g)
 	paths = Path(r'/home/jesperholm/Documents/GitHub/CommunityFirnThesis/Python/CFM/CFM_main/CFMinput/OptiNoise/' + str(g))
 	paths.mkdir(parents=True, exist_ok=True)
-Data_crunch_Ulti('HLD',Temp_input,path_Temp,m,False,False,False,file_id=0)
-Data_crunch_Ulti('HLD',Temp_input,path_rho,m,True,False,False,file_id=1)
-Data_crunch_Ulti('HLD',Temp_input,path_bco_only,m,False,False,True,file_id=2)
+	
+import time
+#t1 = time.time()
+#Data_crunch_Ulti(path_Temp,m,False,False,False,file_id=0)
+#Data_crunch_Ulti(path_rho,m,True,False,False,file_id=1)
+#Data_crunch_Ulti(path_bco_only,m,False,False,True,file_id=2)
+#t2 = time.time()
+#print(t2-t1)
+
+from multiprocessing import Process
+
+for g in range(3):
+	reset_to_factory(g)
+	paths = Path(r'/home/jesperholm/Documents/GitHub/CommunityFirnThesis/Python/CFM/CFM_main/CFMinput/OptiNoise/' + str(g))
+	paths.mkdir(parents=True, exist_ok=True)
+if __name__ == "__main__":
+    # construct a different process for each function
+    ti = time.time()
+    processes = [Process(target=Data_crunch_Ulti, args=(path_Temp,m,False,False,False,0)),
+                 Process(target=Data_crunch_Ulti, args=(path_rho,m,True,False,False,1)),
+                 Process(target=Data_crunch_Ulti, args=(path_bco_only,m,False,False,True,2))]
+
+    # kick them off 
+    for process in processes:
+        process.start()
+
+    # now wait for them to finish
+    for process in processes:
+        process.join()
+    tf = time.time()
+#print(t2-t1,'Serial')
+print(tf-ti,'Parallel')
 
 
 
 
 
-
-
-
-
-
-D:/GitHub/CommunityFirnThesis/CommunityFirnThesis
 
 
 
