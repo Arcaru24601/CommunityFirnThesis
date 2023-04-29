@@ -212,9 +212,18 @@ bco = bco_rho(temp_test)
 
 
 s = np.random.normal((bco[0]+bco[-1])/2,1.5*np.std(bco),size=800)
+rhos = density[-1,1:100]/1000
+
+fig,ax = plt.subplots(figsize=(5,9))
+Z = 10*rhos
+plt.plot(Z,rhos)
+plt.axvline(6)
+plt.axhline(0.6)
+ax.invert_yaxis()
 
 
-
+T = temp_test - 273.15
+print((0.6-0.03)/0.00226-273.15)
 
 
 
