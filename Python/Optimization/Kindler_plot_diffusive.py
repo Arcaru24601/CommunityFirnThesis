@@ -168,6 +168,23 @@ Point_N = np.array([0.53,0.597,0.375,0.297])
 Point_T = np.array([215.06,217.97,235,244.99])
 Point_A = np.array([0.0284,0.0535,0.1607,0.2621])
 
+
+import scipy.stats
+
+
+def std_interval(data,num_sigma):
+    h = num_sigma * 0.002
+    m = data
+    return m-h, m+h
+
+
+
+
+ci = 0.66
+
+
+
+
 #df['GOU'][-1] = df['BAR'][-1]-0.025
 for (index, column) in enumerate(df):
     print(df.columns[index],column)
@@ -184,6 +201,9 @@ for (index, column) in enumerate(df):
     #ax1.plot(Temps,Test[:,index],'v')
     ax1.plot(Temps,d15N_f,label=str(df2.columns[index]),color=cmap(cmap_intervals[index]))
     ax1.plot(Temps,d15N_f,linestyle[index],fillstyle='none',color=cmap(cmap_intervals[index]))
+    #m, ml, mu = mean_confidence_interval(d15N_f, ci)
+    ml,mu = std_interval(d15N_f,3)
+    ax1.fill_between(Temps,ml,mu,alpha=0.25,color=cmap(cmap_intervals[index]))
 ax1.set_ylim(0.2,0.65)
 ax1.tick_params(axis='both', which='major', labelsize=16)
 

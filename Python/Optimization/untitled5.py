@@ -31,10 +31,16 @@ def mult(y, x):
 
 if __name__ == "__main__":
     # construct a different process for each function
-    max_size = 1000000000
+    max_size = 100000000
     processes = [Process(target=add, args=(range(1, max_size), range(1, max_size))),
                  Process(target=sub, args=(range(1, max_size), range(1, max_size))),
+                 Process(target=mult, args=(range(1, max_size), range(1, max_size))),
+                 Process(target=mult, args=(range(1, max_size), range(1, max_size))),
                  Process(target=mult, args=(range(1, max_size), range(1, max_size)))]
+                 #Process(target=mult, args=(range(1, max_size), range(1, max_size))),
+                 #Process(target=mult, args=(range(1, max_size), range(1, max_size))),
+                 #Process(target=mult, args=(range(1, max_size), range(1, max_size))),
+                 #Process(target=mult, args=(range(1, max_size), range(1, max_size)))]
 
     # kick them off 
     for process in processes:

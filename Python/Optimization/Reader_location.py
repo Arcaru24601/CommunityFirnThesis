@@ -56,7 +56,7 @@ def read(rfolder):
     index = np.zeros(np.shape(diffusivity)[0])
     d15n_cod_diff = np.zeros(np.shape(diffusivity)[0])
     close_off_depth_diff = np.zeros(np.shape(diffusivity)[0])
-    
+    #print(close_off_depth)
     for i in range(1,z.shape[0]):
         index = np.max(np.where(diffusivity[i, 1:] > 10**(-20))) +1
         #print(index,i)
@@ -67,7 +67,7 @@ def read(rfolder):
     d15N_cod = np.ones_like(close_off_depth)
     #d15n_grav = f1['d15N2'][:]-1
     d15n_grav_cod = np.ones_like(close_off_depth)
-
+    
     for i in range(z.shape[0]):
         idx = int(np.where(z[i, 1:] == close_off_depth[i])[0])
         d15N_cod[i] = d15N[i,idx]*1000
@@ -215,13 +215,71 @@ bco = bco_rho(temp_test)
 s = np.random.normal(np.mean(bco),np.std(bco),size=800)
 bco_rho = np.random.choice(s,1)
 
+def csv_gen(temp,bdot):
 
 
 
+    Time = np.array([1000,2000,5000])
+    Temp = np.full(len(Time),temp)
+    Bdot = np.full(len(Time),bdot)
+
+
+    Temp_csv = np.array([Time,Temp])
+    Bdot_csv = np.array([Time,Bdot])
+    print(Time,Temp,Bdot)
+    np.savetxt('../CFM/CFM_main/CFMinput/Const/Acc.csv',Bdot_csv,delimiter=',')
+    np.savetxt('../CFM/CFM_main/CFMinput/Const/Temp.csv',Temp_csv,delimiter=',')
+
+#Modes = np.array(['Temp','Acc','Both'])
+#Rates = np.array([50,200,500,1000])
+from pathlib import Path
+import json,subprocess
+
+path = Path('../CFM/CFM_main/CFMinput/Const')
+path.mkdir(parents=True, exist_ok=True)
+csv_gen(242,0.19)
+Models = ['HLdynamic','HLSigfus','Barnola1991','Goujon2003']
+
+for i in range(len(Models)):
+    print(i)
+    file = open('../CFM/CFM_main/FirnAir_Noise.json')
+    data = json.load(file)
+    data['grid_outputs'] = False
+    #data['resultsFileName'] = str(Model) + str(temp)  + 'K.hdf5'
+    data['resultsFolder'] = 'CFMoutput/Const/' + str(Models[i]) 
+    data['InputFileFolder'] = 'CFMinput/Const'
+    data['InputFileNameTemp'] = 'Temp.csv'
+    data['InputFileNamebdot'] = 'Acc.csv'
+    data['physRho'] = str(Models[i])
+    
+    with open("CFM/CFM_main/Firn_Noise.json", 'w') as f:
+        json.dump(data, f,indent = 2)
+    
+    # Closing file
+    f.close()    
+    #subprocess.run('python main.py FirnAir_Noise.json -n', shell=True, cwd='../CFM/CFM_main/')
+
+
+timesteps1,depth1,temperature,climate,d15N2,Bubble,age_dist,density1,LiD,z_cod,diff_cod,d15n_cod_diff,diffu,d15n_z,d15n_cod = read('../CFM/CFM_main/CFMoutput/Const/HLdynamic/')
+timesteps2,depth2,temperature,climate,d15N2,Bubble,age_dist,density2,LiD,z_cod,diff_cod,d15n_cod_diff,diffu,d15n_z,d15n_cod = read('../CFM/CFM_main/CFMoutput/Const/HLSigfus/')
+timesteps3,depth3,temperature,climate,d15N2,Bubble,age_dist,density3,LiD,z_cod,diff_cod,d15n_cod_diff,diffu,d15n_z,d15n_cod = read('../CFM/CFM_main/CFMoutput/Const/Barnola1991/')
+timesteps4,depth4,temperature,climate,d15N2,Bubble,age_dist,density4,LiD,z_cod,diff_cod,d15n_cod_diff,diffu,d15n_z,d15n_cod = read('../CFM/CFM_main/CFMoutput/Const/Goujon2003/')
 
 
 
+fig, ax = plt.subplots(nrows=1, ncols=1, sharey=True)
+ax.grid(linestyle='--')
+ax.plot(density1[0,1:],depth1[0,1:],label=r'HLD',color='r')
+ax.plot(density2[0,1:],depth2[0,1:],label=r'HLS',color='orange')
+ax.plot(density3[0,1:],depth3[0,1:],label=r'BAR',color='b')
+ax.plot(density4[0,1:],depth4[0,1:],label=r'GOU',color='g')
+ax.legend(loc='lower left',fontsize=16)
+ax.invert_yaxis()
 
+ax.set_ylabel(r'Depth [m]',fontsize=16)
+ax.set_xlabel(r'Density [kg/m$^3$]',fontsize=16)
+
+plt.savefig('Testing_rho.png',dpi=300)
 
 
 
