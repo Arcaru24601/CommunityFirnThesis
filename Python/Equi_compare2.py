@@ -69,7 +69,15 @@ def get_HalfTime(array,mode):
     #print(idx)
     return idx
     
-    
+def get_std_time(array):
+        # print(value)
+    # print(np.mean(array))
+    # print(value)
+    idx = (np.abs(array - 0.02)).argmin()
+    # print(idx)
+    return idx
+
+
 class CoD_plotter():
 
     def __init__(self,j,i,filepath=None,rate=None,Exs=None,KtC=False):
@@ -84,7 +92,7 @@ class CoD_plotter():
         print(self.Rates)
         
         
-        fig, ax = plt.subplots(3, sharex=True, sharey=False,constrained_layout=True)
+        fig, ax = plt.subplots(4, sharex=True, sharey=False,constrained_layout=True)
         label = rate
         #fig.set_figheight(15)
         #fig.set_figwidth(8)
@@ -121,6 +129,27 @@ class CoD_plotter():
                 
                 
             self.delta_temp = self.climate[:,2] - self.temp_cod
+            
+            
+            
+            T_h = self.climate[:, 2]
+            T_c = self.temp_cod
+            self.delta_temp = self.climate[:, 2] - self.temp_cod
+            temp_mean = np.zeros(len(T_h))
+            d15N_Temp = np.zeros(len(T_h))
+            for h in range(len(T_h)):
+                if not T_h[h] == T_c[h]:
+                    temp_mean[h] = (T_h[h] * T_c[h]) / (T_h[h] - T_c[h]) * \
+                                    np.log((T_h[h] / T_c[h]))
+                    alpha= (8.856 - 1232/temp_mean[h]) * 10**(-3)
+                    omega = alpha/temp_mean[h] * 10**(3)
+                    
+                    d15N_Temp[h] = omega * self.delta_temp[h]
+                else:
+                    d15N_Temp[h] = 0
+                #a= 1
+            
+            
             #print(self.temp_cod.shape,self.climate[:,2].shape,self.delta_temp.shape)
             if self.KtC:
                 self.climate[:,2] - 273.15
@@ -184,9 +213,16 @@ class CoD_plotter():
 
             ax[2].set_ylabel(r"\centering Temperature \newline \centering gradient [K]", labelpad=-1.5, fontsize=9)
             #ax[2].legend(loc='lower right', fontsize=8)
-            ax[2].set_xlabel(r"Model Time [y]", labelpad=-1.5, fontsize=9)
+            ax[3].set_xlabel(r"Model Time [y]", labelpad=-1.5, fontsize=9)
 
-            
+            Time_const_d15N = self.model_time[get_std_time(d15N_Temp[slices:])+slices]
+            x = np.arange(0.3, 3.1, 0.1).round(2)
+            ax[3].grid(linestyle='--', color='gray', lw='0.5')
+            ax[3].plot(self.model_time, d15N_Temp,
+                        color=cmap(cmap_intervals[k]))
+            ax[3].axvline(x=Time_const_d15N, color=cmap(
+                 cmap_intervals[k]), alpha=0.5)
+            ax[3].set_ylabel(r"$\delta^{15}$N", labelpad=-1.5, fontsize=9)
             
             
             
@@ -249,11 +285,40 @@ class CoD_plotter():
             #print(self.Rates,Rates)
             #print(self.Rates[k][:-1])
             slices = int(500+float(self.Rates[k]))
+            
+            
+            T_h= self.climate[:, 2]
+            T_c= self.temp_cod
+            self.delta_temp= self.climate[:, 2] - self.temp_cod
+            temp_mean = np.zeros(len(T_h))
+            d15N_Temp = np.zeros(len(T_h))
+            for h in range(len(T_h)):
+                if not T_h[h] == T_c[h]:
+                    temp_mean[h] = (T_h[h] * T_c[h]) / (T_h[h] - T_c[h]) * \
+                                    np.log((T_h[h] / T_c[h]))
+                    alpha= (8.856 - 1232/temp_mean[h]) * 10**(-3)
+                    omega = alpha/temp_mean[h] * 10**(3)
+                    
+                    d15N_Temp[h] = omega * self.delta_temp[h]
+                else:
+                    d15N_Temp[h] = 0
+            
+            
+            
+            
+            
+            
+            
+            
             Time_Const_CoD = self.model_time[get_HalfTime(self.close_off_depth[slices:],mode='Endpoint')+slices]
             Time_Const_temp = self.model_time[get_HalfTime(self.delta_temp[slices:],mode='Endpoint')+slices]
-            Output[j*28+k,odd[i]] = Time_Const_CoD - 1500 - int(self.Rates[k])    
-            Output[j*28+k,even[i]] = Time_Const_temp - 1500 - int(self.Rates[k])
-        return Output[j*28+0:j*28+28,even[i]:odd[i]+1]
+            Time_const_d15N = self.model_time[get_std_time(d15N_Temp[slices:])+slices]
+            
+            Output[j*Num_int+k,odd[i]] = Time_Const_CoD - 1500 - int(self.Rates[k])    
+            Output[j*Num_int+k,even[i]] = Time_Const_temp - 1500 - int(self.Rates[k])
+            output_d15N[j*Num_int+k,i] = Time_const_d15N -1500 - int(self.Rates[k])
+
+        return Output[j*Num_int+0:j*Num_int+Num_int,even[i]:odd[i]+1], d15N_Temp, output_d15N[j*Num_int+0:j*Num_int+Num_int,i:i+1]
 rfolder = 'CFM/CFM_main/CFMoutput/Equi2/'
 x = ['Temp','Acc','Both']
 
@@ -268,6 +333,12 @@ Folder = [(i+i2+j) for i in x for i2 in x2 for j in y]
 
 folder2 = './CFM/CFM_main/CFMinput/Equi2/Acc'
 Equi_Folder = [name for name in os.listdir(folder2) if os.path.isdir(os.path.join(folder2, name))]
+
+#folder2= './CFM/CFM_main/CFMinput/EquiAmp2/Acc'
+y= [name for name in os.listdir(folder2) if os.path.isdir(os.path.join(folder2, name))]
+
+
+
 Equi_Folder2 = np.asarray([float(x[:-1]) for x in Equi_Folder])
 Equi_Folder2.sort()
 Rates2 = [str(x) + 'y' for x in Equi_Folder2]
@@ -291,7 +362,11 @@ def folder_gen(Fold,Exp,FileFlag):
         Folder = [(i+i2+j) for i in X for i2 in X2 for j in Y]
     
     return Folder
-S = 28*3
+
+Num_int= len(y)
+S= Num_int*3
+Matrix_15N = np.zeros((S,3))
+output_d15N = np.zeros((S,3))
 Output = np.zeros((S,6))    
 Matrix = np.zeros((S,6))
 even = np.arange(0,5,2)
@@ -313,8 +388,8 @@ for j in range(len(Exp)):
         Current_plot = CoD_plotter(j,i,filepath = path,rate = Rates,Exs = Exp)
         plt.savefig('CoDEqui2/'+ str(Exp[j][:-1]) + str(Models[i][:-1]) +'.png',dpi=300)
         plt.close('all')
-        Matrix[j*28+0:j*28+28,even[i]:odd[i]+1] = Current_plot.Equi_output()
-        Matrix[28:28*2,0:5:2] = 0
+        Matrix[j*Num_int+0:j*Num_int+Num_int,even[i]:odd[i]+1], d15N_Temp,Matrix_15N[j*Num_int+0:j*Num_int+Num_int,i:i+1] = Current_plot.Equi_output()
+        Matrix[Num_int:Num_int*2,0:5:2] = 0
 
 
     #            
@@ -406,6 +481,92 @@ plt.savefig('Equiplot/Dur2.png',dpi=300)
 
 
 
+
+
+
+
+
+
+
+Models = ['HLD', 'Bar', 'GOU']
+Output= ['d15N']
+
+Iter1= [Models, Output]
+Exp = ['Temp', 'Acc', 'Both']
+Multiplier= y
+Iter2= [Exp, Multiplier]
+cols= pd.MultiIndex.from_product(Iter1)
+
+idx = pd.MultiIndex.from_product(Iter2, names = ['Exp', 'Amp'])
+
+
+df= pd.DataFrame(Matrix_15N,
+                  columns=cols,
+                  index=idx)
+
+df.style.set_table_styles(
+    [dict(selector='th', props=[('text-align', 'center')])])
+# df.set_properties(**{'text-align': 'center'})
+
+cell_hover= {
+    "selector": "td:hover",
+    "props": [("background-color", "#FFFFE0")]
+}
+index_names= {
+    "selector": ".index_name",
+    "props": "font-style: italic; color: darkgrey; font-weight:normal;"
+}
+headers= {
+    "selector": "th:not(.index_name)",
+    "props": "background-color: #800000; color: white; text-align: center"
+}
+
+
+
+
+df.style.format(decimal='.', thousands=',', precision=1)
+# df = df.astype(str)
+
+
+
+
+
+
+Rates1 = np.array([10,20,30,40,50,70,90])
+Rates3 = np.linspace(100,2000,21,dtype=int)
+Rates2 = np.concatenate((Rates1,Rates3))
+
+x = Rates2
+#x = np.arange(0.3, 3.1, 0.1).round(2)
+fig, ax = plt.subplots(nrows = 3, ncols = 1, sharex=True, constrained_layout=True)
+for k, exp in enumerate(['Temp', 'Acc', 'Both']):
+    for i, model in enumerate(['HLD', 'Bar', 'GOU']):
+        Array= df[str(model)].loc[str(exp)]
+        Temps= np.asarray(Array['d15N'])
+        #CoD= np.asarray(Array['CoD'])
+        ax[k].set_title(exp + ' d15N', fontsize=14)
+        #ax[k, 1].set_title(exp + ' Close-off depth', fontsize=14)
+
+        ax[k].plot(x, Temps, color=palette[k],
+                      linestyle=linestyle[i], label=model)
+        #ax[k, 1].plot(x, CoD, color=palette2[k],
+        #              linestyle=linestyle[i], label=model)
+        fig.supylabel('Halfway-time to Equilibrium [y]', fontsize=14)
+        fig.supxlabel('Duration of change [y]', fontsize=14)
+
+# =============================================================================
+#         Find way to have multiple common ylabels
+# =============================================================================
+
+box= ax[1].get_position()
+            # ax[i,j].set_position([box.x0, box.y0, box.width * 0.8, box.height])
+
+# Put a legend to the right of the current axis
+ax[1].legend(custom_lines, ['HLD', 'BAR', 'GOU'], ncol=1,
+                fontsize=12, loc='center left', bbox_to_anchor=(1, 0.5))
+        # ax[k,0].set_ylabel('Temperature at close-off [K]')
+        # ax[k,1].set_ylabel('Close-off depth [m]')
+plt.savefig('Equiplot/Durd15n.png', dpi=300)
 
 
 

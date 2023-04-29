@@ -111,7 +111,7 @@ Equi_Folder2.sort()
 Equi_Folder = [str(x) + 'y' for x in Equi_Folder2]
 
 
-Exp = ['Temp','Acc','Both']
-Models = ['HLdynamic','Barnola1991','Goujon2003']
-Equi_run(Models,Exp,Equi_Folder)
+Exp = ['Both']
+Models = ['Barnola1991','Goujon2003']
+#Equi_run(Models,Exp,Equi_Folder)
 Equi_run_Amp(Models,Exp,EquiAmp_Folder)

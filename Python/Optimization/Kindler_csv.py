@@ -50,7 +50,7 @@ for i in range(len(Input_temp)):
 
 
 
-Models = ['HLdynamic','HLSigfus','Barnola1991','Goujon2003']
+Models = ['HLdynamic']#,'HLSigfus','Barnola1991','Goujon2003']
 #Models = ['HLdynamic']
 Diffus = ['Freitag', 'Schwander', 'Severinghaus', 'Witrant', 'Battle', 'Adolph']
 def Equi_run(Model,temp,acc):

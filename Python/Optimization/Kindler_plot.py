@@ -115,7 +115,7 @@ for j in range(len(sub_folders)):
     Test[j,:],CoD_T[j,:],TestN[j,:]  = Current_plot.CoD_out()
     
 
-Mod = ['HLD','HLS','BAR','GOU']
+Mod = ['HLS','HLD','BAR','GOU']
 
 import pandas as pd
 
@@ -161,11 +161,16 @@ Point_A = np.array([0.0284,0.0535,0.1607,0.2621])
 
 #df['GOU'][-1] = df['BAR'][-1]-0.025
 for (index, column) in enumerate(df):
+    
     print(df.columns[index],column)
     d15N = np.asarray(df[column])
     d15N_f = np.asarray(df2[column])
+   
     ax1.plot(Temps,d15N_f,label=str(df.columns[index]),color=cmap(cmap_intervals[index]))
     ax1.plot(Temps,d15N_f,linestyle[index],fillstyle='none',color=cmap(cmap_intervals[index]))
+    if index == 1:
+        ax1.plot(Temps[3],d15N_f[3],'o',fillstyle='full',color='k',label='Dist. point 230K')
+        ax1.plot(Temps[5],d15N_f[5],'o',fillstyle='full',color='k',label='Dist. point 240K')
     #ax2.plot(Input_acc,d15N,label=str(df2.columns[index]),color=cmap(cmap_intervals[index]))
     #ax2.plot(Input_acc,np.ones_like(Input_acc),linestyle[index],fillstyle='none',color=cmap(cmap_intervals[index]))
     #ax1.plot(Point_T,Point_N,'ko',lw=3,label='Dist. point' if index == 3 else "")
@@ -173,6 +178,7 @@ for (index, column) in enumerate(df):
     #ax1.axvline(Point_T[3],color='r',linestyle=':',label='Point 4' if index == 3 else '')
     #ax1.plot(Temps,TestN[:,index],'o')
     #ax1.plot(Temps,Test[:,index],'v')
+    
     #ax1.plot(Temps,d15N_f,label=str(df2.columns[index]),color=cmap(cmap_intervals[index]))
 ax1.set_ylim(0.2,0.65)
 ax1.tick_params(axis='both', which='major', labelsize=16)

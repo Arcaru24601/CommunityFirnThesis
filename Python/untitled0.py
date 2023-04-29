@@ -14,7 +14,7 @@ Point_A = np.array([0.0167,0.0535,0.1607,0.2621])
 
 
 T,A,Beta = input_file(25)
-Test2 = 242
+Test2 = 252
 Time = np.array([1000,1200,1500])
 Temp = np.full_like(Time,Test2)
 Bdot = np.full(len(Time),expfunc(Beta,Test2))

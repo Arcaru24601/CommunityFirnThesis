@@ -49,8 +49,8 @@ Input_temp,Input_acc,Beta = input_file()
 
 dfc = pd.read_csv('resultsFolder/Integer_diffu.csv',sep=',')
 Modela = ['HLD','HLS','BAR','GOU']
+Models = ['Ulti_bco_only','Ulti_bco_rho','Ulti_Deff_only']
 
-Models = ['Ulti_Temp','Ulti_rho','Ulti_Deff']
 mus = np.zeros((13,8))
 mus_1 = np.zeros((13,8))
 # Loop over H5 files and load into a dataframe
@@ -68,22 +68,28 @@ for i,val in enumerate(Dists2):
         print(val,Models[j])
         #for z,file in enumerate(glob.iglob('resultsFolder/Version1/' + str(Models[j]) + '/' + str(Dist[i]) + '/*.h5')):  
         for z in range(S):
-            file = 'resultsFolder/' + str(Models[j]) + '/HLD/' + str(Dists2[i]) + '/Point' + str(z) + '.h5'
+            file = 'resultsFolder/' +str(Models[j]) + '/HLD/' + str(Dists2[i]) + '/Point' + str(z) + '.h5'
             #print(file)
             
-            with h5py.File(file, 'r') as h5fr:
+            try:
+            	with h5py.File(file, 'r') as h5fr:
                 #print(h5fr.keys())
                 #print(2)
-                cost_func[z] = h5fr['cost_func'][-1]
-                d15N[z] = h5fr['d15N@CoD'][-1]
-                count[z] = h5fr['count'][-1]
-                Temp[z] = h5fr['temp'][-1]
-                #print(np.mean(Temp))
-       
-       
+                	cost_func[z] = h5fr['cost_func'][-1]
+                	d15N[z] = h5fr['d15N@CoD'][-1]
+                	count[z] = h5fr['count'][-1]
+                	Temp[z] = h5fr['temp'][-1]
+                	#print(np.mean(Temp))
+           
+       	    except:
+       	    	print('File not found')
+       	    	cost_func[z] = cost_func[z-1]
+       	    	d15N[z] = d15N[z-1]
+       	    	count[z] = count[z-1]
+       	    	Temp[z] = Temp[z-1]
         #table = pd.DataFrame(xdata).reset_index()
         #print(table)
-        bins = 50
+        bins = 'freedman'
         
         hist(Data_d15N, bins=bins, ax=ax[0,j],histtype='stepfilled',color = palette[0],label=r'Input $\delta^{15}$N' if j ==3 else '')
         hist(Temp, bins=bins, ax=ax[1,j],histtype='stepfilled',color = palette[1],label='Output Temperature' if j ==3 else '')
@@ -101,8 +107,8 @@ for i,val in enumerate(Dists2):
         
         
         
-        mus[i,even[j]] = '{0:.4f}'.format(mu) 
-        mus[i,odd[j]] = '{0:.3f}'.format(std)
+        mus[i,even[j]] = '{0:.3f}'.format(mu) 
+        mus[i,odd[j]] = '{0:.2f}'.format(std)
         print(mu,Input_temp[val])
         mua = np.mean(Data_d15N)
         stda = np.std(Data_d15N)
@@ -111,8 +117,8 @@ for i,val in enumerate(Dists2):
         #ax[1,j].axvline(Point_T[i],color='g',linestyle="--")
         #ax[0,j].text(0, 0.9, r'$\mu$:{0:.2f}'.format(mua), size=14, ha='left', va='center',transform=ax[0,j].transAxes)
         #ax[0,j].text(0, 0.8, r'$\sigma$:{0:.1f}'.format(stda), size=14, ha='left', va='center',transform=ax[0,j].transAxes)
-        mus_1[i,even[j]] = '{0:.4f}'.format(mua) 
-        mus_1[i,odd[j]] = '{0:.3f}'.format(stda)
+        mus_1[i,even[j]] = '{0:.3f}'.format(mua) 
+        mus_1[i,odd[j]] = '{0:.2f}'.format(stda)
 
         
         

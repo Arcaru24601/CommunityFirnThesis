@@ -17,20 +17,23 @@ def get_model_data(model_path):
     temperature = f['temperature'][:]
     #print(temperature)
     #print(close_off_depth)
+    diffu = f['diffusivity'][:]
     d15N = f['d15N2'][:]-1
     d15N_cod = np.ones_like(close_off_depth)
     f.close()
+    diffu_cod = np.ones_like(close_off_depth)
     #temp_cod = np.ones_like(close_off_depth)
     for k in range(z.shape[0]):
         idx = int(np.where(z[k, 1:] == close_off_depth[k])[0])
         d15N_cod[k] = d15N[k,idx]*1000
+        diffu_cod[k] = diffu[k,idx]
     Grav = 9.81
     R = 8.3145
     delta_M = 1/1000  # Why is this 1/1000
     #print(T_means)
     d15N_cod_grav = (np.exp((delta_M*Grav*close_off_depth) / (R*temperature[0,1])) - 1) * 1000 
     
-    return d15N_cod_grav[-1], temperature[0,-1],d15N_cod[-1],close_off_depth[-1],climate[-1,1]#,idx,z,d15N*1000,temperature
+    return d15N_cod_grav[-1], temperature[0,-1],d15N_cod[-1],close_off_depth[-1],climate[-1,1],diffu_cod[-1]#,idx,z,d15N*1000,temperature
 
 def get_model_data2(model_path):
     f = hf.File(model_path)
