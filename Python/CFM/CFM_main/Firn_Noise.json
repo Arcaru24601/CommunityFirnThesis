@@ -1,5 +1,5 @@
 {
-  "InputFileFolder": "CFMinput/Noise/Integer/245K",
+  "InputFileFolder": "CFMinput/Noise/Integer/240K",
   "InputFileNameTemp": "Temp.csv",
   "InputFileNamebdot": "Acc.csv",
   "InputFileNameIso": "example_ISOTOPE.csv",
@@ -7,7 +7,7 @@
   "InputFileNamemelt": "example_SMELT.csv",
   "InputFileNameStrain": "example_STRAIN.csv",
   "InputFileNameRain": "example_RAIN.csv",
-  "resultsFolder": "CFMoutput/Noise/Integer/Goujon2003/245K",
+  "resultsFolder": "CFMoutput/Noise/rho_plot/240/390",
   "initfirnFile": "example_firndata.csv",
   "initprofile": false,
   "input_type": "csv",
@@ -17,7 +17,7 @@
   ],
   "DFresample": "1M",
   "DFfile": "CFM_example_input_df.pkl",
-  "physRho": "Goujon2003",
+  "physRho": "HLdynamic",
   "physRho_options": [
     "HLdynamic",
     "HLSigfus",
@@ -81,7 +81,7 @@
     "param",
     "noise"
   ],
-  "rhos0": 350.0,
+  "rhos0": 390.0,
   "r2s0": 1e-08,
   "AutoSpinUpTime": false,
   "yearSpin": 1000,
@@ -139,7 +139,7 @@
     "runoff",
     "refrozen"
   ],
-  "resultsFileName": "Goujon2003245K.hdf5",
+  "resultsFileName": "CFMresults.hdf5",
   "spinFileName": "CFMspin.hdf5",
   "doublegrid": false,
   "nodestocombine": 50,

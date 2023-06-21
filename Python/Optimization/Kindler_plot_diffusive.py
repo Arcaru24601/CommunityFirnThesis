@@ -199,11 +199,13 @@ for (index, column) in enumerate(df):
     #ax1.axvline(Point_T[3],color='r',linestyle=':',label='Point 4' if index == 3 else '')
     #ax1.plot(Temps,TestN[:,index],'o')
     #ax1.plot(Temps,Test[:,index],'v')
+    if index == 1:
+        ax1.plot(Temps[2],d15N_f[2],'o',fillstyle='full',color='k',label='Dist. point 225K')
     ax1.plot(Temps,d15N_f,label=str(df2.columns[index]),color=cmap(cmap_intervals[index]))
     ax1.plot(Temps,d15N_f,linestyle[index],fillstyle='none',color=cmap(cmap_intervals[index]))
     #m, ml, mu = mean_confidence_interval(d15N_f, ci)
-    ml,mu = std_interval(d15N_f,3)
-    ax1.fill_between(Temps,ml,mu,alpha=0.25,color=cmap(cmap_intervals[index]))
+    #ml,mu = std_interval(d15N_f,3)
+    #ax1.fill_between(Temps,ml,mu,alpha=0.25,color=cmap(cmap_intervals[index]))
 ax1.set_ylim(0.2,0.65)
 ax1.tick_params(axis='both', which='major', labelsize=16)
 

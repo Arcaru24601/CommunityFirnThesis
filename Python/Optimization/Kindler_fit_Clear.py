@@ -115,7 +115,7 @@ def get_min_max_temp(x=temp_interval):
 #rho_s = rho_0(Input_temp,Input_acc)
 #rho_co = rho_bco(Input_temp)
 
-'''
+
 plt.close('all')
 output_temp,output_acc,beta = input_file()
 
@@ -130,7 +130,7 @@ ax.tick_params(axis='both', which='major', labelsize=16)
 ax.set_xlabel('Temperature [K]',fontsize=18)
 ax.legend(fontsize=12)
 plt.savefig('Noise/TEst2.png',dpi=300)
-'''
+
 
 
 

@@ -129,13 +129,13 @@ class File:
             print(self.Folder,self.apply_func()[2].shape,self.apply_func()[0].shape)
             Temp_csv = np.array([self.apply_func()[2],self.apply_func()[0]])
             Bdot_csv = np.array([self.apply_func()[2],self.apply_func()[1]])
-            
+            print(Bdot_csv)
             np.savetxt(self.sfolder+self.Folder+'/Acc_const.csv',Bdot_csv,delimiter=',')
             np.savetxt(self.sfolder+self.Folder+'/'+self.Folder+'.csv',Temp_csv,delimiter=',')
         
 Flips = [False]
-steps = 1e4
-size = 1e4
+steps = 2.5e3
+size = 5e3
 for i in Flips:
     T_linear = File(steps,size,253,'linear','Temp',LongFlag=i)
     T_linear.array_gen()

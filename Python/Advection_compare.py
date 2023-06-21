@@ -13,7 +13,7 @@ cmap = plt.cm.get_cmap('viridis')
 import seaborn as sns 
 #plt.rc('text', usetex=True)
 #plt.rc('font', family='serif')
-import reader as re
+#import reader as re
 sns.set()
 from scipy.signal import savgol_filter
 from scipy.ndimage.filters import uniform_filter1d

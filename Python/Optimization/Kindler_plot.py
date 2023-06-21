@@ -127,7 +127,9 @@ df2 = pd.DataFrame(data = TestN,
                   index = sub2, 
                   columns = Mod)
 
-
+Cod_df = pd.DataFrame(data = CoD_T, 
+                  index = sub2, 
+                  columns = Mod)
 
 
 linestyle = ['o','v','D','d']
@@ -152,8 +154,8 @@ Input_temp,Input_acc,Beta = input_file()
 Temps = Input_temp
 
 plt.close('all')
-fig = plt.figure(constrained_layout=True)
-ax1 = fig.add_subplot(111)
+fig,ax = plt.subplots(figsize=(20,7),ncols=2,constrained_layout=True)
+#ax1 = fig.add_subplot(111)
 #ax2 = ax1.twiny()
 Point_N = np.array([0.53,0.597,0.375,0.297])
 Point_T = np.array([215.06,217.97,235,244.99])
@@ -165,12 +167,17 @@ for (index, column) in enumerate(df):
     print(df.columns[index],column)
     d15N = np.asarray(df[column])
     d15N_f = np.asarray(df2[column])
-   
-    ax1.plot(Temps,d15N_f,label=str(df.columns[index]),color=cmap(cmap_intervals[index]))
-    ax1.plot(Temps,d15N_f,linestyle[index],fillstyle='none',color=cmap(cmap_intervals[index]))
+    cod = np.asarray(Cod_df[column])
+    ax[1].plot(Temps,d15N_f,label=str(df.columns[index]),color=cmap(cmap_intervals[index]))
+    ax[1].plot(Temps,d15N_f,linestyle[index],fillstyle='none',color=cmap(cmap_intervals[index]))
     if index == 1:
-        ax1.plot(Temps[3],d15N_f[3],'o',fillstyle='full',color='k',label='Dist. point 230K')
-        ax1.plot(Temps[5],d15N_f[5],'o',fillstyle='full',color='k',label='Dist. point 240K')
+        ax[1].plot(Temps[2],d15N_f[2],'o',fillstyle='full',color='k',label='Dist. point 225K')
+        ax[0].plot(Temps[2],cod[2],'o',fillstyle='full',color='k',label='Dist. point 225K')
+        #ax[1].plot(Temps[5],d15N_f[5],'o',fillstyle='full',color='k',label='Dist. point 240K')
+    ax[0].plot(Temps,cod,label=str(df.columns[index]),color=cmap(cmap_intervals[index]))
+    ax[0].plot(Temps,cod,linestyle[index],fillstyle='none',color=cmap(cmap_intervals[index]))
+    
+   
     #ax2.plot(Input_acc,d15N,label=str(df2.columns[index]),color=cmap(cmap_intervals[index]))
     #ax2.plot(Input_acc,np.ones_like(Input_acc),linestyle[index],fillstyle='none',color=cmap(cmap_intervals[index]))
     #ax1.plot(Point_T,Point_N,'ko',lw=3,label='Dist. point' if index == 3 else "")
@@ -180,13 +187,13 @@ for (index, column) in enumerate(df):
     #ax1.plot(Temps,Test[:,index],'v')
     
     #ax1.plot(Temps,d15N_f,label=str(df2.columns[index]),color=cmap(cmap_intervals[index]))
-ax1.set_ylim(0.2,0.65)
-ax1.tick_params(axis='both', which='major', labelsize=16)
+ax[1].set_ylim(0.2,0.65)
+ax[1].tick_params(axis='both', which='major', labelsize=26)
 
-#ax2.set_ylim(ax1.get_ylim())
-    #ax2 = ax1.twiny()    
-    #plt.ylim((0.2,0.6))
-ax1.set_xlabel('Temperature [K]',fontsize=18)
+ax[0].tick_params(axis='both', which='major', labelsize=22)
+ax[0].set_xlabel('Temperature [K]',fontsize=26)
+
+ax[1].set_xlabel('Temperature [K]',fontsize=26)
 #.set_xlabel(r'Accumulation rate [m yr$^{-1}$]',fontsize=14)
 
 
@@ -194,8 +201,10 @@ ax1.set_xlabel('Temperature [K]',fontsize=18)
             #ax[i,j].set_position([box.x0, box.y0, box.width * 0.8, box.height])
 
 # Put a legend to the right of the current axis
-ax1.legend(loc='best',fontsize=12)
-ax1.set_ylabel(u'$\delta^{15}$N [\u2030]',fontsize=18)
+ax[1].legend(loc='best',fontsize=18)
+ax[1].set_ylabel(u'$\delta^{15}$N [\u2030]',fontsize=26)
+ax[0].set_ylabel(r'Close-off depth [m]',fontsize=26)
+
 plt.savefig('Noise/NoiseTemp22.png',dpi=300)
 
 fig = plt.figure(constrained_layout=True)

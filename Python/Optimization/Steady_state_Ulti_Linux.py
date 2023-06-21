@@ -204,7 +204,7 @@ def Data_crunch_Ulti(sath,N,rho_surface_uncertainty_Flag,diff_param_Flag,bco_par
     for j,val in enumerate(Indices):
         mu_d15n = df[str(Model)][Indices[j]]
         d = np.random.normal(np.asarray(mu_d15n),0.02,size=2000)
-        d15N_dist = d[(abs(d - d.mean())) < (3 * d.std())][:800]
+        d15N_dist = d[(abs(d - d.mean())) < (3 * d.std())][:N]
  
         print(mu_d15n,Input_temp[Indices[j]],Input_acc[Indices[j]],expfunc(Beta,Input_temp[Indices[j]]))    
         rho_s_distribution = np.random.normal(330,20,size=N)
@@ -321,11 +321,7 @@ path_bco_only = 'resultsFolder/Ulti_bco_only/'
 
 print(Input_temp)
 m = 800# Num repetitions
-for g in range(3):
-	reset_to_factory(g)
-	paths = Path(r'/home/jesperholm/Documents/GitHub/CommunityFirnThesis/Python/CFM/CFM_main/CFMinput/OptiNoise/' + str(g))
-	paths.mkdir(parents=True, exist_ok=True)
-	
+
 import time
 #t1 = time.time()
 #Data_crunch_Ulti(path_Temp,m,False,False,False,file_id=0)
@@ -334,12 +330,25 @@ import time
 #t2 = time.time()
 #print(t2-t1)
 
+
+Input_2 = np.array([1])    
+Input_3 = np.array([2])
+Input_4 = np.array([3])
+Input_5 = np.array([4])
+Input_6 = np.array([5])
+
+
+
+
+
 from multiprocessing import Process
 
 for g in range(3):
 	reset_to_factory(g)
 	paths = Path(r'/home/jesperholm/Documents/GitHub/CommunityFirnThesis/Python/CFM/CFM_main/CFMinput/OptiNoise/' + str(g))
 	paths.mkdir(parents=True, exist_ok=True)
+
+'''
 if __name__ == "__main__":
     # construct a different process for each function
     ti = time.time()
@@ -356,12 +365,29 @@ if __name__ == "__main__":
         process.join()
     tf = time.time()
 #print(t2-t1,'Serial')
-print(tf-ti,'Parallel')
+    print(tf-ti,'Parallel')
+'''
 
 
 
+if __name__ == "__main__":
+    # construct a different process for each function
+    ti = time.time()
+    processes = [Process(target=Data_crunch_Ulti, args=(path_Deff_only,m,False,True,False,0,2e-3,'HLD',Input_2)),
+                 #Process(target=Data_crunch_Ulti, args=(path_Deff_only,m,False,True,False,1,2e-3,'HLD',Input_3)),
+                 #Process(target=Data_crunch_Ulti, args=(path_Deff_only,m,False,True,False,2,1e-6,'HLD',Input_4)),
+                 Process(target=Data_crunch_Ulti, args=(path_Deff_only,m,False,True,False,3,2e-3,'HLD',Input_5)),
+                 Process(target=Data_crunch_Ulti, args=(path_Deff_only,m,False,True,False,4,2e-3,'HLD',Input_6))]
+    # kick them off 
+    for process in processes:
+        process.start()
 
-
+    # now wait for them to finish
+    for process in processes:
+        process.join()
+    tf = time.time()
+#print(t2-t1,'Serial')
+    print(tf-ti,'Parallel')
 
 
 

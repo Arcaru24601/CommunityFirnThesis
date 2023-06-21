@@ -47,7 +47,7 @@ def cost_func(d15N_ref,d15n_model):
 # =============================================================================
 
 spin_year = 1000
-model_year = 650
+model_year = 950
 spin_year2 = spin_year + model_year/2
 end_year = spin_year + model_year
 
@@ -83,7 +83,11 @@ def reset_to_factory(file_id):
     data['resultsFolder'] = "CFMoutput/OptiNoise/" + str(file_id)
     data['InputFileFolder'] = "CFMinput/OptiNoise/" + str(file_id)
     data['AirConfigName'] = "Air_OptiNoise_Ulti_"+str(file_id)+".json"
-
+    data['physRho'] = 'HLdynamic' #str(mod)
+    
+    
+    
+    
     with open(r"D:/GitHub/CommunityFirnThesis/CommunityFirnThesis/Python/CFM/CFM_main/FirnAir_Noise_Ulti_"+str(file_id)+".json", 'w') as f:
         json.dump(data, f,indent = 2)
 
@@ -91,14 +95,15 @@ def reset_to_factory(file_id):
     f.close()
     return None
 
-def func(temp,N_ref,var_dict,bco_param_flag,file_id):
+def func(temp,N_ref,var_dict,bco_param_flag,file_id,model):
     
     count = int(np.max(var_dict['count']))
     print('Iteration',count)
     file = open(r'D:/GitHub/CommunityFirnThesis/CommunityFirnThesis/Python/CFM/CFM_main/FirnAir_Noise_Ulti_'+str(file_id)+'.json')
     data = json.load(file)
+    
     rhos = data['rhos0']
-
+    
     file.close() 
     #print('Using',rhos,'surface density')
   
@@ -165,7 +170,7 @@ def func(temp,N_ref,var_dict,bco_param_flag,file_id):
 
 
 
-def root_find(path_to_result,N_ref,bco_param_flag,file_id):
+def root_find(path_to_result,N_ref,bco_param_flag,file_id,model):
     count = 0
     
     var_dict = {'count': np.zeros([N, 1], dtype=int),
@@ -178,7 +183,7 @@ def root_find(path_to_result,N_ref,bco_param_flag,file_id):
                 'diffusivity': np.zeros([N,1])
                 }
 
-    res_c = brentq(func,a = 215,b = 255,args=(N_ref,var_dict,bco_param_flag,file_id),full_output = True,xtol=2e-3,rtol=8.88e-6)
+    res_c = brentq(func,a = 215,b = 255,args=(N_ref,var_dict,bco_param_flag,file_id,model),full_output = True,xtol=2e-4,rtol=8.88e-6)
     entry_0 = np.where(var_dict['count'] == 0)[0]
     var_dict['count'] = np.delete(var_dict['count'], entry_0[1:])
     var_dict['count'] = var_dict['count'][:-1]
@@ -198,7 +203,7 @@ bco = rho_bco(temp_test)
 
 Temp_input = np.array([1,2,3,4,5,6])
 
-def Data_crunch_Ulti(sath,N,rho_surface_uncertainty_Flag,diff_param_Flag,bco_param_flag,file_id,d15n_std=0.02,Model='HLD',Indices=Temp_input):
+def Data_crunch_Ulti(sath,N,rho_surface_uncertainty_Flag,diff_param_Flag,bco_param_flag,model,file_id,d15n_std=0.02,Indices=Temp_input):
     print(os.getcwd())
 
     os.chdir('../')
@@ -209,7 +214,7 @@ def Data_crunch_Ulti(sath,N,rho_surface_uncertainty_Flag,diff_param_Flag,bco_par
     # =============================================================================
         
     for j,val in enumerate(Indices):
-        mu_d15n = df[str(Model)][Indices[j]]
+        mu_d15n = df[str(model)][Indices[j]]
         d = np.random.normal(np.asarray(mu_d15n),d15n_std,size=2000)
         d15N_dist = d[(abs(d - d.mean())) < (3 * d.std())][:N]
  
@@ -223,7 +228,7 @@ def Data_crunch_Ulti(sath,N,rho_surface_uncertainty_Flag,diff_param_Flag,bco_par
         for k in range(len(d15N_dist)):
             d15N_ref = d15N_dist[k]
             
-            print(Model,k,Indices[j])
+            print(model,k,Indices[j])
             print('Target d15N', d15N_ref)
             print('Target temp', Input_temp[Indices[j]])
 
@@ -304,15 +309,15 @@ def Data_crunch_Ulti(sath,N,rho_surface_uncertainty_Flag,diff_param_Flag,bco_par
                 
             os.chdir(r'D:/GitHub/CommunityFirnThesis/CommunityFirnThesis/Python/Optimization')
             
-            folder_path = str(sath) + str(Model) + '/' + str(Indices[j]) 
+            folder_path = str(sath) + str(model) + '/' + str(Indices[j]) 
             
             path = Path(folder_path)
             path.mkdir(parents=True, exist_ok=True)
             results_path = folder_path + '/' + 'Point'  + str(k) + '.h5'
-            try:
-                root_find(results_path,d15N_ref,bco_param_flag,file_id)
+            #try:
+            #    root_find(results_path,d15N_ref,bco_param_flag,file_id,model)
                     
-            except Exception as e: print(e)
+            #except Exception as e: print(e)
                 
     return None
 path_Temp = 'resultsFolder/Ulti_Temp/'
@@ -323,52 +328,68 @@ path_bco = 'resultsFolder/Ulti_Bco/'
 path_bco_rho = 'resultsFolder/Ulti_bco_rho/'
 path_Deff_only = 'resultsFolder/Ulti_Deff_only/'
 path_bco_only = 'resultsFolder/Ulti_bco_only/'
-
+path_Deff_only = 'resultsFolder/Ulti_Deff_only/'
 #for j,val in enumerate(Input_temp):
 
-Input_2 = np.array([1])    
-Input_3 = np.array([2])
-Input_4 = np.array([3])
-Input_5 = np.array([4])
-Input_6 = np.array([5])
+    
+path_rho2e = 'resultsFolder/Ulti_rho2e/'
+path_Deff2e = 'resultsFolder/Ulti_Deff2e/'
+path_Temp2e = 'resultsFolder/Ulti_Temp2e/'
+
+
+
+Models = ['HLD','HLS','BAR','GOU']
+path_Model = 'resultsFolder/Ulti_Models/'
+
+Mods = ['HLdynamic','HLSigfus','Barnola1991','Goujon2003']
+
+
+path = 'resultsFolder/ALL_results/2400_Only/'
+
+path_Temp = path + 'Temp/'
+path_rho = path + 'rho/'
+path_Deff = path + 'Deff/'
+path_Deff_only = path + 'Deff_only/'
+
+Input_2 = np.array([2])    
+#Input_3 = np.array([2])
+#Input_4 = np.array([3])
+#Input_5 = np.array([4])
+#Input_6 = np.array([5])
 
 
 print(Input_temp)
-m = 1# Num repetitions
+m = 2400# Num repetitions
 
-for g in range(3):
-	reset_to_factory(g)
-	paths = Path(r'D:/GitHub/CommunityFirnThesis/CommunityFirnThesis/Python/CFM/CFM_main/CFMinput/OptiNoise/' + str(g))
-	paths.mkdir(parents=True, exist_ok=True)
+
 	
 import time
 
 
 
 #t1 = time.time()
-#Data_crunch_Ulti(path_Deff_only,m,False,False,False,0,1e-6,'HLD',Input_2)
-#Data_crunch_Ulti(path_rho,m,True,False,False,file_id=1)
+#Data_crunch_Ulti(path_Model,m,False,False,False,'GOU',3,2e-2,Input_2)
+#Data_crunch_Ulti(path_Deff_only,m,False,False,False,1,1e-3,'HLD',Input_2)
 #Data_crunch_Ulti(path_bco_only,m,False,False,True,file_id=2)
 #t2 = time.time()
 #print(t2-t1)
 
 from multiprocessing import Process
-
+'''
 for g in range(5):
 	reset_to_factory(g)
 	paths = Path(r'D:/GitHub/CommunityFirnThesis/CommunityFirnThesis/Python/CFM/CFM_main/CFMinput/OptiNoise/' + str(g))
 	paths.mkdir(parents=True, exist_ok=True)
-
-
 '''
+
 if __name__ == "__main__":
     # construct a different process for each function
     ti = time.time()
-    processes = [Process(target=Data_crunch_Ulti, args=(path_Deff_only,m,False,True,False,0,1e-6,'HLD',Input_2)),
-                 Process(target=Data_crunch_Ulti, args=(path_Deff_only,m,False,True,False,1,1e-6,'HLD',Input_3)),
-                 Process(target=Data_crunch_Ulti, args=(path_Deff_only,m,False,True,False,2,1e-6,'HLD',Input_4)),
-                 Process(target=Data_crunch_Ulti, args=(path_Deff_only,m,False,True,False,3,1e-6,'HLD',Input_5)),
-                 Process(target=Data_crunch_Ulti, args=(path_Deff_only,m,False,True,False,4,1e-6,'HLD',Input_6))]
+    processes = [Process(target=Data_crunch_Ulti, args=(path_Temp,m,False,False,False,'HLD',0,2e-3,Input_2)),
+                 Process(target=Data_crunch_Ulti, args=(path_rho,m,True,False,False,'HLD',1,2e-3,Input_2)),
+                 Process(target=Data_crunch_Ulti, args=(path_Deff,m,True,True,False,'HLD',2,2e-3,Input_2)),
+                 Process(target=Data_crunch_Ulti, args=(path_Deff_only,m,False,True,False,'HLD',3,2e-3,Input_2))]
+                 #Process(target=Data_crunch_Ulti, args=(path_Deff_only,m,False,True,False,4,2e-3,'HLD',Input_6))]
     # kick them off 
     for process in processes:
         process.start()
@@ -380,7 +401,7 @@ if __name__ == "__main__":
 #print(t2-t1,'Serial')
     print(tf-ti,'Parallel')
 
-'''
+
 
 
 

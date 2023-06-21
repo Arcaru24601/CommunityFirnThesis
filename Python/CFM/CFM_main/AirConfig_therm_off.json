@@ -5,7 +5,8 @@
     "CO2"
   ],
   "gaschoice": [
-    "d15N2"
+    "d15N2",
+    "d40Ar"
   ],
   "gravity": "on",
   "thermal": "off",
@@ -30,7 +31,7 @@
   ],
   "lockin": true,
   "ConvectiveZoneDepth": 1.5,
-  "advection_type": "zero",
+  "advection_type": "Darcy",
   "advection_type_options": [
     "Christo",
     "Darcy",

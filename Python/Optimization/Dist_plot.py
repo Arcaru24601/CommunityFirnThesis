@@ -12,13 +12,15 @@ import pandas as pd
 import glob
 import matplotlib.ticker as mtick
 import h5py as h5py
+from pathlib import Path
+
 for fcnt in range(1,4,1):
     fname = f'file_{fcnt}.h5'
     with h5py.File(fname,'w') as h5fw:
         arr = np.random.random(10*10).reshape(10,10)
         h5fw.create_dataset('data',data=arr)
 
-S = 800
+S = 2400
 cost_func = np.zeros(S)
 d15N = np.zeros(S)
 count = np.zeros(S)
@@ -34,7 +36,6 @@ np.random.seed(42)
 plt.close('all')
 Models = ['HLdynamic','HLSigfus','Barnola1991','Goujon2003']
 Dist = ['Dist' + str(i) for i in range(4)]
-Dists2 = np.array([3,5])
 import seaborn as sns
 sns.set_theme()
 palette = sns.color_palette(None,3)
@@ -43,16 +44,33 @@ a = u'u\00B1'
 a.encode('utf-8')
 
 
+
+
+
+#fold = '800_3_5_Deff_both'
+#fold = '800_all_6_Deff_only'
+#fold = '2400_Deff_only_2'
+fold = '2400_Deff_2'
+#fold = '200_1'
+#fold = '400_All'
+#Dists2 = np.array([1,2,3,4,5,6])
+Dists2 = np.array([2])
 even = np.arange(0,7,2)
 odd = np.arange(1,8,2)  
 Input_temp,Input_acc,Beta = input_file()
 
 dfc = pd.read_csv('resultsFolder/Integer_diffu.csv',sep=',')
 Modela = ['HLD','HLS','BAR','GOU']
-Models = ['Ulti_bco_only','Ulti_bco_rho','Ulti_Deff_only']
+#Models = ['Ulti_Temp2e','Ulti_rho2e','Ulti_Deff2e']
+Models = ['Ulti_Temp','Ulti_rho','Ulti_Deff']
+title = [r'$\delta^{15}$N',r'$\delta^{15}$N, $\rho_s$',r'$\delta^{15}$N,$\rho_s$, D$_\mathrm{eff}$']
 
-mus = np.zeros((13,8))
-mus_1 = np.zeros((13,8))
+#Models = ['Ulti_Temp','Ulti_rho','Ulti_Deff','Ulti_Deff_only']
+#title = [r'$\delta^{15}$N',r'$\delta^{15}$N, $\rho_s$',r'$\delta^{15}$N,$\rho_s$, D$_\mathrm{eff}$',r'$\delta^{15}$N, D$_\mathrm{eff}$']
+
+
+mus = np.zeros((len(Dists2),2*len(Models)))
+mus_1 = np.zeros((len(Dists2),2*len(Models)))
 # Loop over H5 files and load into a dataframe
 for i,val in enumerate(Dists2):
     #j2 = Dists2[i]
@@ -62,13 +80,13 @@ for i,val in enumerate(Dists2):
     for j in range(len(Models)):
         #j1 = Dists2[j]
         Csv_point = dfc['HLD']
-        Data_d15N = np.random.normal(Csv_point[val],0.02,size=600)
-        #Data_d15N = s[(abs(s - s.mean())) < (3 * s.std())][:S]
+        s = np.random.normal(Csv_point[val],2e-2,size=5000)
+        Data_d15N = s[(abs(s - s.mean())) < (3 * s.std())][:S]
 
         print(val,Models[j])
         #for z,file in enumerate(glob.iglob('resultsFolder/Version1/' + str(Models[j]) + '/' + str(Dist[i]) + '/*.h5')):  
         for z in range(S):
-            file = 'resultsFolder/' +str(Models[j]) + '/HLD/' + str(Dists2[i]) + '/Point' + str(z) + '.h5'
+            file = 'resultsFolder/ALL_results/' + str(fold) + '/' + str(Models[j]) + '/HLD/' + str(Dists2[i]) + '/Point' + str(z) + '.h5'
             #print(file)
             
             try:
@@ -89,17 +107,17 @@ for i,val in enumerate(Dists2):
        	    	Temp[z] = Temp[z-1]
         #table = pd.DataFrame(xdata).reset_index()
         #print(table)
-        bins = 'freedman'
+        bins = 'scott'
         
-        hist(Data_d15N, bins=bins, ax=ax[0,j],histtype='stepfilled',color = palette[0],label=r'Input $\delta^{15}$N' if j ==3 else '')
-        hist(Temp, bins=bins, ax=ax[1,j],histtype='stepfilled',color = palette[1],label='Output Temperature' if j ==3 else '')
-        hist(count, bins=bins, ax=ax[2,j],histtype='stepfilled',color = palette[2],label='Iteration count' if j ==3 else '')
+        hist(Data_d15N, bins=bins, ax=ax[0,j],histtype='stepfilled',color = palette[0],label=r'Input $\delta^{15}$N' if j ==2 else '')
+        hist(Temp, bins=bins, ax=ax[1,j],histtype='stepfilled',color = palette[1],label='Output Temperature' if j ==2 else '')
+        hist(count, bins='scott', ax=ax[2,j],histtype='stepfilled',color = palette[2],label='Iteration count' if j ==2 else '')
         
         mu = np.mean(Temp)
         std = np.std(Temp)
-        ax[1,j].axvline(mu,color='g',linestyle="--",label='Mean' if j ==3 else '')
-        ax[1,j].hlines(y=1,xmin=mu-std,xmax=mu+std,color='y',linestyle="-",label=r'1$\sigma$ deviation' if j ==3 else '')
-        ax[1,j].axvline(Input_temp[val],color='k',linestyle="--",label='Expected Temperature' if j ==3 else '')
+        ax[1,j].axvline(mu,color='g',linestyle="--",label='Mean' if j ==2 else '')
+        ax[1,j].hlines(y=1,xmin=mu-std,xmax=mu+std,color='y',linestyle="-",label=r'1$\sigma$ deviation' if j ==2 else '')
+        ax[1,j].axvline(Input_temp[val],color='k',linestyle="--",label='Expected Temperature' if j ==2 else '')
         ax[1,j].text(0, 0.9, r'$\mu$:{0:.2f}'.format(mu), size=14, ha='left', va='center',transform=ax[1,j].transAxes)
         ax[1,j].text(0, 0.8, r'$\sigma$:{0:.1f}'.format(std), size=14, ha='left', va='center',transform=ax[1,j].transAxes)
         ax[1,j].text(0, 0.7, r'$T_r$:{0:.2f}'.format(Input_temp[val]), size=14, ha='left', va='center',transform=ax[1,j].transAxes)
@@ -112,8 +130,8 @@ for i,val in enumerate(Dists2):
         print(mu,Input_temp[val])
         mua = np.mean(Data_d15N)
         stda = np.std(Data_d15N)
-        ax[0,j].axvline(mua,color='k',linestyle="--",label='Mean' if j ==3 else '')
-        ax[0,j].hlines(y=1,xmin=mua-stda,xmax=mua+stda,color='y',linestyle="-",label=r'1$\sigma$ deviation' if j ==3 else '')
+        ax[0,j].axvline(mua,color='k',linestyle="--",label='Mean' if j ==2 else '')
+        ax[0,j].hlines(y=1,xmin=mua-stda,xmax=mua+stda,color='y',linestyle="-",label=r'1$\sigma$ deviation' if j ==2 else '')
         #ax[1,j].axvline(Point_T[i],color='g',linestyle="--")
         #ax[0,j].text(0, 0.9, r'$\mu$:{0:.2f}'.format(mua), size=14, ha='left', va='center',transform=ax[0,j].transAxes)
         #ax[0,j].text(0, 0.8, r'$\sigma$:{0:.1f}'.format(stda), size=14, ha='left', va='center',transform=ax[0,j].transAxes)
@@ -134,7 +152,7 @@ for i,val in enumerate(Dists2):
         #ax[3,j].set_xlabel('Point nr.')
         ax[2,j].set_xlabel('Iteration count',fontsize=20)
         #ax[3,j].set_ylabel('Cost function')
-        ax[0,j].set_title(str(Models[j]),fontsize=20)
+        ax[0,j].set_title(str(title[j]),fontsize=20)
         #ax[3,j].yaxis.set_major_formatter(mtick.FormatStrFormatter('%.1e'))
         #ax[3,j].xaxis.set_major_formatter(mtick.FormatStrFormatter('%.1e'))
         #ax[3,j].xaxis.set_major_locator(plt.MaxNLocator(3))
@@ -143,7 +161,7 @@ for i,val in enumerate(Dists2):
             axes.tick_params(axis='both', which='major', labelsize=18)
         #t.set_x(1.0)
         #ax[3,j].yaxis._update_offset_text_position = types.MethodType(bottom_offset, ax.xaxis)
-        if j == 3:
+        if j == 2:
             for z in range(3):
                 box = ax[z,j].get_position()
                 #ax[i,j].set_position([box.x0, box.y0, box.width * 0.8, bo6x.height])
@@ -154,16 +172,20 @@ for i,val in enumerate(Dists2):
                 #ax[1,3].legend(loc='upper right')
                 #ax[2,3].legend(loc='upper right')
     #fig.legend(ncol=3,loc='lower center')
-    plt.savefig('Plots5/Dist'+str(val)+'.png',dpi=300)
+    
+    path = Path('Plots/' + str(fold))
+    path.mkdir(parents=True, exist_ok=True)
+    
+    plt.savefig('Plots/' + str(fold) + '/' + 'Dist'+str(val)+'.png',dpi=300)
         
 
 
-Models = ['HLD','HLS','Bar','GOU']
+#Models = ['HLD','HLS','Bar','GOU']
 Output = ['Mean',r'$\sigma$']
 
 Iter1 = [Models,Output]
 Mode = ['Temp','Nitrogen']
-Dist = ['Dist' + str(x) for x in np.arange(0,25,2)]
+Dist = ['Dist' + str(x) for x in Dists2]
 Iter2 = [Mode,Dist]
 
 
@@ -205,7 +227,7 @@ df = df.astype(str)
 
 
 
-with open('Stuff.tex', 'w') as tf:
+with open('Plots/'+ str(fold) + '.tex', 'w') as tf:
      tf.write(df.style.to_latex(column_format="cccccccccc", position="h", position_float="centering",
                 hrules=True, label="table:5", caption="Equilibrium times for amplitude",
                 multirow_align="c", multicol_align="c")  

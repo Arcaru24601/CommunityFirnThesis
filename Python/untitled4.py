@@ -30,24 +30,24 @@ def osc(period):
     return Time, Temp, Bdot
 def csv_gen(mode):
     if mode == 'Long':
-        Time = np.array([250,1000,1050,3000,3500,5000])
-        Temp = np.array([232.05,232.05,253,253,232.05,232.05])
+        Time = np.array([1000,1500,1700,2000,3500,4500,6000])
+        Temp = np.array([232.05,232.05,232.05,243,243,232.05,232.05])
         Bdot = np.full(len(Time),1.9e-1)
-        #plt.plot(Time,Temp)
+        plt.plot(Time,Temp)
         #plt.plot(Time,Bdot)
         print(Bdot)
     elif mode == 'Peak':
-        Time = np.array([250,1000,1050,1500,5000,5500,10000])
+        Time = np.array([250,1000,1050,1500,5000,5500,6000])
         Temp = np.array([232.05,232.05,253,232.05,232.05,232.05,232.05])
         Bdot = np.full(len(Time),1.9e-1)
         #plt.plot(Time,Temp)
         #plt.plot(Time,Bdot)
         print(Bdot)
     elif mode == 'Short':
-        Time = np.array([250,1000,1050,1200,2000,4000,4050,5000,5500,7000,7050,7500,10000])
-        Temp = np.array([232.05,232.05,253,253,232.05,232.05,253,253,232.05,232.05,253,232.05,232.05])
+        Time = np.array([250,1000,1050,1200,2000,4000,4050,5000,5500,7000,7050,7500,8000])
+        Temp = np.array([232.05,232.05,253,253,232.05,232.05,242,242,232.05,232.05,253,232.05,232.05])
         Bdot = np.full(len(Time),1.9e-1)
-        plt.plot(Time,Temp)
+        #plt.plot(Time,Temp)
         #plt.plot(Time,Bdot)
         print(Bdot)
     elif mode == 'Osc':
@@ -58,12 +58,12 @@ def csv_gen(mode):
         #plt.plot(Time,Temp)
     Temp_csv = np.array([Time,Temp])
     Bdot_csv = np.array([Time,Bdot])
-    
+    print(str(mode),'Testing2')
     np.savetxt('CFM/CFM_main/CFMinput/DO_event/'+str(mode)+'/'+str(mode)+'_acc.csv',Bdot_csv,delimiter=',')
     np.savetxt('CFM/CFM_main/CFMinput/DO_event/'+str(mode)+'/'+str(mode)+'_Temp.csv',Temp_csv,delimiter=',')
     
     
-Events = np.array(['Long','Short','Osc2','Osc'])
+Events = np.array(['Long'])#,'Osc2','Osc'])
 
 for i in range(len(Events)):
     path = Path('CFM/CFM_main/CFMinput/DO_event/' + Events[i])

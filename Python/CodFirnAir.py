@@ -13,15 +13,15 @@ cmap = plt.cm.get_cmap('viridis')
 import seaborn as sns 
 #plt.rc('text', usetex=True)
 #plt.rc('font', family='serif')
-import reader as re
+#import reader as re
 sns.set()
-from scipy.signal import savgol_filter
-from scipy.ndimage.filters import uniform_filter1d
-
-
+#from scipy.signal import savgol_filter
+#from scipy.ndimage.filters import uniform_filter1d
+from matplotlib.ticker import FormatStrFormatter
+from matplotlib import ticker
 
 plt.rc('text', usetex=True)
-plt.rc('font', family='serif')
+#plt.rc('font', family='serif')
 class CoD_plotter():
 
     def __init__(self,filepath=None,f1path=None,KtC=False):
@@ -87,28 +87,59 @@ class CoD_plotter():
     
     
     def plotting(self):
-        rows = 3
-        fig,ax = plt.subplots(rows, sharex=True,sharey=False,constrained_layout=True)
+        rows = 1
+        title = ['a)','b)','c)']
+        fig = plt.figure(figsize=(10, 8), layout="constrained")
+        spec = fig.add_gridspec(2, 2)
+        
+        ax0 = fig.add_subplot(spec[0, 0])
+        #annotate_axes(ax0, 'ax0')
+        
+        ax10 = fig.add_subplot(spec[1, 0])
+        #annotate_axes(ax10, 'ax10')6
+        ax11 = fig.add_subplot(spec[:, 1])
+        #annotate_axes(ax11, 'ax11')
+        
+        cols = 3
+        #fig,ax = plt.subplots(rows,cols, figsize=(10,5),constrained_layout=True)
         #labelFont = 15
         #legFont = 12
         #axFont = 13
+        ax0.tick_params(axis='both', which='major', labelsize=18)
+        ax10.tick_params(axis='both', which='minor', labelsize=16)
+        ax11.tick_params(axis='both', which='major', labelsize=18)
+        ax0.tick_params(axis='both', which='minor', labelsize=16)
+        ax10.tick_params(axis='both', which='major', labelsize=18)
+        ax11.tick_params(axis='both', which='minor', labelsize=16)
         
-        ax[0].plot(self.model_time, self.climate[:,2],'k')
-        ax[0].grid(linestyle='--', color='gray', lw='0.5')
-        ax[0].set_ylabel(r'\centering Temperature \newline\centering Forcing [K]',fontsize=14)
-        ax[0].set_yticks(np.arange(230,260, step=10))
+        ax0.set_title(title[0],fontsize=20)
+        ax10.set_title(title[1],fontsize=20)
+        ax11.set_title(title[2],fontsize=20)
+        
+        
+        ax02 = ax0.twinx()
+        ax02.tick_params(axis='both', which='major', labelsize=18)
+        ax02.tick_params(axis='both', which='minor', labelsize=16)
+        
+        ax0.plot(self.model_time[251:-1], self.climate[251:-1,2],'g')
+        ax0.grid(linestyle='--', color='gray', lw='0.5')
+        ax0.set_ylabel(r'Surface Temperature [K]',color='g',fontsize=22)
+        ax02.set_ylabel("Accumulation Forcing [$\mathrm{my}^{-1}$ ice eq.]",color='y',fontsize=18)
+        ax02.plot(self.model_time[251:-1], self.climate[251:-1,1],'y')
+        print(self.d15N_cod)
+        #ax0.set_yticks(np.arange(225,245, step=10))
         '''
-        ax[1].plot(self.model_time, self.climate[:,1],'k')
-        ax[1].grid(linestyle='--', color='gray', lw='0.5')
-        ax[1].set_ylabel(r'\centering Acc. Forcing \newline\centering [$\mathrm{my}^{-1}$ ice eq.]')
-        ax[1].set_yticks(np.arange(0.05,0.6,step=0.2))
-        
-        ax[2].plot(self.model_time, self.close_off_depth,'b')
-        ax[2].grid(linestyle='--', color='gray', lw='0.5')
-        ax[2].set_ylabel(r'\centering Close-off \newline\centering depth [m]')
-        ax[2].set_yticks(np.arange(30,120,step=30))
-        ax[2].invert_yaxis()
-        
+        ax10.plot(self.model_time, self.climate[:,1],'k')
+        ax10.grid(linestyle='--', color='gray', lw='0.5')
+        ax10.set_ylabel(r'\centering Acc. Forcing \newline\centering [$\mathrm{my}^{-1}$ ice eq.]')
+        ax10.set_yticks(np.arange(0.05,0.6,step=0.2))
+        '''
+        ax10.plot(self.model_time[251:-1], self.close_off_depth[251:-1],'b')
+        ax10.grid(linestyle='--', color='gray', lw='0.5')
+        ax10.set_ylabel(r'\centering Close-off depth [m]',fontsize=22)
+        #ax10.set_yticks(np.arange(30,122,step=30))
+        ax10.invert_yaxis()
+        '''
         ax[3].plot(self.model_time, self.delta_temp,'r')
         ax[3].grid(linestyle='--', color='gray', lw='0.5')
         if self.KtC:
@@ -123,46 +154,51 @@ class CoD_plotter():
         ax[4].set_ylabel(r'$\Delta$age [y]')
         print(self.close_off_age[-10:]-self.ice_age_cod[-10:])
         '''
-        ax[1].plot(self.model_time,self.d15N_cod * 1000,'c-',label='$\delta^{15}$N')
-        ax[1].plot(self.model_time,self.d15N_th_cod * 1000,'c:',label='$\delta^{15}$N thermal')
-        ax[1].plot(self.model_time,self.d15n_grav_cod * 1000,'c--',label='$\delta^{15}$N gravitational')
-        ax[1].grid(linestyle='--', color='gray', lw='0.5')
-        ax[1].set_ylabel(r'$\delta^{15}N_{cod}$ [‰]',fontsize=14)
-        ax[1].set_yticks(np.arange(0.0,0.55, step=0.25))
-        box = ax[1].get_position()
+        ax11.plot(self.model_time[251:-1],self.d15N_cod[251:-1] * 1000,'c-',label='$\delta^{15}$N')
+        ax11.plot(self.model_time[251:-1],self.d15N_th_cod[251:-1] * 1000,'c:',label='$\delta^{15}$N$_{th}$ ')
+        ax11.plot(self.model_time[251:-1],self.d15n_grav_cod[251:-1] * 1000,'c--',label='$\delta^{15}$N$_{gr}$')
+        ax11.grid(linestyle='--', color='gray', lw='0.5')
+        ax11.set_ylabel(r'$\delta^{15}N_{cod}$ [‰]',fontsize=18)
+        ax11.set_ylim(-0.1,0.6)
+        #box = ax11.get_position()
+                    #ax[i,j].set_position([box.x0, box.y0, box.width * 0.8, box.height])
+                
+        ax11.set_xlabel('Model time [years]',fontsize=22)
+        ax0.set_xlabel('Model time [years]',fontsize=22)
+        ax10.set_xlabel('Model time [years]',fontsize=22)
+        # Put a legend to the right of the current axis
+        ax11.legend(loc='upper right',fontsize=16)
+        
+        ax02.yaxis.set_major_formatter(ticker.StrMethodFormatter("{x:.3f}"))
+        ax02.set_ylim(0.18, 0.2)
+        ax02.locator_params(axis='y', nbins=6)
+        #ax11.plot(self.model_time,self.d40Ar_cod/4 * 1000,'y-',label='$\delta^{40}$Ar')
+        #ax11.plot(self.model_time,self.d40Ar_th_cod/4 * 1000,'y:',label='$\delta^{40}$Ar thermal')
+        #ax11.plot(self.model_time,self.d40ar_grav_cod/4 * 1000,'y--',label='$\delta^{40}$Ar gravitational')
+        #ax11.grid(linestyle='--', color='gray', lw='0.5')
+        #ax11.set_ylabel(r'$\delta^{40}Ar_{cod}$ [‰]',fontsize=14)
+        #ax11.set_yticks(np.arange(0.0,0.55, step=0.25))
+        #ax11.legend(loc='right', fontsize=12)
+        #ax11.set_ylabel('Model time [years]',fontsize=14)
+        #box = ax11.get_position()
                     #ax[i,j].set_position([box.x0, box.y0, box.width * 0.8, box.height])
 
         # Put a legend to the right of the current axis
-        ax[1].legend(loc='center left', bbox_to_anchor=(1, 0.5),fontsize=14)
-        
-        
-        ax[2].plot(self.model_time,self.d40Ar_cod/4 * 1000,'y-',label='$\delta^{40}$Ar')
-        ax[2].plot(self.model_time,self.d40Ar_th_cod/4 * 1000,'y:',label='$\delta^{40}$Ar thermal')
-        ax[2].plot(self.model_time,self.d40ar_grav_cod/4 * 1000,'y--',label='$\delta^{40}$Ar gravitational')
-        ax[2].grid(linestyle='--', color='gray', lw='0.5')
-        ax[2].set_ylabel(r'$\delta^{40}Ar_{cod}$ [‰]',fontsize=14)
-        ax[2].set_yticks(np.arange(0.0,0.55, step=0.25))
-        #ax[2].legend(loc='right', fontsize=12)
-        #ax[2].set_ylabel('Model time [years]',fontsize=14)
-        box = ax[2].get_position()
-                    #ax[i,j].set_position([box.x0, box.y0, box.width * 0.8, box.height])
-
-        # Put a legend to the right of the current axis
-        ax[2].legend(loc='center left', bbox_to_anchor=(1, 0.5),fontsize=14)
-        ax[2].set_xlabel('Model time [years]',fontsize=14)
+        #ax11.legend(loc='center left', bbox_to_anchor=(1, 0.5),fontsize=14)
+        #ax11.set_xlabel('Model time [years]',fontsize=14)
 
 rfolder = 'CFM/CFM_main/CFMoutput/DO_event/'
-x = ['Long', 'Short', 'Osc2','Osc']
-x2 = ['HLdynamic','Barnola1991','Goujon2003']
-y = ['zero', 'Christo', 'Darcy']
+x = ['Long']
+x2 = ['HLdynamic','HLSigfus','Barnola1991','Goujon2003']
+y = ['Darcy']
 #z = ['grav','Full']
 Folder = [(i+i2+j) for i in x for i2 in x2 for j in y]
 
 
 def folder_gen(fold,FileFlag):
-    X = ['Long/', 'Short/', 'Osc2/','Osc/']
-    X2 = ['HLdynamic/','Barnola1991/','Goujon2003']
-    Y = ['zero/', 'Christo/', 'Darcy/']
+    X = ['Long/']
+    X2 = ['HLdynamic/','HLSigfus/','Barnola1991/','Goujon2003/']
+    Y = ['Darcy/']
     if FileFlag == True:
         X = [x[:-1] for x in X]
         X2 = [x[:-1] for x in X2]
@@ -191,8 +227,12 @@ for i in range(len(Folder)):
         print(Folder[i])
         Current_plot = CoD_plotter(filepath=path,f1path=path_grav,KtC=True)
         Current_plot.plotting()
+        
+        
+        
+        
         plt.savefig('CoDv2/'+str(Folder[i])+'.png',dpi=300)
         plt.close('all')
-        2+2
+    2+2
 plt.close('all')
 

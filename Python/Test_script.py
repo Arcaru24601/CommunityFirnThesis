@@ -83,13 +83,13 @@ def Config_Edit(Model,Folder,priority,effect,advec):
     
 def Air_Edit(Model,effect,advec):
     
-    if Model == 'HLdynamic':
-        file = open('CFM/CFM_main/Air_HLD.json')
-    elif Model == 'Barnola1991':
-        file = open('CFM/CFM_main/Air_BAR.json')
-    elif Model == 'Goujon2003':
-        file = open('CFM/CFM_main/Air_GOU.json')
-        
+    #if Model == 'HLdynamic':
+    #    file = open('CFM/CFM_main/AirConfig2.json')
+    #elif Model == 'Barnola1991':
+    #    file = open('CFM/CFM_main/AirConfig2.json')
+    #elif Model == 'Goujon2003':
+    #    file = open('CFM/CFM_main/AirConfig2.json')
+    file = open('CFM/CFM_main/AirConfig2.json')
     
     data = json.load(file)
     data['advection_type'] = str(advec)
@@ -102,7 +102,7 @@ def Air_Edit(Model,effect,advec):
     
         
 
-    with open("CFM/CFM_main/AirConfig.json", 'w') as f:
+    with open("CFM/CFM_main/AirConfig2.json", 'w') as f:
         json.dump(data, f,indent = 2)
         
         # Closing file
@@ -135,7 +135,7 @@ def Terminal_run_Models(Model,Exp,Folder):
     data = json.load(file)
     data['grid_outputs'] = False
     data['resultsFileName'] = str(Exp) + '_' + str(Model) + str(Folder) +  '.hdf5'
-    data['resultsFolder'] = 'CFMoutput/Equi2_Temp/' + str(Exp) + '/' + str(Model) + '/' + str(Folder) 
+    data['resultsFolder'] = 'CFMoutput/Equi2_grav/' + str(Exp) + '/' + str(Model) + '/' + str(Folder) 
     data['InputFileFolder'] = 'CFMinput/Equi2/' + str(Exp) + '/' + str(Folder)
     data['InputFileNameTemp'] = 'Temp.csv'
     data['InputFileNamebdot'] = 'Acc.csv'
@@ -155,11 +155,16 @@ def Terminal_run_Amp(Model,Exp,Folder):
     data = json.load(file)
     data['grid_outputs'] = False
     data['resultsFileName'] = str(Exp) + '_' + str(Model) + str(Folder) +  '.hdf5'
-    data['resultsFolder'] = 'CFMoutput/EquiAmp2_Temp/' + str(Exp) + '/' + str(Model) + '/' + str(Folder) 
+    data['resultsFolder'] = 'CFMoutput/EquiAmp2_grav/' + str(Exp) + '/' + str(Model) + '/' + str(Folder)
     data['InputFileFolder'] = 'CFMinput/EquiAmp2/' + str(Exp) + '/' + str(Folder)
     data['InputFileNameTemp'] = 'Temp.csv'
     data['InputFileNamebdot'] = 'Acc.csv'
     data['physRho'] = str(Model)
+    #if effect == 'full':
+    #    data['AirConfigName'] = "AirConfig.json"
+    #elif effect == 'grav':
+    #    data['AirConfigName'] = "AirConfig_therm_off.json"
+        
         
     with open("CFM/CFM_main/example_equiAmp.json", 'w') as f:
         json.dump(data, f,indent = 2)
@@ -168,6 +173,13 @@ def Terminal_run_Amp(Model,Exp,Folder):
     f.close()    
         
     subprocess.run('python main.py example_equiAmp.json -n', shell=True, cwd='CFM/CFM_main/')
+
+
+
+
+
+
+
 
 def Terminal_run_Noise(Model,temp,acc):
     file = open('CFM/CFM_main/Firn_Noise.json')

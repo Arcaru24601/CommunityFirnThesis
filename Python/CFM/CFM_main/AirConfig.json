@@ -5,10 +5,11 @@
     "CO2"
   ],
   "gaschoice": [
-    "d15N2"
+    "d15N2",
+    "d40Ar"
   ],
   "gravity": "on",
-  "thermal": "on",
+  "thermal": "off",
   "runtype": "transient",
   "runtype_options": [
     "steady",
@@ -18,6 +19,8 @@
   "steady_bdot": 0.05,
   "StepsPerYear": 1,
   "z_resolution": 0.5,
+ "noisy_bco": false,
+  "bco_dist": 814.5748767670342,
   "UserData": false,
   "Diffu_param": "Schwander",
   "Diffu_options": [
@@ -30,7 +33,7 @@
   ],
   "lockin": true,
   "ConvectiveZoneDepth": 1.5,
-  "advection_type": "zero",
+  "advection_type": "Darcy",
   "advection_type_options": [
     "Christo",
     "Darcy",

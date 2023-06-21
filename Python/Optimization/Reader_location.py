@@ -19,7 +19,7 @@ import os
 import numpy as np
 
 
-def read(rfolder):
+def read(rfolder,rfile):
     '''
     Parameters
     ----------
@@ -33,7 +33,7 @@ def read(rfolder):
     Various arrays.
 
     '''
-    rfile = 'CFMresults.hdf5'
+    #rfile = 'Temp_Barnola199110y.hdf5'
     fn = os.path.join(rfolder,rfile)
     f = h5.File(fn,'r')
     
@@ -43,14 +43,16 @@ def read(rfolder):
     f_close_off_depth = f["BCO"][:, -1]
     close_off_depth = f["BCO"][:, 2]
     LID = f["BCO"][:, 6]
-    close_off_age = f["BCO"][:,1]
+    close_off_age = f["BCO"][:]
     age_dist = f['gas_age'][:]
     #### COD variables
     temperature = f['temperature'][:]
     temp_cod = np.ones_like(close_off_depth)
     density = f['density'][:]
-    
+    force = f['forcing'][:]
+
     d15N = f['d15N2'][:]-1
+    #d40Ar = f['d40Ar'][:]-1
 
     diffusivity = f['diffusivity'][:]
     index = np.zeros(np.shape(diffusivity)[0])
@@ -67,11 +69,13 @@ def read(rfolder):
     d15N_cod = np.ones_like(close_off_depth)
     #d15n_grav = f1['d15N2'][:]-1
     d15n_grav_cod = np.ones_like(close_off_depth)
-    
+    #d40Ar_cod = np.ones_like(close_off_depth)
+
     for i in range(z.shape[0]):
         idx = int(np.where(z[i, 1:] == close_off_depth[i])[0])
         d15N_cod[i] = d15N[i,idx]*1000
- 
+        #d40Ar_cod[i] = d40Ar[i,idx]*1000
+
         temp_cod[i] = temperature[i,idx]
    
     d15N_cod_z = np.ones_like(close_off_depth)
@@ -95,7 +99,7 @@ def read(rfolder):
     f.close()
     with h5.File(fn,'r') as hf:
         print(hf.keys())
-    return model_time,z,temperature,climate,d15N*1000,close_off_depth,age_dist,density,LID,f_close_off_depth,close_off_depth_diff,d15n_cod_diff,diffusivity,d15N_cod_z,d15N_cod
+    return force,model_time,z,temperature,climate,d15N*1000,close_off_depth,age_dist,density,LID,f_close_off_depth,close_off_depth_diff,d15n_cod_diff,diffusivity,d15N_cod_z,d15N_cod
 
 
 def find_constant_row(matrix, tolerance=1e-6):
@@ -122,24 +126,45 @@ ax.axvline(Time_Const,color='k',label=str(Time_Const))
 Time = timesteps[find_constant_row(temperature[510:,1:],tolerance = 1e-1)]
 ax.legend
 '''
+forcing, timesteps,depth,temperature,climate,d15N2,Bubble,age_dist,density,LiD,z_cod,diff_cod,d15n_cod_diff,diffu,d15n_z,d15n_cod = read('../CFM/CFM_main/CFMoutput/Noise/Integer/Barnola1991/240K','Barnola1991240K.hdf5')
 
 
 #timesteps,depth,temperature,climate,d15N2,Bubble,age_dist = read('CFM/CFM_main/CFMoutput/EquiAmp2/Temp/HLdynamic/1.1')
-timesteps,depth,temperature,climate,d15N2,Bubble,age_dist,density,LiD,z_cod,diff_cod,d15n_cod_diff,diffu,d15n_z,d15n_cod = read('../CFM/CFM_main/CFMoutput/OptiNoise')
+#forcing, timesteps,depth,temperature,climate,d15N2,Bubble,age_dist,density,LiD,z_cod,diff_cod,d15n_cod_diff,diffu,d15n_z,d15n_cod = read('../CFM/CFM_main/CFMoutput/OptiNoise',)
 
 
 bcoMart =  1 / (1 / (917.0) + temperature[-1,-1] * 6.95E-7 - 4.3e-5)
 
 s = 1 - (density[-1,1:] / 917.0)
 
+print(s)
 def por_cl(s,bcos):
     s_co = 1 - bcoMart/917.0
-    por_cl = 0.37 * s * np.power((s/s_co),-7.6)
+    por_cl = 0.37 * s * np.power(s/s_co,-7.6)
     return por_cl
 
 
+
+
+def por_cl_2(s,rho,bco):
+    for i in range(len(rho)):
+        if rho[i] <= bco:
+            po_cl = s*np.exp(75*(rho[i]/bco-1))
+            print(po_cl)
+            #print('Yes')
+        else:
+            po_cl = s
+            #print('No')
+    return po_cl
+
 s_cl = por_cl(s, bcoMart)
 s_op = s - s_cl
+
+
+#s_cl = por_cl_2(s, density[-1,1:], bcoMart)
+#s_op = s - s_cl
+
+
 
 
 def moving_average(x, w):
@@ -147,65 +172,86 @@ def moving_average(x, w):
 ind = s_cl>s
 s_cl[ind] = s[ind]
 s_op = s-s_cl
-from matplotlib import pyplot as plt
 
+
+
+#ind1 = s1_cl>s
+#s1_cl[ind] = s[ind]
+#s1_op = s-s1_cl
+
+
+
+from matplotlib import pyplot as plt
+import seaborn as sns
+
+sns.set()
 plt.close('all')
 
-fig, ax = plt.subplots(nrows=1, ncols=3, sharey=True)
+fig, ax = plt.subplots(figsize=(10,7),nrows=1, ncols=3, sharey=True,constrained_layout=True)
 
 ax[0].invert_yaxis()
 
-ax[1].plot(s_cl[0:261],depth[-1,1:262],label=r'$s_cl$')
-ax[1].plot(s_op[0:261],depth[-1,1:262],label=r'$s_op$')
+ax[1].plot(s[0:567],depth[-1,1:568],color='grey',linestyle='--',label=r'$s$')
+ax[1].plot(s_cl[0:567],depth[-1,1:568],color='g',label=r'$s_{cl}$')
+ax[1].plot(s_op[0:567],depth[-1,1:568],color='y',label=r'$s_{op}$')
+
+
+#ax[1].plot(s1_cl[0:864],depth[-1,1:865],'--',color='g',label=r'$s1_cl$')
+#ax[1].plot(s1_op[0:864],depth[-1,1:865],'--',color='y',label=r'$s1_op$')
+
 ax[0].set_xlabel('Porosity')
-ax[1].set_ylabel('Depth')
+#ax[1].set_ylabel('Depth')
 ax[0].set_xlabel('Density')
-#ax[0].axhline(LiD[-1],label='LiD')
-#ax[0].axhline(z_cod[-1],label='zCoD')
-#ax[1].axhline(z_cod[-1],label='zCoD')
-#ax[1].axhline(LiD[-1],label='LiD')
-#ax[1].axhline(Bubble[-1],label='CoD',color='k')
+
+
+ax[0].plot(density[-1,1:568],depth[-1,1:568],'k')
+#ax[2].set_xlabel(r'$\delta^{15}$N')
+ax[2].plot(d15N2[-1,1:568],depth[-1,1:568],'r',label='240 K')
+ax[2].axhline(z_cod[-1],linestyle='--')
+ax[2].axhline(LiD[-1],linestyle='--',color='k')
+#ax[2].axhline(Bubble[-1],label='CoD',color='k',linestyle='dotted')
+#ax[2].axhline(diff_cod[-1],label='diff CoD',color='r')
+
+
+ax[0].axhline(z_cod[-1],label=r'$z_{CoD}$',linestyle='--')
+ax[0].axhline(LiD[-1],label='LiD',linestyle='--',color='k')
 #ax[0].axhline(Bubble[-1],label='CoD',color='k')
+#ax[0].axhline(diff_cod[-1],label='diff CoD',color='r')
 
-ax[0].plot(density[-1,1:262],depth[-1,1:262],label=r'$density$')
-ax[2].set_xlabel(r'$\delta^{15}$N')
-ax[2].plot(d15N2[-1,1:262],depth[-1,1:262])
-ax[2].axhline(z_cod[-1],label='zCoD',color='g')
-ax[2].axhline(LiD[-1],label='LiD')
-ax[2].axhline(Bubble[-1],label='CoD',color='k')
-ax[2].axhline(diff_cod[-1],label='diff CoD',color='r')
+ax[0].legend(fontsize=16,loc='lower left')
+print(depth[-1,568])
 
+ax[1].axhline(z_cod[-1],linestyle='--')
+ax[1].axhline(LiD[-1],linestyle='--',color='k')
+#ax[1].axhline(Bubble[-1],label='CoD',color='k')
+#ax[1].axhline(diff_cod[-1],label='diff CoD',color='r')
 
-ax[0].axhline(z_cod[-1],label='zCoD',color='g')
-ax[0].axhline(LiD[-1],label='LiD')
-ax[0].axhline(Bubble[-1],label='CoD',color='k')
-ax[0].axhline(diff_cod[-1],label='diff CoD',color='r')
+forcing, timesteps,depth,temperature,climate,d15N2,Bubble,age_dist,density,LiD,z_cod,diff_cod,d15n_cod_diff,diffu,d15n_z,d15n_cod = read('../CFM/CFM_main/CFMoutput/Noise/Integer/Barnola1991/230K','Barnola1991230K.hdf5')
+ax[2].plot(d15N2[-1,1:1100],depth[-1,1:1100],'b',label='230 K')
 
+print(depth[-1,1100])
 
-ax[1].axhline(z_cod[-1],label='zCoD',color='g')
-ax[1].axhline(LiD[-1],label='LiD')
-ax[1].axhline(Bubble[-1],label='CoD',color='k')
-ax[1].axhline(diff_cod[-1],label='diff CoD',color='r')
+ax[1].set_xlabel(r'Porosity [m$^{3}$/m$^{3}$]',fontsize=18)
+ax[0].set_ylabel('Depth [m]',fontsize=18)
+ax[0].set_xlabel(r'Density [kg/m$^{3}$]',fontsize=18)
 
-
+ax[1].legend(fontsize=16)
 
 
+for l, axes in enumerate(ax):
+    ax[l].tick_params(axis='both', which='major', labelsize=14)
+
+ax[2].set_xlabel(u'$\delta^{15}$N [‰] ',fontsize=18)
+#ax[2].plot(d15N2[-1,1:125],depth[-1,1:125],'r',label='240 K')
 
 
-
-ax[2].axvline(d15n_cod[-1],linestyle=':')
-ax[2].axvline(d15n_cod_diff[-1],linestyle='--')
-#ax[2].axvline(d15n_z[-1],linestyle = '-.')
-
-
-plt.legend()
+ax[2].legend(fontsize=16)
 
 
 
+plt.savefig('Tesing.png',dpi=300)
 
-
-
-
+'''
 def bco_rho(temp):
     bcoMart =  1 / (1 / (917.0) + temp * 6.95E-7 - 4.3e-5)
     return bcoMart
@@ -239,7 +285,8 @@ path = Path('../CFM/CFM_main/CFMinput/Const')
 path.mkdir(parents=True, exist_ok=True)
 csv_gen(242,0.19)
 Models = ['HLdynamic','HLSigfus','Barnola1991','Goujon2003']
-
+'''
+'''
 for i in range(len(Models)):
     print(i)
     file = open('../CFM/CFM_main/FirnAir_Noise.json')
@@ -257,8 +304,12 @@ for i in range(len(Models)):
     
     # Closing file
     f.close()    
-    #subprocess.run('python main.py FirnAir_Noise.json -n', shell=True, cwd='../CFM/CFM_main/')
+'''
 
+
+
+    #subprocess.run('python main.py FirnAir_Noise.json -n', shell=True, cwd='../CFM/CFM_main/')
+'''
 
 timesteps1,depth1,temperature,climate,d15N2,Bubble,age_dist,density1,LiD,z_cod,diff_cod,d15n_cod_diff,diffu,d15n_z,d15n_cod = read('../CFM/CFM_main/CFMoutput/Const/HLdynamic/')
 timesteps2,depth2,temperature,climate,d15N2,Bubble,age_dist,density2,LiD,z_cod,diff_cod,d15n_cod_diff,diffu,d15n_z,d15n_cod = read('../CFM/CFM_main/CFMoutput/Const/HLSigfus/')
@@ -281,5 +332,5 @@ ax.set_xlabel(r'Density [kg/m$^3$]',fontsize=16)
 
 plt.savefig('Testing_rho.png',dpi=300)
 
-
+'''
 

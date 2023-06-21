@@ -209,7 +209,8 @@ ax[1].axhline(LiD[-1],linestyle='--')
 ax[1].plot(s_cl[0:124],depth[-1,1:125],'g',label=r'$s_{cl}$')
 ax[1].plot(s_op[0:124],depth[-1,1:125],'y',label=r'$s_{op}$')
 ax[1].set_xlabel(r'Porosity [m$^{3}$/m$^{3}$]',fontsize=18)
-
+ax[0].set_ylabel('Depth [m]',fontsize=18)
+ax[0].set_xlabel(r'Density [kg/m$^{3}$]',fontsize=18)
 
 ax[1].legend(fontsize=16)
 
